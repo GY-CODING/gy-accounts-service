@@ -39,6 +39,11 @@ public class User implements Parseable {
     @Setter
     private byte[] salt;
 
+    @Embedded
+    @Getter
+    @Setter
+    private GYToken token;
+
     @Builder
     public User(String username, Email email) {
         this.username       = username;
