@@ -3,11 +3,10 @@ package org.gycoding.accounts.controller;
 import org.gycoding.accounts.model.database.AccountService;
 import org.gycoding.accounts.model.entities.Email;
 import org.gycoding.accounts.model.entities.User;
+import org.gycoding.accounts.model.postBodies.LogInBody;
+import org.gycoding.accounts.model.postBodies.SignUpBody;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AccountsController {
@@ -18,37 +17,26 @@ public class AccountsController {
         this.accountService = accountService;
     }
 
-    @GetMapping("/login")
-	public Boolean login(
-        @RequestParam(value = "user", defaultValue = "") String user,
-        @RequestParam(value = "password", defaultValue = "") String password
-    ) {
-        if(user.matches(Email.EMAIL_REGEX)) {
-            return accountService.checkLogin(new Email(user), password);
+    @PostMapping("/login")
+	public Boolean login(@RequestBody LogInBody logInBody) {
+        if(logInBody.getUser().matches(Email.EMAIL_REGEX)) {
+            return accountService.checkLogin(new Email(logInBody.getUser()), logInBody.getPassword());
         } else {
-            return accountService.checkLogin(user, password);
+            return accountService.checkLogin(logInBody.getUser(), logInBody.getPassword());
         }
 	}
 
     @PostMapping("/signup")
-	public Integer signUp(
-        @RequestParam(value = "username", defaultValue = "") String username,
-        @RequestParam(value = "email", defaultValue = "") String email,
-        @RequestParam(value = "password", defaultValue = "") String password
-    ) {
-        return accountService.signUp(new User(username, new Email(email)), password).toInt();
+	public Integer signUp(@RequestBody SignUpBody signUpBody) {
+        return accountService.signUp(new User(signUpBody.getUsername(), new Email(signUpBody.getEmail())), signUpBody.getPassword()).toInt();
 	}
 
-    @GetMapping("/session")
-	public String getSession(
-        @RequestParam(value = "user", defaultValue = "") String user,
-        @RequestParam(value = "password", defaultValue = "") String password
-    ) {
-
-        if(user.matches(Email.EMAIL_REGEX)) {
-            return accountService.getSession(new Email(user), password);
+    @PostMapping("/session")
+	public String getSession(@RequestBody LogInBody logInBody) {
+        if(logInBody.getUser().matches(Email.EMAIL_REGEX)) {
+            return accountService.getSession(new Email(logInBody.getUser()), logInBody.getPassword());
         } else {
-            return accountService.getSession(user, password);
+            return accountService.getSession(logInBody.getUser(), logInBody.getPassword());
         }
 	}
 }

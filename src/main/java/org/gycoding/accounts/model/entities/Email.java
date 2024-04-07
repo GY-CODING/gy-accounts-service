@@ -63,6 +63,6 @@ public class Email implements Parseable {
 
     @Override
     public String toTXT() {
-        return String.format("%s%s%s", this.getIdentifier(), EMAIL_DELIM, this.getService());
+        return String.format("%s", this.getEmail());
     }
 }
