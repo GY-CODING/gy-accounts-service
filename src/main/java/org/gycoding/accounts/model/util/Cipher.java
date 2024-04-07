@@ -2,6 +2,7 @@ package org.gycoding.accounts.model.util;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.util.UUID;
 
 /**
  * Singleton for string encryption. Uses a salt (encrypted value for key encryption randomization) associated with a user to generate a unique key encryption for each user.
@@ -53,19 +54,11 @@ public class Cipher {
     }
 
     /**
-     * Generates a random account number.
-     * @return The account number.
+     * Generates a random token.
+     * @return The token.
      * @author <a href="https://toxyc.dev">Iván Vicente Morales</a>
      */
-    public static String generateAccountNumber() {
-        final String PREFIX = "ES24";
-
-        String accountNumber = "";
-
-        for (int i = 0; i < 20; i++) {
-            accountNumber += (int) (Math.random() * 10);
-        }
-        
-        return PREFIX + accountNumber;
+    public static String generateToken() {
+        return UUID.randomUUID().toString();
     }
 }

@@ -3,7 +3,9 @@ package org.gycoding.accounts.controller;
 import org.gycoding.accounts.model.database.AccountService;
 import org.gycoding.accounts.model.entities.Email;
 import org.gycoding.accounts.model.entities.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,9 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountsController {
     private AccountService accountService;
 
+    @Autowired
+    public AccountsController(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
     @GetMapping("/login")
 	public Boolean login(
-        @RequestParam(value = "user", defaultValue = "") String user, 
+        @RequestParam(value = "user", defaultValue = "") String user,
         @RequestParam(value = "password", defaultValue = "") String password
     ) {
         if(user.matches(Email.EMAIL_REGEX)) {
@@ -23,7 +30,7 @@ public class AccountsController {
         }
 	}
 
-    @GetMapping("/signup")
+    @PostMapping("/signup")
 	public Integer signUp(
         @RequestParam(value = "username", defaultValue = "") String username,
         @RequestParam(value = "email", defaultValue = "") String email,
@@ -37,6 +44,11 @@ public class AccountsController {
         @RequestParam(value = "user", defaultValue = "") String user,
         @RequestParam(value = "password", defaultValue = "") String password
     ) {
-        return accountService.getSession(user, password);
+
+        if(user.matches(Email.EMAIL_REGEX)) {
+            return accountService.getSession(new Email(user), password);
+        } else {
+            return accountService.getSession(user, password);
+        }
 	}
 }

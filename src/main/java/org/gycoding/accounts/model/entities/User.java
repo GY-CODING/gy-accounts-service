@@ -33,11 +33,12 @@ public class User implements Parseable {
     @Column
     @Getter
     @Setter
-    private byte[] password;
+    private String password;
 
+    @Column
     @Getter
     @Setter
-    private byte[] salt;
+    private String salt;
 
     @Embedded
     @Getter
@@ -62,6 +63,7 @@ public class User implements Parseable {
         return "{" +
                 "\"username\":\"" + username + '\"' +
                 ", \"email\":\"" + email + '\"' +
+                ", \"token\":\"" + token.toString() + '\"' +
                 '}';
     }
 
@@ -70,11 +72,12 @@ public class User implements Parseable {
         return "<user>" +
                 "<username>" + username + "</username>" +
                 "<email>" + email + "</email>" +
+                "<token>" + token.toString() + "</token>" +
                 "</user>";
     }
 
     @Override
     public String toTXT() {
-        return String.format("%s%s%s", this.username, Parseable.DELIM, this.email);
+        return String.format("%s%s%s%s%s", this.username, Parseable.DELIM, this.email, Parseable.DELIM, this.token.toString());
     }
 }

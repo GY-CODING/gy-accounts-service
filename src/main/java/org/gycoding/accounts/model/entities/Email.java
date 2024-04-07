@@ -3,6 +3,7 @@ package org.gycoding.accounts.model.entities;
 import java.util.StringTokenizer;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Transient;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,10 +17,12 @@ public class Email implements Parseable {
     @Setter
     private String email;
 
+    @Transient
     @Getter
     @Setter
     private String identifier;
 
+    @Transient
     @Getter
     @Setter
     private String service;
