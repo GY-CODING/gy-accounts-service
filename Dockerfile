@@ -26,7 +26,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar ./gy-accounts.jar
 
 # Expose the port on which the application will run
-EXPOSE 8080
+EXPOSE 8002
 
 # Set the command to run the application
 CMD ["java", "-jar", "gy-accounts.jar"]
