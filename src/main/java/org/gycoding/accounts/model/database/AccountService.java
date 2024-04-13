@@ -1,11 +1,9 @@
 package org.gycoding.accounts.model.database;
 
-import org.gycoding.accounts.model.entities.Email;
-import org.gycoding.accounts.model.entities.GYToken;
-import org.gycoding.accounts.model.entities.ServerState;
-import org.gycoding.accounts.model.entities.User;
+import org.gycoding.accounts.model.entities.*;
 import org.gycoding.accounts.model.util.ByteHexConverter;
 import org.gycoding.accounts.model.util.Cipher;
+import org.gycoding.accounts.model.util.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -93,17 +91,17 @@ public class AccountService {
         }
     }
 
-    public String getSession(String username, String password) {
+    public Session getSession(String username, String password) {
         if(this.checkLogin(username, password)) {
-            return this.getUsuario(username).toString();
+            return new Session(this.getUsuario(username), JWTService.generateToken(username));
         } else {
             return null;
         }
     }
 
-    public String getSession(Email email, String password) {
+    public Session getSession(Email email, String password) {
         if(this.checkLogin(email, password)) {
-            return this.getUsuario(email).toString();
+            return new Session(this.getUsuario(email), JWTService.generateToken(email));
         } else {
             return null;
         }

@@ -1,4 +1,4 @@
-package org.gycoding.accounts.controller;
+package org.gycoding.accountsv2.infrastructure.api.controller;
 
 import org.gycoding.accounts.model.database.AccountService;
 import org.gycoding.accounts.model.entities.Email;
@@ -6,7 +6,9 @@ import org.gycoding.accounts.model.entities.User;
 import org.gycoding.accounts.model.postBodies.LogInBody;
 import org.gycoding.accounts.model.postBodies.SignUpBody;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AccountsController {
