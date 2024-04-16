@@ -93,7 +93,7 @@ public class AccountService {
 
     public Session getSession(String username, String password) {
         if(this.checkLogin(username, password)) {
-            return new Session(this.getUsuario(username), JWTService.generateToken(username));
+            return new Session(this.getUsuario(username));
         } else {
             return null;
         }
@@ -101,7 +101,7 @@ public class AccountService {
 
     public Session getSession(Email email, String password) {
         if(this.checkLogin(email, password)) {
-            return new Session(this.getUsuario(email), JWTService.generateToken(email));
+            return new Session(this.getUsuario(email));
         } else {
             return null;
         }
