@@ -64,6 +64,7 @@
 			<version>0.11.2</version> <!-- Versión actualizada -->
 			<scope>runtime</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -98,6 +99,36 @@
 							<version>1.18.20</version>
 						</path>
 					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jetbrains.dokka</groupId>
+				<artifactId>dokka-maven-plugin</artifactId>
+				<version>1.9.20</version>
+				<executions>
+					<execution>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>dokka</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skip>false</skip>
+					<moduleName>GY Accounts</moduleName>
+					<outputDir>./src/main/resources/static/docs</outputDir>
+					<cacheRoot>default</cacheRoot>
+					<offlineMode>false</offlineMode>
+					<samples>
+						<dir>src/test/samples</dir>
+					</samples>
+					<suppressObviousFunctions>false</suppressObviousFunctions>
+					<suppressInheritedMembers>true</suppressInheritedMembers>
+					<jdkVersion>17</jdkVersion>
+					<skipDeprecated>false</skipDeprecated>
+					<reportUndocumented>true</reportUndocumented>
+					<skipEmptyPackages>true</skipEmptyPackages>
 				</configuration>
 			</plugin>
 		</plugins>

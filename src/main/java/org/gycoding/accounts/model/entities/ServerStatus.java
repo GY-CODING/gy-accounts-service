@@ -1,6 +1,6 @@
 package org.gycoding.accounts.model.entities;
 
-public enum ServerState {
+public enum ServerStatus {
     SUCCESS(0),
     INVALID_USERNAME(-1),
     INVALID_EMAIL(-2),
@@ -10,11 +10,12 @@ public enum ServerState {
     INVALID_UPDATE(-6),
     DATABASE_ERROR(-7),
     INVALID_EMISOR(-8),
-    INVALID_RECEPTOR(-9);
+    INVALID_RECEPTOR(-9),
+    NOT_FOUND(-10);
 
     public Integer state;
 
-    ServerState(Integer state) {
+    ServerStatus(Integer state) {
         this.state = state;
     }
 

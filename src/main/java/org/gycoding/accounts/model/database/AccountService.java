@@ -76,9 +76,9 @@ public class AccountService {
         }
     }
 
-    public ServerState signUp(User user, String password) {
+    public ServerStatus signUp(User user, String password) {
         if(this.checkLogin(user.getUsername(), password)) {
-            return ServerState.INVALID_SIGNUP;
+            return ServerStatus.INVALID_SIGNUP;
         } else {
             user.setSalt(ByteHexConverter.bytesToHex(Cipher.generateSalt()));
             user.setPassword(ByteHexConverter.bytesToHex(Cipher.hashPassword(password, ByteHexConverter.hexToBytes(user.getSalt()))));
@@ -86,7 +86,7 @@ public class AccountService {
 
             saveUsuario(user);
 
-            return ServerState.SUCCESS;
+            return ServerStatus.SUCCESS;
         }
     }
 
@@ -106,7 +106,7 @@ public class AccountService {
         }
     }
 
-    public ServerState updateUsername(String username, String password, String newUsername) {
+    public ServerStatus updateUsername(String username, String password, String newUsername) {
         if(this.checkLogin(username, password)) {
             User user = getUsuario(username);
 
@@ -115,16 +115,16 @@ public class AccountService {
 
                 saveUsuario(user);
 
-                return ServerState.SUCCESS;
+                return ServerStatus.SUCCESS;
             } else {
-                return ServerState.INVALID_USERNAME;
+                return ServerStatus.INVALID_USERNAME;
             }
         } else {
-            return ServerState.INVALID_LOGIN;
+            return ServerStatus.INVALID_LOGIN;
         }
     }
 
-    public ServerState updateUsername(Email email, String password, String newUsername) {
+    public ServerStatus updateUsername(Email email, String password, String newUsername) {
         if(this.checkLogin(email, password)) {
             User user = getUsuario(email);
 
@@ -133,16 +133,16 @@ public class AccountService {
 
                 saveUsuario(user);
 
-                return ServerState.SUCCESS;
+                return ServerStatus.SUCCESS;
             } else {
-                return ServerState.INVALID_USERNAME;
+                return ServerStatus.INVALID_USERNAME;
             }
         } else {
-            return ServerState.INVALID_LOGIN;
+            return ServerStatus.INVALID_LOGIN;
         }
     }
 
-    public ServerState updateEmail(String username, String password, Email newEmail) {
+    public ServerStatus updateEmail(String username, String password, Email newEmail) {
         if(this.checkLogin(username, password)) {
             User user = getUsuario(username);
 
@@ -151,16 +151,16 @@ public class AccountService {
 
                 saveUsuario(user);
 
-                return ServerState.SUCCESS;
+                return ServerStatus.SUCCESS;
             } else {
-                return ServerState.INVALID_USERNAME;
+                return ServerStatus.INVALID_USERNAME;
             }
         } else {
-            return ServerState.INVALID_LOGIN;
+            return ServerStatus.INVALID_LOGIN;
         }
     }
 
-    public ServerState updateEmail(Email email, String password, Email newEmail) {
+    public ServerStatus updateEmail(Email email, String password, Email newEmail) {
         if(this.checkLogin(email, password)) {
             User user = getUsuario(email);
 
@@ -169,16 +169,16 @@ public class AccountService {
 
                 saveUsuario(user);
 
-                return ServerState.SUCCESS;
+                return ServerStatus.SUCCESS;
             } else {
-                return ServerState.INVALID_USERNAME;
+                return ServerStatus.INVALID_USERNAME;
             }
         } else {
-            return ServerState.INVALID_LOGIN;
+            return ServerStatus.INVALID_LOGIN;
         }
     }
 
-    public ServerState updatePassword(String username, String password, String newPassword) {
+    public ServerStatus updatePassword(String username, String password, String newPassword) {
         if(this.checkLogin(username, password)) {
             User user = getUsuario(username);
 
@@ -188,16 +188,16 @@ public class AccountService {
 
                 saveUsuario(user);
 
-                return ServerState.SUCCESS;
+                return ServerStatus.SUCCESS;
             } else {
-                return ServerState.INVALID_USERNAME;
+                return ServerStatus.INVALID_USERNAME;
             }
         } else {
-            return ServerState.INVALID_LOGIN;
+            return ServerStatus.INVALID_LOGIN;
         }
     }
 
-    public ServerState updatePassword(Email email, String password, String newPassword) {
+    public ServerStatus updatePassword(Email email, String password, String newPassword) {
         if(this.checkLogin(email, password)) {
             User user = getUsuario(email);
 
@@ -207,16 +207,16 @@ public class AccountService {
 
                 saveUsuario(user);
 
-                return ServerState.SUCCESS;
+                return ServerStatus.SUCCESS;
             } else {
-                return ServerState.INVALID_USERNAME;
+                return ServerStatus.INVALID_USERNAME;
             }
         } else {
-            return ServerState.INVALID_LOGIN;
+            return ServerStatus.INVALID_LOGIN;
         }
     }
 
-    public ServerState updatePasswordForgotten(String username, String newPassword) {
+    public ServerStatus updatePasswordForgotten(String username, String newPassword) {
         User user = getUsuario(username);
 
         if(user != null) {
@@ -225,13 +225,13 @@ public class AccountService {
 
             saveUsuario(user);
 
-            return ServerState.SUCCESS;
+            return ServerStatus.SUCCESS;
         } else {
-            return ServerState.INVALID_USERNAME;
+            return ServerStatus.INVALID_USERNAME;
         }
     }
 
-    public ServerState updatePasswordForgotten(Email email, String newPassword) {
+    public ServerStatus updatePasswordForgotten(Email email, String newPassword) {
         User user = getUsuario(email);
 
         if(user != null) {
@@ -240,9 +240,9 @@ public class AccountService {
 
             saveUsuario(user);
 
-            return ServerState.SUCCESS;
+            return ServerStatus.SUCCESS;
         } else {
-            return ServerState.INVALID_USERNAME;
+            return ServerStatus.INVALID_USERNAME;
         }
     }
 }
