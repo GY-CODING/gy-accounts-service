@@ -30,7 +30,7 @@ paths:
         "200":
           description: OK
       tags:
-        - GY Accounts
+        - Accounts
   /signup:
     post:
       description: Register a new account.
@@ -41,24 +41,24 @@ paths:
           required: true
           schema:
             type: string
-          description: Username of the account trying to be logged in.
+          description: Username of the account to be registered.
         - in: query
           name: email
           required: true
           schema:
             type: string
-          description: Email of the account trying to be logged in.
+          description: Email of the account to be registered.
         - in: query
           name: password
           required: true
           schema:
             type: string
-          description: Password of the account trying to be logged in.
+          description: Password of the account to be registered.
       responses:
         "200":
           description: OK
       tags:
-        - GY Accounts
+        - Accounts
   /session:
     post:
       description: Get a representation of a session.
@@ -80,7 +80,7 @@ paths:
         "200":
           description: OK
       tags:
-        - GY Accounts
+        - Accounts
   /update/username:
     put:
       description: Modifies the username of an existing account.
@@ -108,7 +108,7 @@ paths:
         "200":
           description: OK
       tags:
-        - GY Accounts
+        - Accounts
   /update/email:
     put:
       description: Modifies the email of an existing account.
@@ -136,7 +136,7 @@ paths:
         "200":
           description: OK
       tags:
-        - GY Accounts
+        - Accounts
   /update/password/{forgotten}:
     put:
       description: Modifies the password of an existing account.
@@ -170,4 +170,4 @@ paths:
         "200":
           description: OK
       tags:
-        - GY Accounts
+        - Accounts

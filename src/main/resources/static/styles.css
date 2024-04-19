@@ -85,6 +85,9 @@
 
     --post-color: #3562dd;
     --post-bg-color: #3562dd28;
+
+    --put-color: #43dd35;
+    --put-bg-color: #5cdd3528;
 }
 
 * {
@@ -382,6 +385,11 @@ span {
     color: var(--post-color);
 }
 
+.api-type[type="PUT"] {
+    background-color: var(--put-bg-color);
+    color: var(--put-color);
+}
+
 .api-endpoint-code {
     font-size: 22px;
     letter-spacing: 1px;
@@ -405,7 +413,8 @@ span {
 }
 
 .api-params {
-    margin-left: 30px;
+    margin-top: 10px;
+    margin-left: 40px;
 
     display: flex;
     flex-direction: column;
@@ -429,9 +438,11 @@ span {
     flex-direction: row;
     flex-wrap: nowrap;
 
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     align-content: center;
+
+    text-align: justify;
 
     gap: 5px;
 }

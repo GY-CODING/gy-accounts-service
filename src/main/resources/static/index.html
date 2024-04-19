@@ -33,153 +33,119 @@
     </nav>
 
     <div class="api-page">
-        <div class="api-characters api">
-            <h2 class="api-title">Characters</h2>
+        <div class="api-accounts api">
+            <h2 class="api-title">Accounts</h2>
             <hr>
             <ul class="api-endpoints">
                 <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/characters/story/get?id=odin"><code class="api-endpoint-code">/characters/story/get</code></a>
-                    <p class="api-desc">Devuelve un personaje concreto de la historia de Fall of the Gods.</p>
+                    <h3 class="api-type" type="POST">POST</h3>
+                    <a href="/login"><code class="api-endpoint-code">/login</code></a>
+                    <p class="api-desc">Log in to an existing account.</p>
                     <ul class="api-params">
                         <li class="api-param">
-                            <code class="api-param-name">id</code>
-                            <p class="api-param-desc"> — Identificador de tipo cadena de texto del personaje de la historia.</p>
+                            <code class="api-param-name">user</code>
+                            <p class="api-param-desc"> — Username or email of the account trying to be logged in.</p>
+                        </li>
+                        <li class="api-param">
+                            <code class="api-param-name">password</code>
+                            <p class="api-param-desc"> — Password of the account trying to be logged in.</p>
                         </li>
                     </ul>
                 </li>
                 <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/characters/story/list"><code class="api-endpoint-code">/characters/story/list</code></a>
-                    <p class="api-desc">Devuelve todos los personajes de la historia de Fall of the Gods.</p>
-                </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/characters/game/get?id=odin"><code class="api-endpoint-code">/characters/game/get</code></a>
-                    <p class="api-desc">Devuelve un personaje concreto del videojuego de Fall of the Gods.</p>
+                    <h3 class="api-type" type="POST">POST</h3>
+                    <a href="/signup"><code class="api-endpoint-code">/signup</code></a>
+                    <p class="api-desc">Register a new account.</p>
                     <ul class="api-params">
                         <li class="api-param">
-                            <code class="api-param-name">id</code>
-                            <p class="api-param-desc"> — Identificador de tipo cadena de texto del personaje del videojuego.</p>
+                            <code class="api-param-name">user</code>
+                            <p class="api-param-desc"> — Username of the account to be registered.</p>
+                        </li>
+                        <li class="api-param">
+                            <code class="api-param-name">email</code>
+                            <p class="api-param-desc"> — Email of the account to be registered.</p>
+                        </li>
+                        <li class="api-param">
+                            <code class="api-param-name">password</code>
+                            <p class="api-param-desc"> — Password of the account to be registered.</p>
                         </li>
                     </ul>
                 </li>
                 <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/characters/game/list"><code class="api-endpoint-code">/characters/game/list</code></a>
-                    <p class="api-desc">Devuelve todos los personajes del videojuego de Fall of the Gods.</p>
-                </li>
-            </ul>
-        </div>
-    
-        <div class="api-worlds api">
-            <h2 class="api-title">Worlds</h2>
-            <hr>
-            <ul class="api-endpoints">
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/worlds/get?id=asgard"><code class="api-endpoint-code">/worlds/get</code></a>
-                    <p class="api-desc">Devuelve un mundo concreto de la historia y del videojuego de Fall of the Gods.</p>
+                    <h3 class="api-type" type="POST">POST</h3>
+                    <a href="/session"><code class="api-endpoint-code">/session</code></a>
+                    <p class="api-desc">Get a representation of a session.</p>
                     <ul class="api-params">
                         <li class="api-param">
-                            <code class="api-param-name">id</code>
-                            <p class="api-param-desc"> — Identificador de tipo cadena de texto del mundo de la historia.</p>
+                            <code class="api-param-name">user</code>
+                            <p class="api-param-desc"> — Username or email of the account trying to get the session from.</p>
+                        </li>
+                        <li class="api-param">
+                            <code class="api-param-name">password</code>
+                            <p class="api-param-desc"> — Password of the account trying to get the session from.</p>
                         </li>
                     </ul>
                 </li>
                 <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/worlds/list"><code class="api-endpoint-code">/worlds/list</code></a>
-                    <p class="api-desc">Devuelve todos los mundos de la historia y del videojuego de Fall of the Gods.</p>
-                </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/worlds/places/get?id=idavoll"><code class="api-endpoint-code">/worlds/places/get</code></a>
-                    <p class="api-desc">Devuelve un lugar concreto de un mundo concreto de la historia y del videojuego de Fall of the Gods.</p>
+                    <h3 class="api-type" type="PUT">PUT</h3>
+                    <a href="/update/username"><code class="api-endpoint-code">/update/username</code></a>
+                    <p class="api-desc">Modifies the username of an existing account.</p>
                     <ul class="api-params">
                         <li class="api-param">
-                            <code class="api-param-name">id</code>
-                            <p class="api-param-desc"> — Identificador de tipo cadena de texto del lugar de la historia y del videojuego de Fall of the Gods.</p>
+                            <code class="api-param-name">user</code>
+                            <p class="api-param-desc"> — Username or email of the account to update.</p>
+                        </li>
+                        <li class="api-param">
+                            <code class="api-param-name">password</code>
+                            <p class="api-param-desc"> — Password of the account to update.</p>
+                        </li>
+                        <li class="api-param">
+                            <code class="api-param-name">new-user</code>
+                            <p class="api-param-desc"> — New username.</p>
                         </li>
                     </ul>
                 </li>
                 <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/worlds/places/listAll"><code class="api-endpoint-code">/worlds/places/listAll</code></a>
-                    <p class="api-desc">Devuelve todos los lugares de la historia y del videojuego de Fall of the Gods.</p>
-                </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/worlds/places/list"><code class="api-endpoint-code">/worlds/places/list</code></a>
-                    <p class="api-desc">Devuelve todos los lugares de un mundo concreto de la historia y del videojuego de Fall of the Gods.</p>
+                    <h3 class="api-type" type="PUT">PUT</h3>
+                    <a href="/update/email"><code class="api-endpoint-code">/update/email</code></a>
+                    <p class="api-desc">Modifies the email of an existing account.</p>
                     <ul class="api-params">
                         <li class="api-param">
-                            <code class="api-param-name">id</code>
-                            <p class="api-param-desc"> — Identificador de tipo cadena de texto del mundo de los cuales se quieren retornar sus lugares de la historia y del videojuego de Fall of the Gods.</p>
+                            <code class="api-param-name">user</code>
+                            <p class="api-param-desc"> — Username or email of the account to update.</p>
                         </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    
-        <div class="api-items api">
-            <h2 class="api-title">Items</h2>
-            <hr>
-            <ul class="api-endpoints">
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/items/story/get?id=mjolnir"><code class="api-endpoint-code">/items/story/get</code></a>
-                    <p class="api-desc">Devuelve un objeto concreto de la historia de Fall of the Gods.</p>
-                    <ul class="api-params">
                         <li class="api-param">
-                            <code class="api-param-name">id</code>
-                            <p class="api-param-desc"> — Identificador de tipo cadena de texto del objeto de la historia.</p>
+                            <code class="api-param-name">password</code>
+                            <p class="api-param-desc"> — Password of the account to update.</p>
+                        </li>
+                        <li class="api-param">
+                            <code class="api-param-name">new-email</code>
+                            <p class="api-param-desc"> — New email.</p>
                         </li>
                     </ul>
                 </li>
                 <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/items/story/list"><code class="api-endpoint-code">/items/story/list</code></a>
-                    <p class="api-desc">Devuelve todos los objetos de la historia de Fall of the Gods.</p>
-                </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/items/game/get?id=mjolnir"><code class="api-endpoint-code">/items/game/get</code></a>
-                    <p class="api-desc">Devuelve un objeto concreto del videojuego de Fall of the Gods.</p>
+                    <h3 class="api-type" type="PUT">PUT</h3>
+                    <a href="/update/password?forgotten=false"><code class="api-endpoint-code">/update/password</code></a>
+                    <p class="api-desc">Modifies the password of an existing account.</p>
                     <ul class="api-params">
                         <li class="api-param">
-                            <code class="api-param-name">id</code>
-                            <p class="api-param-desc"> — Identificador de tipo cadena de texto del objeto del videojuego.</p>
+                            <code class="api-param-name">forgotten</code>
+                            <p class="api-param-desc"> — Whether the operation is because of a forgotten password or not.</p>
                         </li>
-                    </ul>
-                </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/items/game/list"><code class="api-endpoint-code">/items/game/list</code></a>
-                    <p class="api-desc">Devuelve todos los objetos del videojuego de Fall of the Gods.</p>
-                </li>
-            </ul>
-        </div>
-
-        <div class="api-worlds api">
-            <h2 class="api-title">Stories</h2>
-            <hr>
-            <ul class="api-endpoints">
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/stories/get?id=la_sombra_del_bosque"><code class="api-endpoint-code">/stories/get</code></a>
-                    <p class="api-desc">Devuelve una historia concreta de Fall of the Gods.</p>
-                    <ul class="api-params">
                         <li class="api-param">
-                            <code class="api-param-name">id</code>
-                            <p class="api-param-desc"> — Identificador de tipo cadena de texto de la historia.</p>
+                            <code class="api-param-name">user</code>
+                            <p class="api-param-desc"> — Username or email of the account to update.</p>
+                        </li>
+                        <li class="api-param">
+                            <code class="api-param-name">password</code>
+                            <p class="api-param-desc"> — Password of the account to update.</p>
+                        </li>
+                        <li class="api-param">
+                            <code class="api-param-name">new-password</code>
+                            <p class="api-param-desc"> — New password.</p>
                         </li>
                     </ul>
-                </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="GET">GET</h3>
-                    <a href="3ebac085-da0f-477e-9383-85a2c0d983be/stories/list"><code class="api-endpoint-code">/stories/list</code></a>
-                    <p class="api-desc">Devuelve todas las historias de Fall of the Gods.</p>
                 </li>
             </ul>
         </div>
@@ -190,10 +156,7 @@
             <h2 class="version-title">1.0.0</h2>
             <hr>
             <p class="version-text">
-                Se puede acceder a toda la información básica de los personajes, objetos, mundos, lugares e historias tanto del lore principal<br>
-                como del seleccionado para el videojuego oficial de Fall of the Gods a través de los <a class="inline-link link-api">endpoints</a> provistos.
-                <br><br>
-                Se provee de una <a class="inline-link link-docs">documentación</a> pública del código fuente de la API.
+                Exposición de todos los servicios básicos de gestión de cuentas de usuario de GYCODING.
             </p>
         </div>
     </div>
@@ -202,7 +165,7 @@
         <div class="about-content">
             <h2 class="about-title">About</h2>
             <hr>
-            <p class="about-text">Esta es la API de referencia de toda la historia de Fall of the Gods, sirve actualmente tanto como consulta de personajes, relatos, objetos, mundos y lugares de la historia, como del videojuego oficial.</p>
+            <p class="about-text">Esta es la API de referencia del servicio de gestión de cuentas de GYCODING.</p>
         </div>
     </div>
 
