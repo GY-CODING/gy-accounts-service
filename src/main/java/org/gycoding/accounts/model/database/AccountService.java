@@ -21,228 +21,151 @@ public class AccountService {
 
     /* ===============# CRUD Methods #=============== */
 
-    public List<User> getUsuarios() {
+    public List<User> listUsers() {
         return accountRepository.findAll();
     }
 
-    public User getUsuario(Integer id) {
-        return accountRepository.findById(id).orElse(null);
-    }
-
-    public User getUsuario(String username) {
-        return accountRepository.findByUsername(username).orElse(null);
-    }
-
-    public User getUsuario(Email email) {
+    public User getUser(String email) {
         return accountRepository.findByEmail(email).orElse(null);
     }
 
-    public User saveUsuario(User usuario) {
+    public User saveUser(User usuario) {
         return accountRepository.save(usuario);
     }
 
-    public void deleteUsuario(Integer id) {
-        accountRepository.deleteById(id);
+    public void deleteUser(String email) {
+        accountRepository.deleteByEmail(email);
     }
 
 
     /* ===============# Custom Methods #=============== */
 
-    public Boolean checkLogin(String username, String password) {
-        User user = getUsuario(username);
+    public ServerStatus checkLogin(String email, String password) {
+        User user = getUser(email);
 
         if(user != null) {
-            if(Cipher.verifyPassword(password, ByteHexConverter.hexToBytes(user.getSalt()), ByteHexConverter.hexToBytes(user.getPassword()))) {
-                return true;
+            if(Cipher.verifyPassword(password, ByteHexConverter.hexToBytes(user.salt()), ByteHexConverter.hexToBytes(user.password()))) {
+                return ServerStatus.USER_LOGGED_IN;
             } else {
-                return false;
+                return ServerStatus.INVALID_LOGIN;
             }
         } else {
-            return false;
-        }
-    }
-
-    public Boolean checkLogin(Email email, String password) {
-        User user = getUsuario(email);
-
-        if(user != null) {
-            if(Cipher.verifyPassword(password, ByteHexConverter.hexToBytes(user.getSalt()), ByteHexConverter.hexToBytes(user.getPassword()))) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+            return ServerStatus.USER_NOT_FOUND;
         }
     }
 
     public ServerStatus signUp(User user, String password) {
-        if(this.checkLogin(user.getUsername(), password)) {
+        if(this.checkLogin(user.email(), password).equals(ServerStatus.USER_LOGGED_IN)) {
             return ServerStatus.INVALID_SIGNUP;
         } else {
-            user.setSalt(ByteHexConverter.bytesToHex(Cipher.generateSalt()));
-            user.setPassword(ByteHexConverter.bytesToHex(Cipher.hashPassword(password, ByteHexConverter.hexToBytes(user.getSalt()))));
-            user.setToken(new GYToken(Cipher.generateToken()));
+            final byte[] salt   = Cipher.generateSalt();
 
-            saveUsuario(user);
+            final User newUser  = User.builder()
+                    .username(user.username())
+                    .email(user.email())
+                    .salt(ByteHexConverter.bytesToHex(salt))
+                    .password(ByteHexConverter.bytesToHex(Cipher.hashPassword(password, salt)))
+                    .build();
 
-            return ServerStatus.SUCCESS;
+            saveUser(newUser);
+
+            return ServerStatus.USER_REGISTERED;
         }
     }
 
-    public Session getSession(String username, String password) {
-        if(this.checkLogin(username, password)) {
-            return new Session(this.getUsuario(username));
+    public Session getSession(String email, String password) {
+        if(this.checkLogin(email, password).equals(ServerStatus.USER_LOGGED_IN)) {
+            return new Session(this.getUser(email));
         } else {
             return null;
         }
     }
 
-    public Session getSession(Email email, String password) {
-        if(this.checkLogin(email, password)) {
-            return new Session(this.getUsuario(email));
-        } else {
-            return null;
-        }
-    }
+    public ServerStatus updateUsername(String email, String password, String newUsername) {
+        if(this.checkLogin(email, password).equals(ServerStatus.USER_LOGGED_IN)) {
+            User user = getUser(email);
 
-    public ServerStatus updateUsername(String username, String password, String newUsername) {
-        if(this.checkLogin(username, password)) {
-            User user = getUsuario(username);
+            try {
+                final User modifiedUser = User.builder()
+                        .username(newUsername)
+                        .email(user.email())
+                        .salt(user.salt())
+                        .password(user.password())
+                        .build();
 
-            if(user != null) {
-                user.setUsername(newUsername);
+                saveUser(modifiedUser);
 
-                saveUsuario(user);
-
-                return ServerStatus.SUCCESS;
-            } else {
-                return ServerStatus.INVALID_USERNAME;
+                return ServerStatus.USERNAME_UPDATE;
+            } catch(Exception e) {
+                return ServerStatus.USERNAME_UPDATE_ERROR;
             }
         } else {
             return ServerStatus.INVALID_LOGIN;
         }
     }
 
-    public ServerStatus updateUsername(Email email, String password, String newUsername) {
-        if(this.checkLogin(email, password)) {
-            User user = getUsuario(email);
+    public ServerStatus updateEmail(String email, String password, String newEmail) {
+        if(this.checkLogin(email, password).equals(ServerStatus.USER_LOGGED_IN)) {
+            User user = getUser(email);
 
-            if(user != null) {
-                user.setUsername(newUsername);
+            try {
+                final User modifiedUser = User.builder()
+                        .username(user.username())
+                        .email(newEmail)
+                        .salt(user.salt())
+                        .password(user.password())
+                        .build();
 
-                saveUsuario(user);
+                saveUser(modifiedUser);
 
-                return ServerStatus.SUCCESS;
-            } else {
-                return ServerStatus.INVALID_USERNAME;
+                return ServerStatus.EMAIL_UPDATE;
+            } catch(Exception e) {
+                return ServerStatus.EMAIL_UPDATE_ERROR;
             }
         } else {
             return ServerStatus.INVALID_LOGIN;
         }
     }
 
-    public ServerStatus updateEmail(String username, String password, Email newEmail) {
-        if(this.checkLogin(username, password)) {
-            User user = getUsuario(username);
+    public ServerStatus updatePassword(String email, String password, String newPassword) {
+        if(this.checkLogin(email, password).equals(ServerStatus.USER_LOGGED_IN)) {
+            User user = getUser(email);
 
-            if(user != null) {
-                user.setEmail(newEmail);
+            try {
+                final User modifiedUser = User.builder()
+                        .username(user.username())
+                        .email(user.email())
+                        .salt(user.salt())
+                        .password(ByteHexConverter.bytesToHex(Cipher.hashPassword(newPassword, ByteHexConverter.hexToBytes(user.salt()))))
+                        .build();
 
-                saveUsuario(user);
+                saveUser(modifiedUser);
 
-                return ServerStatus.SUCCESS;
-            } else {
-                return ServerStatus.INVALID_USERNAME;
+                return ServerStatus.PASSWORD_UPDATE;
+            } catch(Exception e) {
+                return ServerStatus.PASSWORD_UPDATE_ERROR;
             }
         } else {
             return ServerStatus.INVALID_LOGIN;
         }
     }
 
-    public ServerStatus updateEmail(Email email, String password, Email newEmail) {
-        if(this.checkLogin(email, password)) {
-            User user = getUsuario(email);
+    public ServerStatus updatePasswordForgotten(String email, String newPassword) {
+        try {
+            User user = getUser(email);
 
-            if(user != null) {
-                user.setEmail(newEmail);
+            final User modifiedUser = User.builder()
+                    .username(user.username())
+                    .email(user.email())
+                    .salt(user.salt())
+                    .password(ByteHexConverter.bytesToHex(Cipher.hashPassword(newPassword, ByteHexConverter.hexToBytes(user.salt()))))
+                    .build();
 
-                saveUsuario(user);
+            saveUser(modifiedUser);
 
-                return ServerStatus.SUCCESS;
-            } else {
-                return ServerStatus.INVALID_USERNAME;
-            }
-        } else {
-            return ServerStatus.INVALID_LOGIN;
-        }
-    }
-
-    public ServerStatus updatePassword(String username, String password, String newPassword) {
-        if(this.checkLogin(username, password)) {
-            User user = getUsuario(username);
-
-            if(user != null) {
-                user.setSalt(ByteHexConverter.bytesToHex(Cipher.generateSalt()));
-                user.setPassword(ByteHexConverter.bytesToHex(Cipher.hashPassword(newPassword, ByteHexConverter.hexToBytes(user.getSalt()))));
-
-                saveUsuario(user);
-
-                return ServerStatus.SUCCESS;
-            } else {
-                return ServerStatus.INVALID_USERNAME;
-            }
-        } else {
-            return ServerStatus.INVALID_LOGIN;
-        }
-    }
-
-    public ServerStatus updatePassword(Email email, String password, String newPassword) {
-        if(this.checkLogin(email, password)) {
-            User user = getUsuario(email);
-
-            if(user != null) {
-                user.setSalt(ByteHexConverter.bytesToHex(Cipher.generateSalt()));
-                user.setPassword(ByteHexConverter.bytesToHex(Cipher.hashPassword(newPassword, ByteHexConverter.hexToBytes(user.getSalt()))));
-
-                saveUsuario(user);
-
-                return ServerStatus.SUCCESS;
-            } else {
-                return ServerStatus.INVALID_USERNAME;
-            }
-        } else {
-            return ServerStatus.INVALID_LOGIN;
-        }
-    }
-
-    public ServerStatus updatePasswordForgotten(String username, String newPassword) {
-        User user = getUsuario(username);
-
-        if(user != null) {
-            user.setSalt(ByteHexConverter.bytesToHex(Cipher.generateSalt()));
-            user.setPassword(ByteHexConverter.bytesToHex(Cipher.hashPassword(newPassword, ByteHexConverter.hexToBytes(user.getSalt()))));
-
-            saveUsuario(user);
-
-            return ServerStatus.SUCCESS;
-        } else {
-            return ServerStatus.INVALID_USERNAME;
-        }
-    }
-
-    public ServerStatus updatePasswordForgotten(Email email, String newPassword) {
-        User user = getUsuario(email);
-
-        if(user != null) {
-            user.setSalt(ByteHexConverter.bytesToHex(Cipher.generateSalt()));
-            user.setPassword(ByteHexConverter.bytesToHex(Cipher.hashPassword(newPassword, ByteHexConverter.hexToBytes(user.getSalt()))));
-
-            saveUsuario(user);
-
-            return ServerStatus.SUCCESS;
-        } else {
-            return ServerStatus.INVALID_USERNAME;
+            return ServerStatus.PASSWORD_UPDATE;
+        } catch(Exception e) {
+            return ServerStatus.PASSWORD_UPDATE_ERROR;
         }
     }
 }

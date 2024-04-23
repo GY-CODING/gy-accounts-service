@@ -3,6 +3,7 @@ package org.gycoding.accounts.controller;
 import org.gycoding.accounts.model.entities.ServerStatus;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,14 +14,13 @@ import java.nio.file.Paths;
 @RestController
 public class HomeController {
     @GetMapping("/")
-    public String home() {
+    public ResponseEntity<?> home() {
         Resource resource = new ClassPathResource("static/index.html");
 
         try {
-            return new String(Files.readAllBytes(Paths.get(resource.getURI())));
+            return ResponseEntity.ok(new String(Files.readAllBytes(Paths.get(resource.getURI()))));
         } catch (IOException e) {
-            e.printStackTrace();
-            return ServerStatus.NOT_FOUND.toString();
+            return ResponseEntity.status(ServerStatus.HOME_NOT_FOUND.status).body(ServerStatus.HOME_NOT_FOUND.toString());
         }
     }
 }

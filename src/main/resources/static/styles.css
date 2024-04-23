@@ -1,66 +1,11 @@
 @font-face {
-    font-family: 'Cinzel';
-    src: url(./fonts/Cinzel-Regular.otf);
+    font-family: 'Montserrat';
+    src: url(./fonts/Montserrat-VariableFont_wght.ttf);
 }
 
 @font-face {
-    font-family: 'Cinzel-Bold';
-    src: url(./fonts/Cinzel-Bold.otf);
-}
-
-@font-face {
-    font-family: 'Cinzel-SuperBold';
-    src: url(./fonts/Cinzel-Black.otf);
-}
-
-@font-face {
-    font-family: 'CormorantGaramond';
-    src: url(./fonts/CormorantGaramond-Regular.ttf);
-}
-
-@font-face {
-    font-family: 'CormorantGaramond-Italic';
-    src: url(./fonts/CormorantGaramond-Italic.ttf);
-}
-
-@font-face {
-    font-family: 'CormorantGaramond-Light';
-    src: url(./fonts/CormorantGaramond-Light.ttf);
-}
-
-@font-face {
-    font-family: 'CormorantGaramond-Light-Italic';
-    src: url(./fonts/CormorantGaramond-LightItalic.ttf);
-}
-
-@font-face {
-    font-family: 'CormorantGaramond-Medium';
-    src: url(./fonts/CormorantGaramond-Medium.ttf);
-}
-
-@font-face {
-    font-family: 'CormorantGaramond-Medium-Italic';
-    src: url(./fonts/CormorantGaramond-MediumItalic.ttf);
-}
-
-@font-face {
-    font-family: 'CormorantGaramond-Semibold';
-    src: url(./fonts/CormorantGaramond-SemiBold.ttf);
-}
-
-@font-face {
-    font-family: 'CormorantGaramond-Bold-Italic';
-    src: url(./fonts/CormorantGaramond-BoldItalic.ttf);
-}
-
-@font-face {
-    font-family: 'CormorantGaramond-Bold';
-    src: url(./fonts/CormorantGaramond-Bold.ttf);
-}
-
-@font-face {
-    font-family: 'CormorantGaramond-Bold-Italic';
-    src: url(./fonts/CormorantGaramond-BoldItalic.ttf);
+    font-family: 'Montserrat-Italic';
+    src: url(./fonts/Montserrat-Italic-VariableFont_wght.ttf);
 }
 
 :root {
@@ -68,26 +13,19 @@
     --nav-color: #1a1a1a;
     --nav-shadow: #00000049;
     --code-bg-color: #1a1a1a;
+    --about-box-color: #1a1a1a;
+    --about-box-highlight-color: #222222;
 
     --divider-color: #222222;
 
-    --main-color: #d4b755;
+    --main-color: #a06bf7;
 
     --text-color: var(--main-color);
-    --text-highlight-color: #eecf6b;
+    --text-highlight-color: #c098ff;
     --text-selection-color: #d4b75531;
 
     --paragraph-color: #e9e9e9;
     --paragraph-less-important-color: #e9e9e983;
-
-    --get-color: #9a35dd;
-    --get-bg-color: #9a35dd28;
-
-    --post-color: #3562dd;
-    --post-bg-color: #3562dd28;
-
-    --put-color: #43dd35;
-    --put-bg-color: #5cdd3528;
 }
 
 * {
@@ -116,7 +54,7 @@ body {
 
     gap: 5px;
 
-    font-family: 'CormorantGaramond';
+    font-family: 'Montserrat';
 
     overflow-x: hidden;
 }
@@ -131,7 +69,7 @@ code {
 
     border-radius: 6px;
 
-    font-family: 'CormorantGaramond-Bold';
+    font-family: 'Montserrat';
 }
 
 hr {
@@ -160,6 +98,10 @@ span {
 
     display: inline;
 }
+
+
+
+/* =============> NAV <============= */
 
 .navbar {
     position: fixed;
@@ -202,10 +144,14 @@ span {
     align-items: center;
     align-content: center;
 
-    font-family: 'Cinzel-Bold';
+    font-family: 'Montserrat';
     font-size: 18px;
 
     gap: 20px;
+}
+
+.nav-left:hover {
+    cursor: pointer;
 }
 
 .nav-logo {
@@ -231,8 +177,8 @@ span {
 }
 
 .nav-version {
-    font-family: 'Cinzel';
-    font-weight: 100;
+    font-family: 'Montserrat';
+    font-weight: 400;
 
     font-size: 16px;
 }
@@ -253,7 +199,7 @@ span {
     align-items: center;
     align-content: center;
 
-    font-family: 'Cinzel';
+    font-family: 'Montserrat';
 
     gap: 30px;
 }
@@ -288,9 +234,48 @@ span {
     color: var(--text-highlight-color);
 }
 
-.api-page {
+
+
+/* =============> ABOUT <============= */
+
+.about-page {
     width: 100%;
-    height: 300%;
+    height: 63vh;
+
+    padding-top: 20vh;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.about-content {
+    width: 90%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.about-title {
+    font-family: 'Montserrat';
+    font-size: 50px;
+
+    color: var(--text-color);
+}
+
+.about-text {
+    width: 100%;
+    height: 40%;
 
     display: flex;
     flex-direction: column;
@@ -300,124 +285,22 @@ span {
     align-items: center;
     align-content: center;
 
-    margin-top: 20vh;
-    margin-bottom: 30px;
+    text-align: center;
 
-    gap: 150px;
-}
+    gap: 20px;
 
-.api {
-    width: 90%;
-    height: auto;
-
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-
-    justify-content: center;
-    align-items: flex-start;
-    align-content: center;
-}
-
-.api-title, .version-title, .about-title {
-    font-family: 'Cinzel-Bold';
-    font-size: 40px;
-
-    user-select: none;
-}
-
-.api-endpoints {
-    list-style: none;
-
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-
-    justify-content: flex-start;
-    align-items: flex-start;
-    align-content: center;
-
-    gap: 50px;
-
-    font-family: 'Cormorant Garamond';
-    font-size: 14px;
-}
-
-.api-endpoint {
-    width: 100%;
-    height: 50%;
-
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-
-    justify-content: center;
-    align-items: flex-start;
-    align-content: center;
-
-    gap: 5px;
-}
-
-.api-type {
-    user-select: none;
-    
-    width: auto;
-
-    padding-top: 4px;
-    padding-bottom: 4px;
-    padding-left: 8px;
-    padding-right: 8px;
-
-    border-radius: 6px;
-
-    margin-bottom: 5px;
-
-    font-family: 'Cinzel';
-}
-
-.api-type[type="GET"] {
-    background-color: var(--get-bg-color);
-    color: var(--get-color);
-}
-
-.api-type[type="POST"] {
-    background-color: var(--post-bg-color);
-    color: var(--post-color);
-}
-
-.api-type[type="PUT"] {
-    background-color: var(--put-bg-color);
-    color: var(--put-color);
-}
-
-.api-endpoint-code {
-    font-size: 22px;
-    letter-spacing: 1px;
-}
-
-.api-desc {
-    margin-top: 20px;
-    margin-left: 30px;
+    font-family: 'Montserrat';
+    font-size: 18px;
 
     color: var(--paragraph-color);
-    
-    font-size: 18px;
 }
 
-.api-param-desc {
-    color: var(--paragraph-less-important-color);
-    
-    font-size: 16px;
-
-    font-family: 'CormorantGaramond-Italic';
-}
-
-.api-params {
-    margin-top: 10px;
-    margin-left: 40px;
+.about-links {
+    width: 100%;
+    height: 60%;
 
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: nowrap;
 
     justify-content: center;
@@ -425,33 +308,65 @@ span {
     align-content: center;
 
     gap: 20px;
-
-    font-family: 'Cormorant Garamond';
-    font-size: 14px;
 }
 
-.api-param {
-    width: 100%;
-    height: 50%;
+.about-box {
+    width: 170px;
+    height: 170px;
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: nowrap;
 
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     align-content: center;
 
-    text-align: justify;
+    padding: 20px;
 
-    gap: 5px;
+    background-color: var(--about-box-color);
+
+    border: var(--main-color) 2px solid;
+    border-radius: 12px;
+
+    gap: 10px;
+
+    transition: .5s;
 }
 
-.about-page, .changelog-page {
+.about-box:hover {
+    cursor: pointer;
+
+    transition: .5s;
+    
+    filter: drop-shadow(0px 10px 10px #000000);
+    transform: translateY(-10px);
+
+    background-color: var(--about-box-highlight-color);
+}
+
+.about-box-icon {
+    height: 40px;
+}
+
+.about-box-title {
+    font-family: 'Montserrat';
+    font-size: 16px;
+
+    color: var(--text-color);
+    text-align: center;
+}
+
+
+
+/* =============> CHANGELOG <============= */
+
+.changelog-page {
     width: 100%;
-    height: 63vh;
+    height: 80vh;
 
     padding-top: 20vh;
+    margin-bottom: 10vh;
 
     display: none;
     flex-direction: column;
@@ -462,7 +377,7 @@ span {
     align-content: center;
 }
 
-.about-content, .changelog-content {
+.changelog-content {
     width: 90%;
     height: 100%;
 
@@ -473,26 +388,20 @@ span {
     justify-content: flex-start;
     align-items: flex-start;
     align-content: center;
+
+    margin-bottom: 70px;
 }
 
-.about-text {
-    width: 100%;
-    height: 100%;
+.changelog-content hr {
+    margin-bottom: 20px;
+}
 
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
+.version-title {
+    font-family: 'Montserrat';
+    font-size: 30px;
 
-    justify-content: flex-start;
-    align-items: flex-start;
-    align-content: center;
+    color: var(--text-color);
 
-    gap: 20px;
-
-    font-family: 'Cormorant Garamond';
-    font-size: 18px;
-
-    color: var(--paragraph-color);
 }
 
 .version-text {
@@ -503,9 +412,9 @@ span {
 
     justify-content: flex-start;
     align-items: flex-start;
-    align-content: center;
+    align-content: flex-start;
 
-    font-family: 'Cormorant Garamond';
+    font-family: 'Montserrat';
     font-size: 18px;
 
     color: var(--paragraph-color);
@@ -514,6 +423,10 @@ span {
 .inline-link {
     color: var(--text-highlight-color);
 }
+
+
+
+/* =============> FOOTER <============= */
 
 .footer {
     width: 100%;
@@ -533,7 +446,7 @@ span {
     background: transparent;
     color: var(--text-color);
 
-    font-family: 'Cormorant Garamond';
+    font-family: 'Montserrat';
 }
 
 .footer-logo {
@@ -552,6 +465,10 @@ span {
 
     transform: translateY(-5px);
 }
+
+
+
+/* =============> SCROLLBAR <============= */
 
 ::-webkit-scrollbar {
     width: 6px;

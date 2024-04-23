@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GY Accounts</title>
     <link rel="stylesheet" href="./styles.css">
-    <link rel="icon" href="./img/FOTG_logo.ico" type="image/x-icon">
+    <link rel="icon" href="./img/icons/gy-icon.ico" type="image/x-icon">
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-left">
-            <img src="./img/FOTG_logo.webp" class="nav-logo"/>
+            <img src="./img/icons/gy-logo.png" class="nav-logo" draggable="false"/>
             <div class="nav-title-box">
                 <h1 class="nav-title">GY Accounts</h1>
-                <h3 class="nav-version">v1.0.0</h3>
+                <h3 class="nav-version">v1.1.0</h3>
             </div>
         </div>
         <ul class="nav-right">
@@ -24,7 +24,7 @@
                 <h4 class="nav-link nav-link-docs">Docs</h4>
             </li>
             <li class="nav-element">
-                <h4 class="nav-link nav-link-changelog">Changelog</h4>
+                <h4 class="nav-link nav-link-changelog">Versions</h4>
             </li>
             <li class="nav-element">
                 <h4 class="nav-link nav-link-about">About</h4>
@@ -32,120 +32,26 @@
         </ul>
     </nav>
 
-    <div class="api-page">
-        <div class="api-accounts api">
-            <h2 class="api-title">Accounts</h2>
+    <div class="about-page">
+        <div class="about-content">
+            <h2 class="about-title">GY Accounts</h2>
             <hr>
-            <ul class="api-endpoints">
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="POST">POST</h3>
-                    <a href="/login"><code class="api-endpoint-code">/login</code></a>
-                    <p class="api-desc">Log in to an existing account.</p>
-                    <ul class="api-params">
-                        <li class="api-param">
-                            <code class="api-param-name">user</code>
-                            <p class="api-param-desc"> — Username or email of the account trying to be logged in.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">password</code>
-                            <p class="api-param-desc"> — Password of the account trying to be logged in.</p>
-                        </li>
-                    </ul>
+            <p class="about-text">
+                GY Accounts is a service that manages everything related to user accounts for every GYCODING product.
+            </p>
+
+            <ul class="about-links">
+                <li class="about-box about-api">
+                    <img src="./img/svg/api.svg" class="about-box-icon"/>
+                    <h3 class="about-box-title">API Docs</h3>
                 </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="POST">POST</h3>
-                    <a href="/signup"><code class="api-endpoint-code">/signup</code></a>
-                    <p class="api-desc">Register a new account.</p>
-                    <ul class="api-params">
-                        <li class="api-param">
-                            <code class="api-param-name">user</code>
-                            <p class="api-param-desc"> — Username of the account to be registered.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">email</code>
-                            <p class="api-param-desc"> — Email of the account to be registered.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">password</code>
-                            <p class="api-param-desc"> — Password of the account to be registered.</p>
-                        </li>
-                    </ul>
+                <li class="about-box about-docs">
+                    <img src="./img/svg/docs.svg" class="about-box-icon"/>
+                    <h3 class="about-box-title">Code Docs</h3>
                 </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="POST">POST</h3>
-                    <a href="/session"><code class="api-endpoint-code">/session</code></a>
-                    <p class="api-desc">Get a representation of a session.</p>
-                    <ul class="api-params">
-                        <li class="api-param">
-                            <code class="api-param-name">user</code>
-                            <p class="api-param-desc"> — Username or email of the account trying to get the session from.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">password</code>
-                            <p class="api-param-desc"> — Password of the account trying to get the session from.</p>
-                        </li>
-                    </ul>
-                </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="PUT">PUT</h3>
-                    <a href="/update/username"><code class="api-endpoint-code">/update/username</code></a>
-                    <p class="api-desc">Modifies the username of an existing account.</p>
-                    <ul class="api-params">
-                        <li class="api-param">
-                            <code class="api-param-name">user</code>
-                            <p class="api-param-desc"> — Username or email of the account to update.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">password</code>
-                            <p class="api-param-desc"> — Password of the account to update.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">new-user</code>
-                            <p class="api-param-desc"> — New username.</p>
-                        </li>
-                    </ul>
-                </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="PUT">PUT</h3>
-                    <a href="/update/email"><code class="api-endpoint-code">/update/email</code></a>
-                    <p class="api-desc">Modifies the email of an existing account.</p>
-                    <ul class="api-params">
-                        <li class="api-param">
-                            <code class="api-param-name">user</code>
-                            <p class="api-param-desc"> — Username or email of the account to update.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">password</code>
-                            <p class="api-param-desc"> — Password of the account to update.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">new-email</code>
-                            <p class="api-param-desc"> — New email.</p>
-                        </li>
-                    </ul>
-                </li>
-                <li class="api-endpoint">
-                    <h3 class="api-type" type="PUT">PUT</h3>
-                    <a href="/update/password?forgotten=false"><code class="api-endpoint-code">/update/password</code></a>
-                    <p class="api-desc">Modifies the password of an existing account.</p>
-                    <ul class="api-params">
-                        <li class="api-param">
-                            <code class="api-param-name">forgotten</code>
-                            <p class="api-param-desc"> — Whether the operation is because of a forgotten password or not.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">user</code>
-                            <p class="api-param-desc"> — Username or email of the account to update.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">password</code>
-                            <p class="api-param-desc"> — Password of the account to update.</p>
-                        </li>
-                        <li class="api-param">
-                            <code class="api-param-name">new-password</code>
-                            <p class="api-param-desc"> — New password.</p>
-                        </li>
-                    </ul>
+                <li class="about-box about-changelog">
+                    <img src="./img/svg/changelog.svg" class="about-box-icon"/>
+                    <h3 class="about-box-title">Versions</h3>
                 </li>
             </ul>
         </div>
@@ -153,51 +59,82 @@
 
     <div class="changelog-page">
         <div class="changelog-content">
+            <h2 class="version-title">1.1.0</h2>
+            <hr>
+            <p class="version-text">
+                Internal migration from MySQL database to MongoDB. Also, different key management, now the email remains the only primary key for the user accesses.
+            </p>
+        </div>
+        <div class="changelog-content">
+            <h2 class="version-title">1.0.1</h2>
+            <hr>
+            <p class="version-text">
+                Expanded the services to include updates for the <b>username</b>, <b>email</b>, <b>password</b> and a <b>forgotten password</b> service.
+            </p>
+        </div>
+        <div class="changelog-content">
             <h2 class="version-title">1.0.0</h2>
             <hr>
             <p class="version-text">
-                Exposición de todos los servicios básicos de gestión de cuentas de usuario de GYCODING.
+                The service is released with <b>login</b>, <b>sign up</b> and <b>session</b> services.
+                <br><br>
+                Public <a class="inline-link link-docs">documentation</a> is provided.
             </p>
         </div>
     </div>
 
-    <div class="about-page">
-        <div class="about-content">
-            <h2 class="about-title">About</h2>
-            <hr>
-            <p class="about-text">Esta es la API de referencia del servicio de gestión de cuentas de GYCODING.</p>
-        </div>
-    </div>
-
     <footer class="footer">
-        <img class="footer-logo" src="./img/gy-logo.webp" alt="gycoding"/>
+        <img class="footer-logo" src="img/icons/gy-logo.png" alt="gycoding"/>
     </footer>
 
     <script>
+        const navLeft           = document.querySelector('.nav-left');
         const navLinkAPI        = document.querySelector('.nav-link-api');
         const navLinkDocs       = document.querySelector('.nav-link-docs');
         const navLinkChangelog  = document.querySelector('.nav-link-changelog');
         const navLinkAbout      = document.querySelector('.nav-link-about');
 
+        const boxAPI            = document.querySelector('.about-api');
+        const boxDocs           = document.querySelector('.about-docs');
+        const boxChangelog      = document.querySelector('.about-changelog');
+
         const linkAPI           = document.querySelector('.link-api');
         const linkDocs          = document.querySelector('.link-docs');
 
-        const APIPage           = document.querySelector('.api-page');
         const changelogPage     = document.querySelector('.changelog-page');
         const aboutPage         = document.querySelector('.about-page');
 
+        const footer            = document.querySelector('.footer');
         const footerLogo        = document.querySelector('.footer-logo');
+
+        boxAPI.addEventListener('click', () => {
+            window.open("https://documenter.getpostman.com/view/34091334/2sA3Bq3Adw", "_blank");
+        });
+
+        boxDocs.addEventListener('click', () => {
+            window.open("./docs/index.html", "_blank");
+        });
+
+        boxChangelog.addEventListener('click', () => {
+            changelogPage.style.display     = 'flex';
+            aboutPage.style.display         = 'none';
+
+            footer.style.display            = 'none';
+        });
+
+        navLeft.addEventListener('click', () => {
+            changelogPage.style.display     = 'none';
+            aboutPage.style.display         = 'flex';
+
+            footer.style.display            = 'flex';
+        });
     
         navLinkAPI.addEventListener('click', () => {
-            APIPage.style.display           = 'flex';
-            changelogPage.style.display     = 'none';
-            aboutPage.style.display         = 'none';
+            window.open("https://documenter.getpostman.com/view/34091334/2sA3Bq3Adw", "_blank");
         });
 
         linkAPI.addEventListener('click', () => {
-            APIPage.style.display           = 'flex';
-            changelogPage.style.display     = 'none';
-            aboutPage.style.display         = 'none';
+            window.open("https://documenter.getpostman.com/view/34091334/2sA3Bq3Adw", "_blank");
         });
 
         navLinkDocs.addEventListener('click', () => {
@@ -209,15 +146,17 @@
         });
 
         navLinkChangelog.addEventListener('click', () => {
-            APIPage.style.display           = 'none';
             changelogPage.style.display     = 'flex';
             aboutPage.style.display         = 'none';
+
+            footer.style.display            = 'none';
         });
 
         navLinkAbout.addEventListener('click', () => {
-            APIPage.style.display           = 'none';
             changelogPage.style.display     = 'none';
             aboutPage.style.display         = 'flex';
+
+            footer.style.display            = 'flex';
         });
 
         footerLogo.addEventListener('click', () => {
