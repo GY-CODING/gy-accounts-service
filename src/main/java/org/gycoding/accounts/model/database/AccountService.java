@@ -44,7 +44,7 @@ public class AccountService {
         User user = getUser(email);
 
         if(user != null) {
-            if(Cipher.verifyPassword(password, ByteHexConverter.hexToBytes(user.salt()), ByteHexConverter.hexToBytes(user.password()))) {
+            if(Cipher.verifyPassword(password, ByteHexConverter.hexToBytes(user.getSalt()), ByteHexConverter.hexToBytes(user.getPassword()))) {
                 return ServerStatus.USER_LOGGED_IN;
             } else {
                 return ServerStatus.INVALID_LOGIN;
@@ -55,14 +55,14 @@ public class AccountService {
     }
 
     public ServerStatus signUp(User user, String password) {
-        if(this.checkLogin(user.email(), password).equals(ServerStatus.USER_LOGGED_IN)) {
+        if(this.checkLogin(user.getEmail(), password).equals(ServerStatus.USER_LOGGED_IN)) {
             return ServerStatus.INVALID_SIGNUP;
         } else {
             final byte[] salt   = Cipher.generateSalt();
 
             final User newUser  = User.builder()
-                    .username(user.username())
-                    .email(user.email())
+                    .username(user.getUsername())
+                    .email(user.getEmail())
                     .salt(ByteHexConverter.bytesToHex(salt))
                     .password(ByteHexConverter.bytesToHex(Cipher.hashPassword(password, salt)))
                     .build();
@@ -86,14 +86,9 @@ public class AccountService {
             User user = getUser(email);
 
             try {
-                final User modifiedUser = User.builder()
-                        .username(newUsername)
-                        .email(user.email())
-                        .salt(user.salt())
-                        .password(user.password())
-                        .build();
+                user.setUsername(newUsername);
 
-                saveUser(modifiedUser);
+                saveUser(user);
 
                 return ServerStatus.USERNAME_UPDATE;
             } catch(Exception e) {
@@ -109,14 +104,9 @@ public class AccountService {
             User user = getUser(email);
 
             try {
-                final User modifiedUser = User.builder()
-                        .username(user.username())
-                        .email(newEmail)
-                        .salt(user.salt())
-                        .password(user.password())
-                        .build();
+                user.setEmail(newEmail);
 
-                saveUser(modifiedUser);
+                saveUser(user);
 
                 return ServerStatus.EMAIL_UPDATE;
             } catch(Exception e) {
@@ -132,14 +122,9 @@ public class AccountService {
             User user = getUser(email);
 
             try {
-                final User modifiedUser = User.builder()
-                        .username(user.username())
-                        .email(user.email())
-                        .salt(user.salt())
-                        .password(ByteHexConverter.bytesToHex(Cipher.hashPassword(newPassword, ByteHexConverter.hexToBytes(user.salt()))))
-                        .build();
+                user.setPassword(ByteHexConverter.bytesToHex(Cipher.hashPassword(newPassword, ByteHexConverter.hexToBytes(user.getSalt()))));
 
-                saveUser(modifiedUser);
+                saveUser(user);
 
                 return ServerStatus.PASSWORD_UPDATE;
             } catch(Exception e) {
@@ -154,14 +139,9 @@ public class AccountService {
         try {
             User user = getUser(email);
 
-            final User modifiedUser = User.builder()
-                    .username(user.username())
-                    .email(user.email())
-                    .salt(user.salt())
-                    .password(ByteHexConverter.bytesToHex(Cipher.hashPassword(newPassword, ByteHexConverter.hexToBytes(user.salt()))))
-                    .build();
+            user.setPassword(ByteHexConverter.bytesToHex(Cipher.hashPassword(newPassword, ByteHexConverter.hexToBytes(user.getSalt()))));
 
-            saveUser(modifiedUser);
+            saveUser(user);
 
             return ServerStatus.PASSWORD_UPDATE;
         } catch(Exception e) {

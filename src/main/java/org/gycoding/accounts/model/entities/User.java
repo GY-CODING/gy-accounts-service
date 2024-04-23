@@ -9,15 +9,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Map;
 
 @Builder
+@Getter
+@Setter
 @Document(collection = "User")
-public record User(
-        @Id
-        String mongoId,
-        String username,
-        String email,
-        String password,
-        String salt
-) {
+public class User {
+    @Id
+    private String mongoId;
+    private String username;
+    private String email;
+    private String password;
+    private String salt;
+
     @Override
     public String toString() {
         return "{" +
