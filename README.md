@@ -8,7 +8,7 @@
 
 This is the official **GY Accounts** service used by GYCODING for internal account management.
 
-We provide a full **[API reference](#)**, containing all the available **endpoints**, **documentation** *(Javadoc)* and a **changelog** with the new features or bugfixes from all the versions of this API.
+We provide a full **[API reference](#)**, containing all the available **endpoints**, **documentation** and a **changelog** with the new features or bugfixes from all the versions of this API.
 
 <br>
 
