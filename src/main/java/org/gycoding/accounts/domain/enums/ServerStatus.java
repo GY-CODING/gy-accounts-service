@@ -1,4 +1,4 @@
-package org.gycoding.accounts.model.entities;
+package org.gycoding.accounts.domain.enums;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -26,16 +26,13 @@ public enum ServerStatus {
     BAD_REQUEST("The endpoint is malformed.", HttpStatus.BAD_REQUEST),
     SERVER_ERROR("An internal server error has occurred, sorry for the inconvenience.", HttpStatus.INTERNAL_SERVER_ERROR);
 
-    public final String msg;
+    public final String code;
+    public final String message;
     public final HttpStatus status;
 
-    private ServerStatus(String msg, HttpStatus status) {
-        this.msg    = msg;
-        this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("{\n\t\"error\": \"%s\",\n\n\t\"status\": %d,\n\t\"message\": \"%s\"}", this.status.getReasonPhrase().toUpperCase(), this.status.value(), this.msg);
+    private ServerStatus(String message, HttpStatus status) {
+        this.code       = this.name();
+        this.message    = message;
+        this.status     = status;
     }
 }

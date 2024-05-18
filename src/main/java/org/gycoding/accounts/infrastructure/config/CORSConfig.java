@@ -1,4 +1,4 @@
-package org.gycoding.accounts.config;
+package org.gycoding.accounts.infrastructure.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
