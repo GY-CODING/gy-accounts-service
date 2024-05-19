@@ -3,7 +3,7 @@ package org.gycoding.accounts.application.service.achievements;
 import com.auth0.exception.Auth0Exception;
 import org.gycoding.accounts.domain.entities.achievements.Achievement;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
-import org.gycoding.accounts.infrastructure.external.fotg.FOTGRepository;
+import org.gycoding.accounts.infrastructure.external.fotg.FOTGFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +16,11 @@ public class AchievementsService implements AchievementsRepository {
     private AuthFacade authFacade           = null;
 
     @Autowired
-    private FOTGRepository fotgRepository   = null;
+    private FOTGFacade fotgFacade           = null;
 
     @Override
-    public List<Achievement> getAchievements() {
-        return fotgRepository.findAll();
+    public List<Achievement> listAchievements() {
+        return fotgFacade.findAll();
     }
 
     @Override

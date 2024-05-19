@@ -5,8 +5,9 @@ import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 
 public interface AuthRepository {
-    public TokenHolder login(String email, String password) throws Auth0Exception;
-    public CreatedUser signUp(String email, String username, String password) throws Auth0Exception;
-    public String googleAuth();
-    public TokenHolder handleGoogleResponse(String code) throws Auth0Exception;
+    TokenHolder login(String email, String password) throws Auth0Exception;
+    CreatedUser signUp(String email, String username, String password) throws Exception;
+    String googleAuth();
+    TokenHolder handleGoogleResponse(String code) throws Auth0Exception;
+    String decode(String jwt);
 }

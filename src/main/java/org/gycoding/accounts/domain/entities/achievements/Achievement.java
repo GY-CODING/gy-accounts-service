@@ -1,16 +1,11 @@
 package org.gycoding.accounts.domain.entities.achievements;
 
 import lombok.Builder;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Map;
 
 @Builder
-@Document(collection = "Achievement")
 public record Achievement(
-        @Id
-        String mongoId,
         Integer identifier,
         String name,
         String description,

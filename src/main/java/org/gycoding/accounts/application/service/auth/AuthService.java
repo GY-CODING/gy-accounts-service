@@ -5,6 +5,7 @@ import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import org.gycoding.accounts.application.service.achievements.AchievementsRepository;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
+import org.gycoding.accounts.infrastructure.external.fotg.FOTGFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,20 +27,20 @@ public class AuthService implements AuthRepository {
     @Override
     public CreatedUser signUp(String email, String username, String password) throws Auth0Exception {
         final var user          = authFacade.signUp(email, username, password);
-        final var achievements  = achievementsRepository.getAchievements().stream().map(achievement -> {
-            final var map = new HashMap<String, Object>();
+        final var achievements  = achievementsRepository.listAchievements().stream().map(achievement -> {
+                    final var map = new HashMap<String, Object>();
 
-            map.put("identifier", achievement.identifier());
-            map.put("unlocked", false);
+                    map.put("identifier", achievement.identifier());
+                    map.put("unlocked", false);
 
-            return map;
-        })
-        .toList();
-        final var metadata      = new java.util.HashMap<String, Object>();
+                    return map;
+                })
+                .toList();
 
+        final var metadata      = new HashMap<String, Object>();
         metadata.put("achievements", achievements);
 
-        authFacade.updateMetadata(user.getUserId(), metadata);
+        authFacade.updateMetadata(String.format("auth0|%s", user.getUserId()), metadata);
 
         return user;
     }
@@ -52,5 +53,10 @@ public class AuthService implements AuthRepository {
     @Override
     public TokenHolder handleGoogleResponse(String code) throws Auth0Exception {
         return authFacade.handleGoogleResponse(code);
+    }
+
+    @Override
+    public String decode(String jwt) {
+        return authFacade.decode(jwt);
     }
 }
