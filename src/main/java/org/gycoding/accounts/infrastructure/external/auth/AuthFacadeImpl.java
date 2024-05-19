@@ -31,7 +31,7 @@ public class AuthFacadeImpl implements AuthFacade {
         this.googleCallbackURL  = googleCallbackURL;
         this.managementURL      = managementURL;
         this.domain             = domain;
-        this.authAPI            = new AuthAPI(domain, clientId, clientSecret);
+        this.authAPI            = new AuthAPI(this.domain, clientId, clientSecret);
     }
 
     private ManagementAPI getManagementAPI() throws Auth0Exception {
