@@ -6,24 +6,18 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ServerStatus {
     HOME_NOT_FOUND("API reference not found.", HttpStatus.NOT_FOUND),
-    USER_NOT_FOUND("User not found.", HttpStatus.NOT_FOUND),
 
-    USER_REGISTERED("User has been successfully registered.", HttpStatus.CREATED),
-    INVALID_SIGNUP("User already exists.", HttpStatus.CONFLICT),
+    INVALID_SIGNUP("SignUp procedure went wrong. Possible causes could be the user already exists or an internal error from the authentication service.", HttpStatus.CONFLICT),
+    INVALID_LOGIN("LogIn procedure went wrong. Possible causes could be invalid credentials provided when trying to log in or an internal error from the authentication service.", HttpStatus.UNAUTHORIZED),
 
-    USER_LOGGED_IN("User has been successfully logged in.", HttpStatus.OK),
-    INVALID_LOGIN("Invalid credentials.", HttpStatus.UNAUTHORIZED),
+    COULD_NOT_GET_USER_METADATA("Authentication service could not get user metadata successfully.", HttpStatus.NOT_FOUND),
+    METADATA_NOT_UPDATED("Authentication service could not update metadata successfully.", HttpStatus.NOT_MODIFIED),
+    ACHIEVEMENTS_NOT_FOUND("Achievements not found.", HttpStatus.INTERNAL_SERVER_ERROR),
 
-    USERNAME_UPDATE("Username updated successfully.", HttpStatus.OK),
-    USERNAME_UPDATE_ERROR("Username update went wrong.", HttpStatus.CONFLICT),
-
-    EMAIL_UPDATE("Email updated successfully.", HttpStatus.OK),
-    EMAIL_UPDATE_ERROR("Email update went wrong.", HttpStatus.CONFLICT),
-
-    PASSWORD_UPDATE("Password updated successfully.", HttpStatus.OK),
-    PASSWORD_UPDATE_ERROR("Password update went wrong.", HttpStatus.CONFLICT),
+    INVALID_JWT_FORMAT("Invalid JWT format", HttpStatus.BAD_REQUEST),
 
     BAD_REQUEST("The endpoint is malformed.", HttpStatus.BAD_REQUEST),
+    AUTH_ERROR("An error with the authentication service has occurred, sorry for the inconvenience.", HttpStatus.INTERNAL_SERVER_ERROR),
     SERVER_ERROR("An internal server error has occurred, sorry for the inconvenience.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     public final String code;

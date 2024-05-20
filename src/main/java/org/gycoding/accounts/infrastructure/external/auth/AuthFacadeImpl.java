@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthFacadeImpl implements AuthFacade {
@@ -116,7 +118,7 @@ public class AuthFacadeImpl implements AuthFacade {
 
     @Override
     public String decode(String jwt) {
-        DecodedJWT decodedJWT = JWT.decode(jwt);
-        return decodedJWT.getClaim("userId").asString();
+        final var decodedJWT = JWT.decode(jwt.replace("Bearer ", ""));
+        return decodedJWT.getClaim("sub").asString();
     }
 }
