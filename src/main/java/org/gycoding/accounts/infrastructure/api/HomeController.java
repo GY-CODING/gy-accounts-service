@@ -1,6 +1,6 @@
-package org.gycoding.accounts.controller;
+package org.gycoding.accounts.infrastructure.api;
 
-import org.gycoding.accounts.model.entities.ServerStatus;
+import org.gycoding.accounts.domain.enums.ServerStatus;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
