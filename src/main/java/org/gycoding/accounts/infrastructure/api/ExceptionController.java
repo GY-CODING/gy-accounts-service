@@ -11,7 +11,7 @@ public class ExceptionController {
     private final static String EXCEPTION_FORMAT =
             "{" +
             "\"code\": \"%s\"," +
-            "\"message\": \"%s\"" +
+            "\"message\": \"%s\"," +
             "\"owner\": \"%s\"," +
             "\"status\": %d," +
             '}';
