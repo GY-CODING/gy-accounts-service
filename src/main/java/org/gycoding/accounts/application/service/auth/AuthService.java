@@ -32,38 +32,11 @@ public class AuthService implements AuthRepository {
 
     @Override
     public CreatedUser signUp(String email, String username, String password) throws AccountsAPIException {
-        CreatedUser user;
-        List<HashMap<String, Object>> achievements;
-        final var metadata = new HashMap<String, Object>();
-
         try {
-            user = authFacade.signUp(email, username, password);
+            return authFacade.signUp(email, username, password);
         } catch(Auth0Exception e) {
             throw new AccountsAPIException(ServerStatus.INVALID_SIGNUP);
         }
-
-        try {
-            achievements = achievementsRepository.listAchievements().stream().map(achievement -> {
-                        final var map = new HashMap<String, Object>();
-
-                        map.put("identifier", achievement.identifier());
-                        map.put("unlocked", false);
-
-                        return map;
-                    })
-                    .toList();
-        } catch(Exception e) {
-            throw new AccountsAPIException(ServerStatus.ACHIEVEMENTS_NOT_FOUND);
-        }
-
-        try {
-            metadata.put("achievements", achievements);
-            authFacade.updateMetadata(String.format("auth0|%s", user.getUserId()), metadata);
-        } catch(Auth0Exception e) {
-            throw new AccountsAPIException(ServerStatus.METADATA_NOT_UPDATED);
-        }
-
-        return user;
     }
 
     @Override
