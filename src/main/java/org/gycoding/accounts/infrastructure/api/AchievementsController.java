@@ -36,4 +36,14 @@ public class AchievementsController {
 
         return ResponseEntity.noContent().build();
 	}
+
+    @PutMapping("/reset")
+    public ResponseEntity<?> resetAchievements(
+            @RequestHeader String jwt
+    ) throws AccountsAPIException {
+        final var userId = authService.decode(jwt);
+        achievementsService.resetAchievements(userId);
+
+        return ResponseEntity.noContent().build();
+    }
 }
