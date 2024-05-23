@@ -13,4 +13,5 @@ public interface AchievementsRepository {
     List<Achievement> listAchievements() throws AccountsAPIException;
     List<AchievementRSDTO> listAchievements(String userId) throws AccountsAPIException;
     void unlockAchievement(String userId, Integer achievementID) throws AccountsAPIException;
+    void resetAchievements(String userId) throws AccountsAPIException;
 }

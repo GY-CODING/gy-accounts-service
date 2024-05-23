@@ -88,4 +88,32 @@ public class AchievementsService implements AchievementsRepository {
             throw new AccountsAPIException(ServerStatus.METADATA_NOT_UPDATED);
         }
     }
+
+    @Override
+    public void resetAchievements(String userId) throws AccountsAPIException {
+        List<HashMap<String, Object>> achievements;
+        final var metadata = new HashMap<String, Object>();
+
+        try {
+            achievements = this.listAchievements().stream().map(achievement -> {
+                        final var map = new HashMap<String, Object>();
+
+                        map.put("identifier", achievement.identifier());
+                        map.put("unlocked", false);
+
+                        return map;
+                    })
+                    .toList();
+        } catch(Exception e) {
+            throw new AccountsAPIException(ServerStatus.ACHIEVEMENTS_NOT_FOUND);
+        }
+
+        try {
+            metadata.put("achievements", achievements);
+            authFacade.updateMetadata(String.format("%s", userId), metadata);
+        } catch(Auth0Exception e) {
+            e.printStackTrace();
+            throw new AccountsAPIException(ServerStatus.METADATA_NOT_UPDATED);
+        }
+    }
 }
