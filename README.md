@@ -4,9 +4,11 @@
 [![developer](https://img.shields.io/badge/developed-GYCODING-B833FF?style=for-the-badge)](https://gycoding.com)
 [![reference](https://img.shields.io/badge/reference-api_reference-silver?style=for-the-badge)](https://gy-accounts-gy-coding.koyeb.app)
 
+<br>
+
 ## Introduction
 
-This is the official **GY Accounts** service used by GYCODING for internal account management.
+This is the official **GY Accounts** service used by **GYCODING** for internal account management.
 
 We provide a full **[API reference](#)**, containing all the available **endpoints**, **documentation** and a **changelog** with the new features or bugfixes from all the versions of this API.
 
