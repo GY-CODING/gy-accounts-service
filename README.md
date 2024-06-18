@@ -37,4 +37,4 @@ The reference static website was made using just **HTML**, **CSS** and some **Ja
 
 <br>
 
-<pre>GYCODING 2024</pre>
+<pre align="center">GYCODING 2024</pre>
