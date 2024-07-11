@@ -1,17 +1,11 @@
 package org.gycoding.accounts.infrastructure.api;
 
-import org.gycoding.accounts.application.service.achievements.AchievementsRepository;
-import org.gycoding.accounts.application.service.auth.AuthRepository;
 import org.gycoding.accounts.application.service.auth.AuthService;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIException;
 import org.gycoding.accounts.infrastructure.dto.UserRQDTO;
-import org.gycoding.accounts.infrastructure.external.auth.AuthFacadeImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 
 @RestController
 @RequestMapping("/auth")
@@ -42,12 +36,13 @@ public class AccountsController {
         return ResponseEntity.ok(authService.handleGoogleResponse(code));
     }
 
-    @PutMapping("/metadata/reset")
-    public ResponseEntity<?> resetMetadata(
-            @RequestHeader String jwt
+    @PutMapping("/metadata/set")
+    public ResponseEntity<?> setMetadata(
+            @RequestHeader String jwt,
+            @RequestParam Boolean isReset
     ) throws AccountsAPIException {
         final var userId = authService.decode(jwt);
-        authService.resetMetadata(userId);
+        authService.setMetadata(userId, isReset);
 
         return ResponseEntity.noContent().build();
     }
