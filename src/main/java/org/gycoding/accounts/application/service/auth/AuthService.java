@@ -76,7 +76,7 @@ public class AuthService implements AuthRepository {
             metadata.put("role", GYCODINGRoles.COMMON);
             metadata.put("gyMessages", gyMessagesMetadata.toMap());
 
-            authFacade.updateMetadata(String.format("%s", userId), metadata, isReset);
+            authFacade.setMetadata(String.format("%s", userId), metadata, isReset);
         } catch(Auth0Exception e) {
             e.printStackTrace();
             throw new AccountsAPIException(ServerStatus.METADATA_NOT_UPDATED);
