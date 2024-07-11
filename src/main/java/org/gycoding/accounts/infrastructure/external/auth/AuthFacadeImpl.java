@@ -105,15 +105,17 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public void updateMetadata(String userId, Map<String, Object> metadata) throws Auth0Exception {
-        final var managementAPI      = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user               = new User();
+    public void updateMetadata(String userId, Map<String, Object> metadata, Boolean isReset) throws Auth0Exception {
+        if(Boolean.TRUE.equals(isReset) || getMetadata(userId).isEmpty()) {
+            final var managementAPI      = new ManagementAPI(this.mainDomain, this.getManagementToken());
+            final var user               = new User();
 
-        user.setUserMetadata(metadata);
+            user.setUserMetadata(metadata);
 
-        Request<User> request        = managementAPI.users().update(userId, user);
+            Request<User> request        = managementAPI.users().update(userId, user);
 
-        request.execute();
+            request.execute();
+        }
     }
 
     @Override
