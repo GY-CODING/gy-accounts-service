@@ -4,6 +4,8 @@ import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import org.gycoding.accounts.application.service.achievements.AchievementsRepository;
+import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
+import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetadata;
 import org.gycoding.accounts.domain.enums.ServerStatus;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIException;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
@@ -63,6 +65,24 @@ public class AuthService implements AuthRepository {
             return authFacade.decode(jwt);
         } catch(Exception e) {
             throw new AccountsAPIException(ServerStatus.INVALID_JWT_FORMAT);
+        }
+    }
+
+    @Override
+    public void resetMetadata(String userId) throws AccountsAPIException {
+        final var metadata = new HashMap<String, Object>();
+        var gyMessagesMetadata = GYMessagesMetadata.builder()
+                .chats(List.of())
+                .build();
+
+        try {
+            metadata.put("role", GYCODINGRoles.COMMON);
+            metadata.put("gyMessages", gyMessagesMetadata.toMap());
+
+            authFacade.updateMetadata(String.format("%s", userId), metadata);
+        } catch(Auth0Exception e) {
+            e.printStackTrace();
+            throw new AccountsAPIException(ServerStatus.METADATA_NOT_UPDATED);
         }
     }
 }

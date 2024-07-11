@@ -11,4 +11,5 @@ public interface AuthRepository {
     String googleAuth() throws AccountsAPIException;
     TokenHolder handleGoogleResponse(String code) throws AccountsAPIException;
     String decode(String jwt) throws AccountsAPIException;
+    void resetMetadata(String userId) throws AccountsAPIException;
 }

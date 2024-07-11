@@ -41,4 +41,14 @@ public class AccountsController {
     public ResponseEntity<?> handleGoogleCallback(@RequestParam("code") String code) throws AccountsAPIException {
         return ResponseEntity.ok(authService.handleGoogleResponse(code));
     }
+
+    @PutMapping("/metadata/reset")
+    public ResponseEntity<?> resetMetadata(
+            @RequestHeader String jwt
+    ) throws AccountsAPIException {
+        final var userId = authService.decode(jwt);
+        authService.resetMetadata(userId);
+
+        return ResponseEntity.noContent().build();
+    }
 }
