@@ -16,7 +16,7 @@ public interface AuthFacade {
     TokenHolder handleGoogleResponse(String code) throws Auth0Exception;
 
     Map<String, Object> getMetadata(String userId) throws Auth0Exception;
-    void updateMetadata(String userId, Map<String, Object> metadata, Boolean isReset) throws Auth0Exception;
+    void setMetadata(String userId, Map<String, Object> metadata, Boolean isReset) throws Auth0Exception;
 
     String decode(String jwt);
 }
