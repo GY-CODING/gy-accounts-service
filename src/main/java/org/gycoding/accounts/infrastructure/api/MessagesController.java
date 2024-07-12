@@ -45,7 +45,7 @@ public class MessagesController {
         messagesService.removeChat(userId, chatRQDTO.chatId());
         return ResponseEntity.noContent().build();
     }
-
+  
     @PutMapping("/chat/set")
     public ResponseEntity<?> setAdminInChat(
             @RequestBody ChatRQDTO chatRQDTO,
