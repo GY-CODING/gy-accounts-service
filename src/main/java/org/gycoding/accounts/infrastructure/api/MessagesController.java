@@ -28,14 +28,14 @@ public class MessagesController {
         return ResponseEntity.noContent().build();
 	}
 
-    @DeleteMapping("/chat/remove")
-    public ResponseEntity<?> removeChatWithJWT(
-            @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader String jwt
-    ) throws AccountsAPIException {
-        messagesService.removeChat(authFacade.decode(jwt), chatRQDTO.chatId());
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/chat/remove")
+//    public ResponseEntity<?> removeChatWithJWT(
+//            @RequestBody ChatRQDTO chatRQDTO,
+//            @RequestHeader String jwt
+//    ) throws AccountsAPIException {
+//        messagesService.removeChat(authFacade.decode(jwt), chatRQDTO.chatId());
+//        return ResponseEntity.noContent().build();
+//    }
 
     @DeleteMapping("/chat/remove")
     public ResponseEntity<?> removeChatWithUserID(
