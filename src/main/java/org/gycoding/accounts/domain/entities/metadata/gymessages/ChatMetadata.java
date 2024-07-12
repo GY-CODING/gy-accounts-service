@@ -6,4 +6,12 @@ import lombok.Builder;
 public record ChatMetadata(
         String chatId,
         boolean isAdmin
-) { }
+) {
+    @Override
+    public String toString() {
+        return "{"
+                + "\"chatId\": \"" + chatId + "\","
+                + "\"isAdmin\": " + isAdmin
+                + "}";
+    }
+}

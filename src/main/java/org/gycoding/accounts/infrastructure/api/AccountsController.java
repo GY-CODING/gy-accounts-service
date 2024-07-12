@@ -1,5 +1,6 @@
 package org.gycoding.accounts.infrastructure.api;
 
+import org.gycoding.accounts.application.service.auth.AuthRepository;
 import org.gycoding.accounts.application.service.auth.AuthService;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIException;
 import org.gycoding.accounts.infrastructure.dto.UserRQDTO;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class AccountsController {
 
     @Autowired
-    private AuthService authService = null;
+    private AuthRepository authService = null;
 
     @PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody UserRQDTO body) throws AccountsAPIException {
