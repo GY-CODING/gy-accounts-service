@@ -24,7 +24,6 @@ public class AuthService implements AuthRepository {
         try {
             return authFacade.login(email, password);
         } catch(Auth0Exception e) {
-            e.printStackTrace();
             throw new AccountsAPIException(ServerStatus.INVALID_LOGIN);
         }
     }
@@ -78,7 +77,6 @@ public class AuthService implements AuthRepository {
 
             authFacade.setMetadata(String.format("%s", userId), metadata, isReset);
         } catch(Auth0Exception e) {
-            e.printStackTrace();
             throw new AccountsAPIException(ServerStatus.METADATA_NOT_UPDATED);
         }
     }

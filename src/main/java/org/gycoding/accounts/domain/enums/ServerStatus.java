@@ -12,7 +12,9 @@ public enum ServerStatus {
 
     COULD_NOT_GET_USER_METADATA("Authentication service could not get user metadata successfully.", HttpStatus.NOT_FOUND),
     METADATA_NOT_UPDATED("Authentication service could not update metadata successfully.", HttpStatus.NOT_MODIFIED),
-    ACHIEVEMENTS_NOT_FOUND("Achievements not found.", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    CHAT_ALREADY_EXISTS("The chat already exists inside user's metadata.", HttpStatus.CONFLICT),
+    CHAT_NOT_FOUND("The chat was not found inside user's metadata.", HttpStatus.NOT_FOUND),
 
     INVALID_JWT_FORMAT("Invalid JWT format", HttpStatus.BAD_REQUEST),
 
