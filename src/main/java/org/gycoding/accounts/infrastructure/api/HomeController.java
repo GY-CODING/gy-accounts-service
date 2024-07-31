@@ -1,6 +1,7 @@
 package org.gycoding.accounts.infrastructure.api;
 
-import org.gycoding.accounts.domain.enums.ServerStatus;
+import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
+import org.gycoding.springexceptions.model.APIException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +15,26 @@ import java.nio.file.Paths;
 @RestController
 public class HomeController {
     @GetMapping("/")
-    public ResponseEntity<?> home() {
-        Resource resource = new ClassPathResource("static/index.html");
+public String home() throws APIException {
+    Resource resource = new ClassPathResource("static/index.html");
 
-        try {
-            return ResponseEntity.ok(new String(Files.readAllBytes(Paths.get(resource.getURI()))));
-        } catch (IOException e) {
-            return ResponseEntity.status(ServerStatus.HOME_NOT_FOUND.status).body(ServerStatus.HOME_NOT_FOUND.toString());
-        }
+    try {
+        return new String(Files.readAllBytes(Paths.get(resource.getURI())));
+    } catch (IOException e) {
+        throw new APIException(
+                AccountsAPIError.HOME_NOT_FOUND.getCode(),
+                AccountsAPIError.HOME_NOT_FOUND.getMessage(),
+                AccountsAPIError.HOME_NOT_FOUND.getStatus()
+        );
+    }
+}
+
+    @GetMapping("/makemeacoffee")
+    public String makeCoffee() throws APIException {
+        throw new APIException(
+                AccountsAPIError.I_AM_A_TEAPOT.getCode(),
+                AccountsAPIError.I_AM_A_TEAPOT.getMessage(),
+                AccountsAPIError.I_AM_A_TEAPOT.getStatus()
+        );
     }
 }

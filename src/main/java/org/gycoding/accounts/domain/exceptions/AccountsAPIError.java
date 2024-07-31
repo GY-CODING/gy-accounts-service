@@ -1,11 +1,12 @@
-package org.gycoding.accounts.domain.enums;
+package org.gycoding.accounts.domain.exceptions;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum ServerStatus {
+public enum AccountsAPIError {
     HOME_NOT_FOUND("API reference not found.", HttpStatus.NOT_FOUND),
+    I_AM_A_TEAPOT("What? I'm a teapot!.", HttpStatus.I_AM_A_TEAPOT),
 
     INVALID_SIGNUP("SignUp procedure went wrong. Possible causes could be the user already exists or an internal error from the authentication service.", HttpStatus.CONFLICT),
     INVALID_LOGIN("LogIn procedure went wrong. Possible causes could be invalid credentials provided when trying to log in or an internal error from the authentication service.", HttpStatus.UNAUTHORIZED),
@@ -26,7 +27,7 @@ public enum ServerStatus {
     public final String message;
     public final HttpStatus status;
 
-    private ServerStatus(String message, HttpStatus status) {
+    AccountsAPIError(String message, HttpStatus status) {
         this.code       = this.name();
         this.message    = message;
         this.status     = status;

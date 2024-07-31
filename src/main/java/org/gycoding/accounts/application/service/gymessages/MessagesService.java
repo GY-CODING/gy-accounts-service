@@ -1,20 +1,14 @@
 package org.gycoding.accounts.application.service.gymessages;
 
 import com.auth0.exception.Auth0Exception;
-import com.auth0.json.auth.CreatedUser;
-import com.auth0.json.auth.TokenHolder;
-import org.gycoding.accounts.application.service.auth.AuthRepository;
-import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.ChatMetadata;
-import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetadata;
-import org.gycoding.accounts.domain.enums.ServerStatus;
-import org.gycoding.accounts.domain.exceptions.AccountsAPIException;
+import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.dto.ChatRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
+import org.gycoding.springexceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +18,7 @@ public class MessagesService implements MessagesRepository {
     private AuthFacade authFacade = null;
 
     @Override
-    public void addChat(String userId, ChatRQDTO chatRQDTO) throws AccountsAPIException {
+    public void addChat(String userId, ChatRQDTO chatRQDTO) throws APIException {
         try {
             var metadata = authFacade.getMetadata(userId);
             var gyMessagesMetadata = (Map<String, Object>) metadata.get("gyMessages");
@@ -34,7 +28,11 @@ public class MessagesService implements MessagesRepository {
                 var castedChat = (Map<String, Object>) chat;
 
                 if(castedChat.get("chatId").equals(chatRQDTO.chatId())) {
-                    throw new AccountsAPIException(ServerStatus.CHAT_ALREADY_EXISTS);
+                    throw new APIException(
+                            AccountsAPIError.CHAT_ALREADY_EXISTS.getCode(),
+                            AccountsAPIError.CHAT_ALREADY_EXISTS.getMessage(),
+                            AccountsAPIError.CHAT_ALREADY_EXISTS.getStatus()
+                    );
                 }
             }
 
@@ -47,12 +45,16 @@ public class MessagesService implements MessagesRepository {
 
             authFacade.setMetadata(userId, metadata, Boolean.TRUE);
         } catch(Auth0Exception e) {
-            throw new AccountsAPIException(ServerStatus.INVALID_LOGIN);
+            throw new APIException(
+                    AccountsAPIError.INVALID_LOGIN.getCode(),
+                    AccountsAPIError.INVALID_LOGIN.getMessage(),
+                    AccountsAPIError.INVALID_LOGIN.getStatus()
+            );
         }
     }
 
     @Override
-    public void removeChat(String userId, String chatId) throws AccountsAPIException {
+    public void removeChat(String userId, String chatId) throws APIException {
         try {
             var metadata = authFacade.getMetadata(userId);
             var gyMessagesMetadata = (Map<String, Object>) metadata.get("gyMessages");
@@ -69,12 +71,16 @@ public class MessagesService implements MessagesRepository {
 
             authFacade.setMetadata(userId, metadata, Boolean.TRUE);
         } catch(Auth0Exception e) {
-            throw new AccountsAPIException(ServerStatus.INVALID_LOGIN);
+            throw new APIException(
+                    AccountsAPIError.INVALID_LOGIN.getCode(),
+                    AccountsAPIError.INVALID_LOGIN.getMessage(),
+                    AccountsAPIError.INVALID_LOGIN.getStatus()
+            );
         }
     }
 
     @Override
-    public void setAdmin(String userId, ChatRQDTO chatRQDTO) throws AccountsAPIException {
+    public void setAdmin(String userId, ChatRQDTO chatRQDTO) throws APIException {
         boolean chatFound = false;
 
         try {
@@ -93,24 +99,36 @@ public class MessagesService implements MessagesRepository {
             }
 
             if(!chatFound) {
-                throw new AccountsAPIException(ServerStatus.CHAT_NOT_FOUND);
+                throw new APIException(
+                        AccountsAPIError.CHAT_NOT_FOUND.getCode(),
+                        AccountsAPIError.CHAT_NOT_FOUND.getMessage(),
+                        AccountsAPIError.CHAT_NOT_FOUND.getStatus()
+                );
             }
 
             authFacade.setMetadata(userId, metadata, Boolean.TRUE);
         } catch(Auth0Exception e) {
-            throw new AccountsAPIException(ServerStatus.INVALID_LOGIN);
+            throw new APIException(
+                    AccountsAPIError.INVALID_LOGIN.getCode(),
+                    AccountsAPIError.INVALID_LOGIN.getMessage(),
+                    AccountsAPIError.INVALID_LOGIN.getStatus()
+            );
         }
     }
 
     @Override
-    public List<Object> listChats(String userId) throws AccountsAPIException {
+    public List<Object> listChats(String userId) throws APIException {
 
         try {
             var metadata = authFacade.getMetadata(userId);
             var gyMessagesMetadata = (Map<String, Object>) metadata.get("gyMessages");
             return (List<Object>) gyMessagesMetadata.get("chats");
         } catch(Auth0Exception e) {
-            throw new AccountsAPIException(ServerStatus.INVALID_LOGIN);
+            throw new APIException(
+                    AccountsAPIError.INVALID_LOGIN.getCode(),
+                    AccountsAPIError.INVALID_LOGIN.getMessage(),
+                    AccountsAPIError.INVALID_LOGIN.getStatus()
+            );
         }
     }
 }
