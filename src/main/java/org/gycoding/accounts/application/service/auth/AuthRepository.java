@@ -2,7 +2,7 @@ package org.gycoding.accounts.application.service.auth;
 
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
-import org.gycoding.springexceptions.model.APIException;
+import org.gycoding.exceptions.model.APIException;
 
 public interface AuthRepository {
     TokenHolder login(String email, String password) throws APIException;

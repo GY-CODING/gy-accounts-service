@@ -1,7 +1,7 @@
 package org.gycoding.accounts.application.service.gymessages;
 
 import org.gycoding.accounts.infrastructure.dto.ChatRQDTO;
-import org.gycoding.springexceptions.model.APIException;
+import org.gycoding.exceptions.model.APIException;
 
 import java.util.List;
 

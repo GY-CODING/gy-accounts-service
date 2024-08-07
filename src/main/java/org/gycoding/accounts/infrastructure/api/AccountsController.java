@@ -3,7 +3,7 @@ package org.gycoding.accounts.infrastructure.api;
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.auth.AuthRepository;
 import org.gycoding.accounts.infrastructure.dto.UserRQDTO;
-import org.gycoding.springexceptions.model.APIException;
+import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

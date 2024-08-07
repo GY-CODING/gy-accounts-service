@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.gymessages.MessagesRepository;
 import org.gycoding.accounts.infrastructure.dto.ChatRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
-import org.gycoding.springexceptions.model.APIException;
+import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

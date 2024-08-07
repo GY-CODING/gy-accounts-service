@@ -1,7 +1,7 @@
 package org.gycoding.accounts.infrastructure.api;
 
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
-import org.gycoding.springexceptions.model.APIException;
+import org.gycoding.exceptions.model.APIException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
