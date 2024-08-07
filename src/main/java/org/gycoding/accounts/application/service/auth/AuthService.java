@@ -5,9 +5,9 @@ import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetadata;
-import org.gycoding.accounts.domain.enums.ServerStatus;
-import org.gycoding.accounts.domain.exceptions.AccountsAPIException;
+import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
+import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,52 +20,72 @@ public class AuthService implements AuthRepository {
     private AuthFacade authFacade = null;
 
     @Override
-    public TokenHolder login(String email, String password) throws AccountsAPIException {
+    public TokenHolder login(String email, String password) throws APIException {
         try {
             return authFacade.login(email, password);
         } catch(Auth0Exception e) {
-            throw new AccountsAPIException(ServerStatus.INVALID_LOGIN);
+            throw new APIException(
+                    AccountsAPIError.INVALID_LOGIN.getCode(),
+                    AccountsAPIError.INVALID_LOGIN.getMessage(),
+                    AccountsAPIError.INVALID_LOGIN.getStatus()
+            );
         }
     }
 
     @Override
-    public CreatedUser signUp(String email, String username, String password) throws AccountsAPIException {
+    public CreatedUser signUp(String email, String username, String password) throws APIException {
         try {
             return authFacade.signUp(email, username, password);
         } catch(Auth0Exception e) {
-            throw new AccountsAPIException(ServerStatus.INVALID_SIGNUP);
+            throw new APIException(
+                    AccountsAPIError.INVALID_SIGNUP.getCode(),
+                    AccountsAPIError.INVALID_SIGNUP.getMessage(),
+                    AccountsAPIError.INVALID_SIGNUP.getStatus()
+            );
         }
     }
 
     @Override
-    public String googleAuth() throws AccountsAPIException {
+    public String googleAuth() throws APIException {
         try {
             return authFacade.googleAuth();
         } catch(Exception e) {
-            throw new AccountsAPIException(ServerStatus.AUTH_ERROR);
+            throw new APIException(
+                    AccountsAPIError.AUTH_ERROR.getCode(),
+                    AccountsAPIError.AUTH_ERROR.getMessage(),
+                    AccountsAPIError.AUTH_ERROR.getStatus()
+            );
         }
     }
 
     @Override
-    public TokenHolder handleGoogleResponse(String code) throws AccountsAPIException {
+    public TokenHolder handleGoogleResponse(String code) throws APIException {
         try {
             return authFacade.handleGoogleResponse(code);
         } catch(Auth0Exception e) {
-            throw new AccountsAPIException(ServerStatus.AUTH_ERROR);
+            throw new APIException(
+                    AccountsAPIError.AUTH_ERROR.getCode(),
+                    AccountsAPIError.AUTH_ERROR.getMessage(),
+                    AccountsAPIError.AUTH_ERROR.getStatus()
+            );
         }
     }
 
     @Override
-    public String decode(String jwt) throws AccountsAPIException {
+    public String decode(String jwt) throws APIException {
         try {
             return authFacade.decode(jwt);
         } catch(Exception e) {
-            throw new AccountsAPIException(ServerStatus.INVALID_JWT_FORMAT);
+            throw new APIException(
+                    AccountsAPIError.INVALID_JWT_FORMAT.getCode(),
+                    AccountsAPIError.INVALID_JWT_FORMAT.getMessage(),
+                    AccountsAPIError.INVALID_JWT_FORMAT.getStatus()
+            );
         }
     }
 
     @Override
-    public void setMetadata(String userId, Boolean isReset) throws AccountsAPIException {
+    public void setMetadata(String userId, Boolean isReset) throws APIException {
         final var metadata = new HashMap<String, Object>();
         var gyMessagesMetadata = GYMessagesMetadata.builder()
                 .chats(List.of())
@@ -77,7 +97,11 @@ public class AuthService implements AuthRepository {
 
             authFacade.setMetadata(String.format("%s", userId), metadata, isReset);
         } catch(Auth0Exception e) {
-            throw new AccountsAPIException(ServerStatus.METADATA_NOT_UPDATED);
+            throw new APIException(
+                    AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
+                    AccountsAPIError.METADATA_NOT_UPDATED.getMessage(),
+                    AccountsAPIError.METADATA_NOT_UPDATED.getStatus()
+            );
         }
     }
 }

@@ -1,15 +1,14 @@
 package org.gycoding.accounts.application.service.auth;
 
-import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
-import org.gycoding.accounts.domain.exceptions.AccountsAPIException;
+import org.gycoding.exceptions.model.APIException;
 
 public interface AuthRepository {
-    TokenHolder login(String email, String password) throws AccountsAPIException;
-    CreatedUser signUp(String email, String username, String password) throws AccountsAPIException;
-    String googleAuth() throws AccountsAPIException;
-    TokenHolder handleGoogleResponse(String code) throws AccountsAPIException;
-    String decode(String jwt) throws AccountsAPIException;
-    void setMetadata(String userId, Boolean isReset) throws AccountsAPIException;
+    TokenHolder login(String email, String password) throws APIException;
+    CreatedUser signUp(String email, String username, String password) throws APIException;
+    String googleAuth() throws APIException;
+    TokenHolder handleGoogleResponse(String code) throws APIException;
+    String decode(String jwt) throws APIException;
+    void setMetadata(String userId, Boolean isReset) throws APIException;
 }

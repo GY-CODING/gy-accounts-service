@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.gycoding</groupId>
 	<artifactId>gy-accounts</artifactId>
-	<version>3.1.0</version>
+	<version>3.2.0</version>
 	<name>gy-accounts</name>
 	<description>GY Accounts is a service used by GYCODING for the management of user accounts for their products.</description>
 	<properties>
@@ -35,7 +35,6 @@
 		</dependency>
 
 		<dependency>
-      
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
@@ -45,6 +44,11 @@
 			<groupId>org.springframework.restdocs</groupId>
 			<artifactId>spring-restdocs-mockmvc</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
 		<dependency>
@@ -68,6 +72,12 @@
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>java-dotenv</artifactId>
 			<version>5.2.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.gycoding</groupId>
+			<artifactId>spring-exceptions</artifactId>
+			<version>1.1.2</version>
 		</dependency>
 	</dependencies>
 
@@ -103,36 +113,6 @@
 							<version>1.18.20</version>
 						</path>
 					</annotationProcessorPaths>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.jetbrains.dokka</groupId>
-				<artifactId>dokka-maven-plugin</artifactId>
-				<version>1.9.20</version>
-				<executions>
-					<execution>
-						<phase>pre-site</phase>
-						<goals>
-							<goal>dokka</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<skip>false</skip>
-					<moduleName>GY Accounts</moduleName>
-					<outputDir>./src/main/resources/static/docs</outputDir>
-					<cacheRoot>default</cacheRoot>
-					<offlineMode>false</offlineMode>
-					<samples>
-						<dir>src/test/samples</dir>
-					</samples>
-					<suppressObviousFunctions>false</suppressObviousFunctions>
-					<suppressInheritedMembers>true</suppressInheritedMembers>
-					<jdkVersion>17</jdkVersion>
-					<skipDeprecated>false</skipDeprecated>
-					<reportUndocumented>true</reportUndocumented>
-					<skipEmptyPackages>true</skipEmptyPackages>
 				</configuration>
 			</plugin>
 		</plugins>
