@@ -6,10 +6,6 @@ import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import com.auth0.json.mgmt.users.User;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.impl.JWTParser;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.net.Request;
 import kong.unirest.json.JSONObject;
 import org.gycoding.accounts.domain.enums.AuthConnections;
@@ -17,9 +13,8 @@ import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthFacadeImpl implements AuthFacade {
@@ -33,8 +28,9 @@ public class AuthFacadeImpl implements AuthFacade {
     private String managementClientId;
     private String managementClientSecret;
     private String managementTokenURL;
-
     private String googleCallbackURL;
+
+    private String userinfoURL;
 
     public AuthFacadeImpl(
             @Value("${auth0.main.domain}") String mainDomain,
@@ -44,7 +40,8 @@ public class AuthFacadeImpl implements AuthFacade {
             @Value("${auth0.management.clientId}") String managementClientId,
             @Value("${auth0.management.clientSecret}") String managementClientSecret,
             @Value("${auth0.management.token.url}") String managementTokenURL,
-            @Value("${auth0.google.callback}") String googleCallbackURL
+            @Value("${auth0.google.callback}") String googleCallbackURL,
+            @Value("${auth0.userinfo.url}") String userinfoURL
     ) {
         this.mainDomain             = mainDomain;
         this.mainClientId           = mainClientId;
@@ -54,6 +51,7 @@ public class AuthFacadeImpl implements AuthFacade {
         this.managementClientSecret = managementClientSecret;
         this.managementTokenURL     = managementTokenURL;
         this.googleCallbackURL      = googleCallbackURL;
+        this.userinfoURL            = userinfoURL;
 
         this.authAPI                = new AuthAPI(this.mainDomain, this.mainClientId, this.mainClientSecret);
     }
@@ -119,8 +117,17 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public String decode(String jwt) {
-        final var decodedJWT = JWT.decode(jwt.replace("Bearer ", ""));
-        return decodedJWT.getClaim("sub").asString();
+    public String decode(String token) {
+        final var headers = new HashMap<String, String>();
+
+        headers.put("Authorization", "Bearer " + token);
+        headers.put("Content-Type", "application/json");
+
+        final var response          = UnirestFacade.get(this.userinfoURL, headers);
+        JSONObject jsonResponse     = new JSONObject(response.getBody());
+
+        System.out.println(jsonResponse.getString("sub"));
+
+        return jsonResponse.getString("sub");
     }
 }

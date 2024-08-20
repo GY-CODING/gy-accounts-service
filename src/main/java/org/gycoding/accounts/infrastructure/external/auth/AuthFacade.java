@@ -18,5 +18,5 @@ public interface AuthFacade {
     Map<String, Object> getMetadata(String userId) throws Auth0Exception;
     void setMetadata(String userId, Map<String, Object> metadata, Boolean isReset) throws Auth0Exception;
 
-    String decode(String jwt);
+    String decode(String token);
 }

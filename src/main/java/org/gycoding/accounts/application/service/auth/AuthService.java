@@ -72,20 +72,7 @@ public class AuthService implements AuthRepository {
     }
 
     @Override
-    public String decode(String jwt) throws APIException {
-        try {
-            return authFacade.decode(jwt);
-        } catch(Exception e) {
-            throw new APIException(
-                    AccountsAPIError.INVALID_JWT_FORMAT.getCode(),
-                    AccountsAPIError.INVALID_JWT_FORMAT.getMessage(),
-                    AccountsAPIError.INVALID_JWT_FORMAT.getStatus()
-            );
-        }
-    }
-
-    @Override
-    public void setMetadata(String userId, Boolean isReset) throws APIException {
+    public void setMetadata(String token, Boolean isReset) throws APIException {
         final var metadata = new HashMap<String, Object>();
         var gyMessagesMetadata = GYMessagesMetadata.builder()
                 .chats(List.of())
@@ -95,7 +82,7 @@ public class AuthService implements AuthRepository {
             metadata.put("role", GYCODINGRoles.COMMON);
             metadata.put("gyMessages", gyMessagesMetadata.toMap());
 
-            authFacade.setMetadata(String.format("%s", userId), metadata, isReset);
+            authFacade.setMetadata(String.format("%s", token), metadata, isReset);
         } catch(Auth0Exception e) {
             throw new APIException(
                     AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
