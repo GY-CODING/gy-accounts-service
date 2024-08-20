@@ -3,6 +3,7 @@ package org.gycoding.accounts.infrastructure.api;
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.auth.AuthRepository;
 import org.gycoding.accounts.infrastructure.dto.UserRQDTO;
+import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AccountsController {
-
     @Autowired
     private AuthRepository authService = null;
+    @Autowired
+    private AuthFacade authFacade = null;
 
     @PostMapping("/login")
 	public ResponseEntity<?> login(@Valid @RequestBody UserRQDTO body) throws APIException {
@@ -39,11 +41,10 @@ public class AccountsController {
 
     @PutMapping("/metadata/set")
     public ResponseEntity<?> setMetadata(
-            @RequestHeader String jwt,
+            @RequestHeader String token,
             @RequestParam Boolean isReset
     ) throws APIException {
-        final var userId = authService.decode(jwt);
-        authService.setMetadata(userId, isReset);
+        authService.setMetadata(authFacade.decode(token), isReset);
 
         return ResponseEntity.noContent().build();
     }

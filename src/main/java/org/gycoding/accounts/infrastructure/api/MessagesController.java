@@ -21,30 +21,19 @@ public class MessagesController {
 	public ResponseEntity<?> addChat(
             @Valid
             @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader String jwt
+            @RequestHeader String token
     ) throws APIException {
-        messagesService.addChat(authFacade.decode(jwt), chatRQDTO);
+        messagesService.addChat(authFacade.decode(token), chatRQDTO);
         return ResponseEntity.noContent().build();
 	}
-// It already exists, so we can remove it or change its domain.
-
-//    @DeleteMapping("/chat/remove")
-//    public ResponseEntity<?> removeChatWithJWT(
-//            @Valid
-//            @RequestBody ChatRQDTO chatRQDTO,
-//            @RequestHeader String jwt
-//    ) throws APIException {
-//        messagesService.removeChat(authFacade.decode(jwt), chatRQDTO.chatId());
-//        return ResponseEntity.noContent().build();
-//    }
 
     @DeleteMapping("/chat/remove")
     public ResponseEntity<?> removeChatWithUserID(
             @Valid
             @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader String userId
+            @RequestHeader String token
     ) throws APIException {
-        messagesService.removeChat(userId, chatRQDTO.chatId());
+        messagesService.removeChat(authFacade.decode(token), chatRQDTO.chatId());
         return ResponseEntity.noContent().build();
     }
   
@@ -52,16 +41,16 @@ public class MessagesController {
     public ResponseEntity<?> setAdminInChat(
             @Valid
             @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader String jwt
+            @RequestHeader String token
     ) throws APIException {
-        messagesService.setAdmin(authFacade.decode(jwt), chatRQDTO);
+        messagesService.setAdmin(authFacade.decode(token), chatRQDTO);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/chat/list")
     public ResponseEntity<?> listChats(
-            @RequestHeader String jwt
+            @RequestHeader String token
     ) throws APIException {
-        return ResponseEntity.ok(messagesService.listChats(authFacade.decode(jwt)));
+        return ResponseEntity.ok(messagesService.listChats(authFacade.decode(token)));
     }
 }

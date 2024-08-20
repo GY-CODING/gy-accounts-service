@@ -118,7 +118,6 @@ public class MessagesService implements MessagesRepository {
 
     @Override
     public List<Object> listChats(String userId) throws APIException {
-
         try {
             var metadata = authFacade.getMetadata(userId);
             var gyMessagesMetadata = (Map<String, Object>) metadata.get("gyMessages");
