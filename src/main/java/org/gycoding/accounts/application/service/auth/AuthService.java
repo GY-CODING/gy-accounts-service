@@ -4,6 +4,7 @@ import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
+import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetadata;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
@@ -74,15 +75,52 @@ public class AuthService implements AuthRepository {
     @Override
     public void setMetadata(String token, Boolean isReset) throws APIException {
         final var metadata = new HashMap<String, Object>();
-        var gyMessagesMetadata = GYMessagesMetadata.builder()
+        var defaultGYMessagesMetadata = GYMessagesMetadata.builder()
                 .chats(List.of())
+                .build();
+
+        var defaultGYClientMetadata = GYClientMetadata.builder()
+                .username(null)
+                .title(null)
+                .friends(List.of())
                 .build();
 
         try {
             metadata.put("role", GYCODINGRoles.COMMON);
-            metadata.put("gyMessages", gyMessagesMetadata.toMap());
+            metadata.put("gyMessages", defaultGYMessagesMetadata.toMap());
+            metadata.put("gyClient", defaultGYClientMetadata.toMap());
 
-            authFacade.setMetadata(String.format("%s", token), metadata, isReset);
+            authFacade.setMetadata(token, metadata, isReset);
+        } catch(Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
+                    AccountsAPIError.METADATA_NOT_UPDATED.getMessage(),
+                    AccountsAPIError.METADATA_NOT_UPDATED.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public void refreshMetadata(String token) throws APIException {
+        try {
+            final var oldMetadata = authFacade.getMetadata(token);
+            final var newMetadata = new HashMap<String, Object>();
+
+            var defaultGYMessagesMetadata = GYMessagesMetadata.builder()
+                    .chats(List.of())
+                    .build();
+
+            var defaultGYClientMetadata = GYClientMetadata.builder()
+                    .username(null)
+                    .title(null)
+                    .friends(List.of())
+                    .build();
+
+            newMetadata.put("role", oldMetadata.getOrDefault("role", GYCODINGRoles.COMMON));
+            newMetadata.put("gyMessages", oldMetadata.getOrDefault("gyMessages", defaultGYMessagesMetadata.toMap()));
+            newMetadata.put("gyClient", oldMetadata.getOrDefault("gyClient", defaultGYClientMetadata));
+
+            authFacade.setMetadata(token, newMetadata, Boolean.TRUE);
         } catch(Auth0Exception e) {
             throw new APIException(
                     AccountsAPIError.METADATA_NOT_UPDATED.getCode(),

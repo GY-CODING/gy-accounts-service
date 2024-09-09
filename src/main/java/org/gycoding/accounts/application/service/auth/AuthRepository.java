@@ -10,4 +10,5 @@ public interface AuthRepository {
     String googleAuth() throws APIException;
     TokenHolder handleGoogleResponse(String code) throws APIException;
     void setMetadata(String token, Boolean isReset) throws APIException;
+    void refreshMetadata(String token) throws APIException;
 }
