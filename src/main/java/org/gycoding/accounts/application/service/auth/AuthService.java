@@ -122,6 +122,7 @@ public class AuthService implements AuthRepository {
 
             authFacade.setMetadata(token, newMetadata, Boolean.TRUE);
         } catch(Auth0Exception e) {
+            System.out.println("Error: " + e.getMessage());
             throw new APIException(
                     AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
                     AccountsAPIError.METADATA_NOT_UPDATED.getMessage(),
