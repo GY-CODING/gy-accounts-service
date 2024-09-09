@@ -126,7 +126,7 @@ public class AuthFacadeImpl implements AuthFacade {
 
         final var response          = UnirestFacade.get(this.userinfoURL, headers);
         JSONObject jsonResponse     = new JSONObject(response.getBody());
-
+      
         return jsonResponse.getString("sub");
     }
 }
