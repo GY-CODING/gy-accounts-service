@@ -104,6 +104,7 @@ public class AuthFacadeImpl implements AuthFacade {
 
     @Override
     public void setMetadata(String userId, Map<String, Object> metadata, Boolean isReset) throws Auth0Exception {
+        // TODO - Review if this condition is well formed and useful.
         if(Boolean.TRUE.equals(isReset) || getMetadata(userId) == null) {
             final var managementAPI      = new ManagementAPI(this.mainDomain, this.getManagementToken());
             final var user               = new User();
@@ -125,9 +126,7 @@ public class AuthFacadeImpl implements AuthFacade {
 
         final var response          = UnirestFacade.get(this.userinfoURL, headers);
         JSONObject jsonResponse     = new JSONObject(response.getBody());
-
-        System.out.println(jsonResponse.getString("sub"));
-
+      
         return jsonResponse.getString("sub");
     }
 }

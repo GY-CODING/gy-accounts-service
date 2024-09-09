@@ -48,4 +48,11 @@ public class AccountsController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/metadata/refresh")
+    public ResponseEntity<?> refreshMetadata(@RequestHeader String token) throws APIException {
+        authService.refreshMetadata(authFacade.decode(token));
+
+        return ResponseEntity.noContent().build();
+    }
 }
