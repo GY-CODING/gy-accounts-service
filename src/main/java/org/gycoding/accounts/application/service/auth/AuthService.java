@@ -121,6 +121,7 @@ public class AuthService implements AuthRepository {
             newMetadata.put("gyClient", oldMetadata.getOrDefault("gyClient", defaultGYClientMetadata));
 
             authFacade.setMetadata(token, newMetadata, Boolean.TRUE);
+            System.out.println("Metadata refreshed");
         } catch(Auth0Exception e) {
             System.out.println("Error: " + e.getMessage());
             throw new APIException(
