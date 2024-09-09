@@ -23,11 +23,7 @@ public class AuthService implements AuthRepository {
     @Override
     public TokenHolder login(String email, String password) throws APIException {
         try {
-            final var token = authFacade.login(email, password);
-
-            this.refreshMetadata(token.getAccessToken());
-
-            return token;
+            return authFacade.login(email, password);
         } catch(Auth0Exception e) {
             throw new APIException(
                     AccountsAPIError.INVALID_LOGIN.getCode(),
