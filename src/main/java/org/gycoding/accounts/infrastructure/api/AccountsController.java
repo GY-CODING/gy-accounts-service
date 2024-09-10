@@ -41,10 +41,10 @@ public class AccountsController {
 
     @PutMapping("/metadata/set")
     public ResponseEntity<?> setMetadata(
-            @RequestHeader String token,
+            @RequestHeader String userId,
             @RequestParam Boolean isReset
     ) throws APIException {
-        authService.setMetadata(authFacade.decode(token), isReset);
+        authService.setMetadata(userId, isReset);
 
         return ResponseEntity.noContent().build();
     }
