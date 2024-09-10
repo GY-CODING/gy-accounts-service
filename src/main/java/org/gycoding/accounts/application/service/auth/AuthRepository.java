@@ -9,6 +9,5 @@ public interface AuthRepository {
     CreatedUser signUp(String email, String username, String password) throws APIException;
     String googleAuth() throws APIException;
     TokenHolder handleGoogleResponse(String code) throws APIException;
-    void setMetadata(String token, Boolean isReset) throws APIException;
     void refreshMetadata(String token) throws APIException;
 }

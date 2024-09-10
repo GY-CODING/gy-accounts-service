@@ -73,34 +73,6 @@ public class AuthService implements AuthRepository {
     }
 
     @Override
-    public void setMetadata(String userId, Boolean isReset) throws APIException {
-        final var metadata = new HashMap<String, Object>();
-        var defaultGYMessagesMetadata = GYMessagesMetadata.builder()
-                .chats(List.of())
-                .build();
-
-        var defaultGYClientMetadata = GYClientMetadata.builder()
-                .username(null)
-                .title(null)
-                .friends(List.of())
-                .build();
-
-        try {
-            metadata.put("role", GYCODINGRoles.COMMON);
-            metadata.put("gyMessages", defaultGYMessagesMetadata.toMap());
-            metadata.put("gyClient", defaultGYClientMetadata.toMap());
-
-            authFacade.setMetadata(userId, metadata, isReset);
-        } catch(Auth0Exception e) {
-            throw new APIException(
-                    AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
-                    AccountsAPIError.METADATA_NOT_UPDATED.getMessage(),
-                    AccountsAPIError.METADATA_NOT_UPDATED.getStatus()
-            );
-        }
-    }
-
-    @Override
     public void refreshMetadata(String userId) throws APIException {
         try {
             final var oldMetadata = authFacade.getMetadata(userId);
@@ -121,9 +93,7 @@ public class AuthService implements AuthRepository {
             newMetadata.put("gyClient", oldMetadata.getOrDefault("gyClient", defaultGYClientMetadata));
 
             authFacade.setMetadata(userId, newMetadata, Boolean.TRUE);
-            System.out.println("Metadata refreshed");
         } catch(Auth0Exception e) {
-            System.out.println("Error: " + e.getMessage());
             throw new APIException(
                     AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
                     AccountsAPIError.METADATA_NOT_UPDATED.getMessage(),

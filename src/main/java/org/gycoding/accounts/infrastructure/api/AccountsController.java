@@ -39,16 +39,6 @@ public class AccountsController {
         return ResponseEntity.ok(authService.handleGoogleResponse(code));
     }
 
-    @PutMapping("/metadata/set")
-    public ResponseEntity<?> setMetadata(
-            @RequestHeader String userId,
-            @RequestParam Boolean isReset
-    ) throws APIException {
-        authService.setMetadata(userId, isReset);
-
-        return ResponseEntity.noContent().build();
-    }
-
     @PutMapping("/metadata/refresh")
     public ResponseEntity<?> refreshMetadata(@RequestHeader String userId) throws APIException {
         authService.refreshMetadata(userId);
