@@ -50,8 +50,8 @@ public class AccountsController {
     }
 
     @PutMapping("/metadata/refresh")
-    public ResponseEntity<?> refreshMetadata(@RequestHeader String token) throws APIException {
-        authService.refreshMetadata(authFacade.decode(token));
+    public ResponseEntity<?> refreshMetadata(@RequestHeader String userId) throws APIException {
+        authService.refreshMetadata(userId);
 
         return ResponseEntity.noContent().build();
     }
