@@ -3,6 +3,8 @@ package org.gycoding.accounts.application.service.auth;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
+import org.gycoding.accounts.application.service.username.UsernameRepository;
+import org.gycoding.accounts.application.service.username.UsernameService;
 import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetadata;
@@ -19,6 +21,9 @@ import java.util.List;
 public class AuthService implements AuthRepository {
     @Autowired
     private AuthFacade authFacade = null;
+
+    @Autowired
+    private UsernameRepository usernameRepository = null;
 
     @Override
     public TokenHolder login(String email, String password) throws APIException {

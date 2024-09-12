@@ -17,6 +17,8 @@ public enum AccountsAPIError {
     CHAT_ALREADY_EXISTS("The chat already exists inside user's metadata.", HttpStatus.CONFLICT),
     CHAT_NOT_FOUND("The chat was not found inside user's metadata.", HttpStatus.NOT_FOUND),
 
+    USERNAME_ALREADY_EXISTS("The username you are trying to create or modify already exists.", HttpStatus.CONFLICT),
+
     INVALID_JWT_FORMAT("Invalid JWT format", HttpStatus.BAD_REQUEST),
 
     BAD_REQUEST("The endpoint is malformed.", HttpStatus.BAD_REQUEST),
