@@ -122,8 +122,8 @@ public class AuthService implements AuthRepository {
             GYClientMetadata clientMetadata
     ) throws APIException {
         try {
-            final var oldMetadata = authFacade.getMetadata(userId);
-            final var newMetadata = new HashMap<String, Object>();
+            var oldMetadata = authFacade.getMetadata(userId);
+            var newMetadata = new HashMap<String, Object>();
 
             if(messagesMetadata == null && clientMetadata == null) {
                 throw new APIException(
@@ -135,6 +135,7 @@ public class AuthService implements AuthRepository {
 
             if(oldMetadata == null) {
                 this.refreshMetadata(userId);
+                oldMetadata = authFacade.getMetadata(userId);
             }
 
                 if (messagesMetadata != null) {
