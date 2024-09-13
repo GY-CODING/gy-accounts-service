@@ -2,6 +2,8 @@ package org.gycoding.accounts.application.service.auth;
 
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
+import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
+import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetadata;
 import org.gycoding.exceptions.model.APIException;
 
 public interface AuthRepository {
@@ -10,4 +12,5 @@ public interface AuthRepository {
     String googleAuth() throws APIException;
     TokenHolder handleGoogleResponse(String code) throws APIException;
     void refreshMetadata(String token) throws APIException;
+    void setMetadata(String userId, GYMessagesMetadata messagesMetadata, GYClientMetadata clientMetadata) throws APIException;
 }

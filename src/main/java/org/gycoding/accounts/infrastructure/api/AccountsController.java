@@ -2,7 +2,9 @@ package org.gycoding.accounts.infrastructure.api;
 
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.auth.AuthRepository;
+import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.dto.UserRQDTO;
+import org.gycoding.accounts.infrastructure.dto.metadata.MetadataRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,16 @@ public class AccountsController {
     @PutMapping("/metadata/refresh")
     public ResponseEntity<?> refreshMetadata(@RequestHeader String userId) throws APIException {
         authService.refreshMetadata(userId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/metadata/set")
+    public ResponseEntity<?> setMetadata(
+            @RequestHeader String userId,
+            @RequestBody MetadataRQDTO body
+    ) throws APIException {
+        authService.setMetadata(userId, body.gyMessages(), body.gyClient());
 
         return ResponseEntity.noContent().build();
     }
