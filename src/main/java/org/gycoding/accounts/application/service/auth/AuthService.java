@@ -95,9 +95,15 @@ public class AuthService implements AuthRepository {
                     .friends(List.of())
                     .build();
 
-            newMetadata.put("role", oldMetadata.getOrDefault("role", GYCODINGRoles.COMMON));
-            newMetadata.put("gyMessages", oldMetadata.getOrDefault("gyMessages", defaultGYMessagesMetadata.toMap()));
-            newMetadata.put("gyClient", oldMetadata.getOrDefault("gyClient", defaultGYClientMetadata));
+            if(oldMetadata != null) {
+                newMetadata.put("role", oldMetadata.getOrDefault("role", GYCODINGRoles.COMMON));
+                newMetadata.put("gyMessages", oldMetadata.getOrDefault("gyMessages", defaultGYMessagesMetadata.toMap()));
+                newMetadata.put("gyClient", oldMetadata.getOrDefault("gyClient", defaultGYClientMetadata));
+            } else {
+                newMetadata.put("role", GYCODINGRoles.COMMON);
+                newMetadata.put("gyMessages", defaultGYMessagesMetadata);
+                newMetadata.put("gyClient", defaultGYClientMetadata);
+            }
 
             authFacade.setMetadata(userId, newMetadata, Boolean.TRUE);
         } catch(Auth0Exception e) {
@@ -127,33 +133,33 @@ public class AuthService implements AuthRepository {
                 );
             }
 
-            if(messagesMetadata != null) {
-                messagesMetadata = GYMessagesMetadata.builder()
-                        .chats(messagesMetadata.chats() != null ? messagesMetadata.chats() : (List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).get("chats"))
-                        .build();
-            } else {
-                messagesMetadata = GYMessagesMetadata.builder()
-                        .chats((List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).get("chats"))
-                        .build();
-            }
+                if (messagesMetadata != null) {
+                    messagesMetadata = GYMessagesMetadata.builder()
+                            .chats(messagesMetadata.chats() != null ? messagesMetadata.chats() : (List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).get("chats"))
+                            .build();
+                } else {
+                    messagesMetadata = GYMessagesMetadata.builder()
+                            .chats((List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).get("chats"))
+                            .build();
+                }
 
-            if(clientMetadata != null) {
-                clientMetadata = GYClientMetadata.builder()
-                        .username(clientMetadata.username() != null ? clientMetadata.username() : (String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("username"))
-                        .title(clientMetadata.title() != null ? clientMetadata.title() : (String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("title"))
-                        .friends(clientMetadata.friends() != null ? clientMetadata.friends() : (List<FriendsMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("friends"))
-                        .build();
-            } else {
-                clientMetadata = GYClientMetadata.builder()
-                        .username((String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("username"))
-                        .title((String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("title"))
-                        .friends((List<FriendsMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("friends"))
-                        .build();
-            }
+                if (clientMetadata != null) {
+                    clientMetadata = GYClientMetadata.builder()
+                            .username(clientMetadata.username() != null ? clientMetadata.username() : (String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("username"))
+                            .title(clientMetadata.title() != null ? clientMetadata.title() : (String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("title"))
+                            .friends(clientMetadata.friends() != null ? clientMetadata.friends() : (List<FriendsMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("friends"))
+                            .build();
+                } else {
+                    clientMetadata = GYClientMetadata.builder()
+                            .username((String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("username"))
+                            .title((String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("title"))
+                            .friends((List<FriendsMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("friends"))
+                            .build();
+                }
 
-            newMetadata.put("role", oldMetadata.getOrDefault("role", GYCODINGRoles.COMMON));
-            newMetadata.put("gyMessages", messagesMetadata);
-            newMetadata.put("gyClient", clientMetadata);
+                newMetadata.put("role", oldMetadata.getOrDefault("role", GYCODINGRoles.COMMON));
+                newMetadata.put("gyMessages", messagesMetadata);
+                newMetadata.put("gyClient", clientMetadata);
 
             authFacade.setMetadata(userId, newMetadata, Boolean.TRUE);
         } catch(Auth0Exception e) {
