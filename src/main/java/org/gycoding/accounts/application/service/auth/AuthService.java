@@ -133,6 +133,10 @@ public class AuthService implements AuthRepository {
                 );
             }
 
+            if(oldMetadata == null) {
+                this.refreshMetadata(userId);
+            }
+
                 if (messagesMetadata != null) {
                     messagesMetadata = GYMessagesMetadata.builder()
                             .chats(messagesMetadata.chats() != null ? messagesMetadata.chats() : (List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).get("chats"))
