@@ -2,7 +2,6 @@ package org.gycoding.accounts.infrastructure.api;
 
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.auth.AuthRepository;
-import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.dto.UserRQDTO;
 import org.gycoding.accounts.infrastructure.dto.metadata.MetadataRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;

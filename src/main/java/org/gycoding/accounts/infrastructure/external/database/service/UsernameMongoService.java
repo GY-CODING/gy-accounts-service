@@ -1,11 +1,12 @@
 package org.gycoding.accounts.infrastructure.external.database.service;
 
-import org.gycoding.accounts.domain.entities.username.EntityUsername;
+import org.gycoding.accounts.domain.entities.database.gyclient.EntityUsername;
 import org.gycoding.accounts.infrastructure.external.database.repository.UsernameMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UsernameMongoService {
@@ -22,6 +23,10 @@ public class UsernameMongoService {
 
     public EntityUsername getUsername(String username) {
         return usernameMongoRepository.findByUsername(username);
+    }
+
+    public EntityUsername getUsername(UUID userID) {
+        return usernameMongoRepository.findByUserId(userID.toString());
     }
 
     public List<EntityUsername> listUsernames() {

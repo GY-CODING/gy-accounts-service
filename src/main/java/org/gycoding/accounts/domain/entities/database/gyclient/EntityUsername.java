@@ -1,8 +1,6 @@
-package org.gycoding.accounts.domain.entities.username;
+package org.gycoding.accounts.domain.entities.database.gyclient;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

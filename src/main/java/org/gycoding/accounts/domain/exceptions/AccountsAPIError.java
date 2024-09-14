@@ -13,6 +13,7 @@ public enum AccountsAPIError {
 
     COULD_NOT_GET_USER_METADATA("Authentication service could not get user metadata successfully.", HttpStatus.NOT_FOUND),
     METADATA_NOT_UPDATED("Authentication service could not update metadata successfully.", HttpStatus.NOT_MODIFIED),
+    METADATA_NOT_FOUND("User's metadata could not be received, either because of the non existance of it or because of an internal Auth0 error.", HttpStatus.NOT_FOUND),
 
     CHAT_ALREADY_EXISTS("The chat already exists inside user's metadata.", HttpStatus.CONFLICT),
     CHAT_NOT_FOUND("The chat was not found inside user's metadata.", HttpStatus.NOT_FOUND),

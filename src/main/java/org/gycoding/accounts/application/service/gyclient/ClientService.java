@@ -1,17 +1,22 @@
-package org.gycoding.accounts.application.service.username;
+package org.gycoding.accounts.application.service.gyclient;
 
+import com.auth0.exception.Auth0Exception;
+import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
+import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
+import org.gycoding.accounts.domain.entities.model.gyclient.Profile;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
-import org.gycoding.accounts.domain.entities.username.EntityUsername;
+import org.gycoding.accounts.domain.entities.database.gyclient.EntityUsername;
 import org.gycoding.accounts.infrastructure.external.database.service.UsernameMongoService;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
-public class UsernameService implements UsernameRepository {
+public class ClientService implements ClientRepository {
     @Autowired
     private AuthFacade authFacade = null;
 
@@ -47,7 +52,30 @@ public class UsernameService implements UsernameRepository {
     }
 
     @Override
+    public EntityUsername getUsername(UUID userID) throws APIException {
+        return usernameMongoService.getUsername(userID);
+    }
+
+    @Override
     public List<EntityUsername> listUsernames() throws APIException {
         return usernameMongoService.listUsernames();
+    }
+
+    @Override
+    public GYClientMetadata getUserMetadata(String userID) throws APIException {
+        try {
+            return authFacade.getClientMetadata(userID);
+        } catch(Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.METADATA_NOT_FOUND.getCode(),
+                    AccountsAPIError.METADATA_NOT_FOUND.getMessage(),
+                    AccountsAPIError.METADATA_NOT_FOUND.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public Profile getFriendProfile(String userID, String friendUserID) throws APIException {
+        return null;
     }
 }

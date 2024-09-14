@@ -1,4 +1,4 @@
-package org.gycoding.accounts.domain.entities;
+package org.gycoding.accounts.domain.entities.model.auth;
 
 import lombok.Builder;
 import lombok.Getter;

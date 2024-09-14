@@ -8,12 +8,15 @@ import com.auth0.json.auth.TokenHolder;
 import com.auth0.json.mgmt.users.User;
 import com.auth0.net.Request;
 import kong.unirest.json.JSONObject;
+import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
+import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
 import org.gycoding.accounts.domain.enums.AuthConnections;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -104,7 +107,6 @@ public class AuthFacadeImpl implements AuthFacade {
 
     @Override
     public void setMetadata(String userId, Map<String, Object> metadata, Boolean isReset) throws Auth0Exception {
-        // TODO - Review if this condition is well formed and useful.
         if(Boolean.TRUE.equals(isReset) || getMetadata(userId) == null) {
             final var managementAPI      = new ManagementAPI(this.mainDomain, this.getManagementToken());
             final var user               = new User();
@@ -115,6 +117,17 @@ public class AuthFacadeImpl implements AuthFacade {
 
             request.execute();
         }
+    }
+
+    @Override
+    public GYClientMetadata getClientMetadata(String userId) throws Auth0Exception {
+        final var metadata = this.getMetadata(userId);
+
+        return GYClientMetadata.builder()
+                .username((String) ((HashMap<String, Object>) metadata.get("gyClient")).get("username"))
+                .title((String) ((HashMap<String, Object>) metadata.get("gyClient")).get("title"))
+                .friends((List<FriendsMetadata>) ((HashMap<String, Object>) metadata.get("gyClient")).get("friends"))
+                .build();
     }
 
     @Override

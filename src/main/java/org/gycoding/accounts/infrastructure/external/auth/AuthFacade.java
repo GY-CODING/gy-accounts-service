@@ -3,8 +3,11 @@ package org.gycoding.accounts.infrastructure.external.auth;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
+import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
+import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -17,6 +20,8 @@ public interface AuthFacade {
 
     Map<String, Object> getMetadata(String userId) throws Auth0Exception;
     void setMetadata(String userId, Map<String, Object> metadata, Boolean isReset) throws Auth0Exception;
+
+    GYClientMetadata getClientMetadata(String userId) throws Auth0Exception;
 
     String decode(String token);
 }
