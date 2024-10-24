@@ -1,0 +1,14 @@
+name: Deploy to Koyeb
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+     uses: GY-CODING/.github/.github/workflows/koyeb-deploy.yml@master
+     secrets: inherit
+     with: 
+       project-name: "gy-accounts-service"
+       project-id: ""
