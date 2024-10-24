@@ -65,7 +65,7 @@ public class ClientService implements ClientRepository {
     public GYClientMetadata getUserMetadata(String userID) throws APIException {
         try {
             return authFacade.getClientMetadata(userID);
-        } catch(Auth0Exception e) {
+        } catch(Exception e) {
             throw new APIException(
                     AccountsAPIError.METADATA_NOT_FOUND.getCode(),
                     AccountsAPIError.METADATA_NOT_FOUND.getMessage(),

@@ -20,7 +20,7 @@ public enum AccountsAPIError {
 
     USERNAME_ALREADY_EXISTS("The username you are trying to create or modify already exists.", HttpStatus.CONFLICT),
 
-    INVALID_JWT_FORMAT("Invalid JWT format", HttpStatus.BAD_REQUEST),
+    INVALID_TOKEN_FORMAT("Invalid token format", HttpStatus.BAD_REQUEST),
 
     BAD_REQUEST("The endpoint is malformed.", HttpStatus.BAD_REQUEST),
     AUTH_ERROR("An error with the authentication service has occurred, sorry for the inconvenience.", HttpStatus.INTERNAL_SERVER_ERROR),

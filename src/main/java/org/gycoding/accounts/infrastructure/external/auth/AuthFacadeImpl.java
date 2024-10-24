@@ -7,11 +7,14 @@ import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import com.auth0.json.mgmt.users.User;
 import com.auth0.net.Request;
+import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
 import org.gycoding.accounts.domain.enums.AuthConnections;
+import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
+import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -131,17 +134,22 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public String decode(String token) {
+    public String decode(String token) throws APIException {
         final var headers = new HashMap<String, String>();
 
         headers.put("Authorization", "Bearer " + token);
         headers.put("Content-Type", "application/json");
+        try {
+            final var response          = UnirestFacade.get(this.userinfoURL, headers);
+            JSONObject jsonResponse     = new JSONObject(response.getBody());
 
-        final var response          = UnirestFacade.get(this.userinfoURL, headers);
-        JSONObject jsonResponse     = new JSONObject(response.getBody());
-
-        System.out.println("Token decoded.");
-      
-        return jsonResponse.getString("sub");
+            return jsonResponse.getString("sub");
+        } catch(JSONException e) {
+            throw new APIException(
+                    AccountsAPIError.INVALID_TOKEN_FORMAT.getCode(),
+                    AccountsAPIError.INVALID_TOKEN_FORMAT.getMessage(),
+                    AccountsAPIError.INVALID_TOKEN_FORMAT.getStatus()
+            );
+        }
     }
 }

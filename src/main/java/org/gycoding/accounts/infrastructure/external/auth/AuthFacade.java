@@ -5,6 +5,7 @@ import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
+import org.gycoding.exceptions.model.APIException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,5 +24,5 @@ public interface AuthFacade {
 
     GYClientMetadata getClientMetadata(String userId) throws Auth0Exception;
 
-    String decode(String token);
+    String decode(String token) throws APIException;
 }
