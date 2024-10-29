@@ -57,9 +57,9 @@ public class AccountsController {
             @RequestBody MetadataRQDTO body
     ) throws APIException {
         var userMetadata = UserMetadata.builder()
-                .username("null")
-                .image("null")
-                .roles(List.of(GYCODINGRoles.COMMON))
+                .username(body.username())
+                .image(body.image())
+                .roles(body.roles())
                 .gyMessagesMetadata(body.gyMessages())
                 .gyClientMetadata(body.gyClient())
                 .build();
