@@ -148,7 +148,7 @@ public class AuthService implements AuthRepository {
             } else {
                 userMetadata.setGyMessagesMetadata(
                         GYMessagesMetadata.builder()
-                        .chats((List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).get("chats"))
+                        .chats(List.of())
                         .build()
                 );
             }
@@ -163,8 +163,8 @@ public class AuthService implements AuthRepository {
             } else {
                 userMetadata.setGyClientMetadata(
                         GYClientMetadata.builder()
-                        .title((String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("title"))
-                        .friends((List<FriendsMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyClient")).get("friends"))
+                        .title("null")
+                        .friends(List.of())
                         .build()
                 );
             }
