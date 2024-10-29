@@ -53,7 +53,7 @@ public class AccountsController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/metadata/usernames/save")
+    @PostMapping("/usernames/save")
     public ResponseEntity<?> saveUsername(
             @RequestBody UsernameRQDTO body,
             @RequestHeader String userId

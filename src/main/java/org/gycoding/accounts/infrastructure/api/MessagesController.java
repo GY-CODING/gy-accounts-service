@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth/messages")
+@RequestMapping("/messages")
 public class MessagesController {
     @Autowired
     private MessagesRepository messagesService = null;
