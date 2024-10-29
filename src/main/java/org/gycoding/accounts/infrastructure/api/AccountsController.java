@@ -2,6 +2,8 @@ package org.gycoding.accounts.infrastructure.api;
 
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.auth.AuthRepository;
+import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
+import org.gycoding.accounts.domain.entities.metadata.UserMetadata;
 import org.gycoding.accounts.infrastructure.dto.UserRQDTO;
 import org.gycoding.accounts.infrastructure.dto.metadata.MetadataRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
@@ -9,6 +11,8 @@ import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -52,7 +56,15 @@ public class AccountsController {
             @RequestHeader String userId,
             @RequestBody MetadataRQDTO body
     ) throws APIException {
-        authService.setMetadata(userId, body.gyMessages(), body.gyClient());
+        var userMetadata = UserMetadata.builder()
+                .username("null")
+                .image("null")
+                .roles(List.of(GYCODINGRoles.COMMON))
+                .gyMessagesMetadata(body.gyMessages())
+                .gyClientMetadata(body.gyClient())
+                .build();
+
+        authService.setMetadata(userId, userMetadata);
 
         return ResponseEntity.noContent().build();
     }
