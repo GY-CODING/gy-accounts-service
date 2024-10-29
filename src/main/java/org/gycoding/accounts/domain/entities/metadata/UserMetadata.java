@@ -14,7 +14,7 @@ import java.util.Map;
 @Getter
 public class UserMetadata {
     private String username;
-    private String image;
+    private String picture;
     private List<GYCODINGRoles> roles;
     private GYClientMetadata gyClientMetadata;
     private GYMessagesMetadata gyMessagesMetadata;
@@ -22,10 +22,10 @@ public class UserMetadata {
     public Map<String, Object> toMap() {
         return Map.of(
                 "username", username,
-                "image", image,
+                "picture", picture,
                 "roles", roles,
-                "gyClientMetadata", gyClientMetadata,
-                "gyMessagesMetadata", gyMessagesMetadata
+                "gyClient", gyClientMetadata,
+                "gyMessages", gyMessagesMetadata
         );
     }
 }

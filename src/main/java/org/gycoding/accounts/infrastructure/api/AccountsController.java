@@ -2,9 +2,11 @@ package org.gycoding.accounts.infrastructure.api;
 
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.auth.AuthRepository;
+import org.gycoding.accounts.application.service.auth.MetadataRepository;
 import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
 import org.gycoding.accounts.domain.entities.metadata.UserMetadata;
 import org.gycoding.accounts.infrastructure.dto.UserRQDTO;
+import org.gycoding.accounts.infrastructure.dto.UsernameRQDTO;
 import org.gycoding.accounts.infrastructure.dto.metadata.MetadataRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
@@ -20,7 +22,7 @@ public class AccountsController {
     @Autowired
     private AuthRepository authService = null;
     @Autowired
-    private AuthFacade authFacade = null;
+    private MetadataRepository metadataService = null;
 
     @PostMapping("/login")
 	public ResponseEntity<?> login(@Valid @RequestBody UserRQDTO body) throws APIException {
@@ -44,28 +46,18 @@ public class AccountsController {
         return ResponseEntity.ok(authService.handleGoogleResponse(code));
     }
 
-    @PutMapping("/metadata/refresh")
-    public ResponseEntity<?> refreshMetadata(@RequestHeader String userId) throws APIException {
-        authService.refreshMetadata(userId);
+    @PutMapping("/metadata/setup")
+    public ResponseEntity<?> setupMetadata(@RequestHeader String userId) throws APIException {
+        metadataService.setupMetadata(userId);
 
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/metadata/set")
-    public ResponseEntity<?> setMetadata(
-            @RequestHeader String userId,
-            @RequestBody MetadataRQDTO body
+    @PostMapping("/metadata/usernames/save")
+    public ResponseEntity<?> saveUsername(
+            @RequestBody UsernameRQDTO body,
+            @RequestHeader String userId
     ) throws APIException {
-        var userMetadata = UserMetadata.builder()
-                .username(body.username() != null ? body.username() : "null")
-                .image(body.image() != null ? body.image() : "null")
-                .roles(body.roles() != null ? body.roles() : List.of(GYCODINGRoles.COMMON))
-                .gyMessagesMetadata(body.gyMessages())
-                .gyClientMetadata(body.gyClient())
-                .build();
-
-        authService.setMetadata(userId, userMetadata);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(metadataService.saveUsername(userId, body.username()).toString());
     }
 }

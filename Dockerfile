@@ -1,4 +1,4 @@
-# Use a base image with Java and Maven installed
+# Use a base picture with Java and Maven installed
 FROM maven:3.8.4-openjdk-17-slim AS build
 
 # Set the working directory
@@ -54,7 +54,7 @@ COPY src ./src
 # Build the application
 RUN mvn package -DskipTests
 
-# Use a lightweight base image with Java installed
+# Use a lightweight base picture with Java installed
 FROM openjdk:17-jdk-slim
 
 # Set the working directory
