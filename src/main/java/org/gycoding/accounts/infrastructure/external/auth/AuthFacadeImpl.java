@@ -127,7 +127,6 @@ public class AuthFacadeImpl implements AuthFacade {
         final var metadata = this.getMetadata(userId);
 
         return GYClientMetadata.builder()
-                .username((String) ((HashMap<String, Object>) metadata.get("gyClient")).get("username"))
                 .title((String) ((HashMap<String, Object>) metadata.get("gyClient")).get("title"))
                 .friends((List<FriendsMetadata>) ((HashMap<String, Object>) metadata.get("gyClient")).get("friends"))
                 .build();
