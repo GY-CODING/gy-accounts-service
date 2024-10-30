@@ -27,14 +27,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthService implements AuthRepository {
     @Autowired
     private AuthFacade authFacade = null;
-
-    @Autowired
-    private ClientRepository clientRepository = null;
 
     @Autowired
     private UsernameMongoService usernameMongoService = null;
@@ -99,7 +97,21 @@ public class AuthService implements AuthRepository {
                             .build()
             );
 
-            authFacade.updatePicture(userId, GY_ACCOUNTS_PICTURE_URL + userId);
+            this.updateMetadata(userId,
+                    Optional.of(
+                            UserMetadata.builder()
+                                    .picture(GY_ACCOUNTS_PICTURE_URL + userId)
+                                    .roles(List.of(GYCODINGRoles.COMMON))
+                                    .gyMessagesMetadata(GYMessagesMetadata.builder()
+                                            .chats(List.of())
+                                            .build())
+                                    .gyClientMetadata(GYClientMetadata.builder()
+                                            .title("null")
+                                            .friends(List.of())
+                                            .build())
+                                    .build()
+                    )
+            );
 
             return savedPicture;
         } catch(Exception e) {
@@ -186,6 +198,54 @@ public class AuthService implements AuthRepository {
                     AccountsAPIError.AUTH_ERROR.getCode(),
                     AccountsAPIError.AUTH_ERROR.getMessage(),
                     AccountsAPIError.AUTH_ERROR.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public void updateMetadata(String userId, Optional<UserMetadata> metadata) throws APIException {
+        try {
+            final var oldMetadata = authFacade.getMetadata(userId);
+            UserMetadata newMetadata = null;
+
+            var defaultGYMessagesMetadata = GYMessagesMetadata.builder()
+                    .chats(List.of())
+                    .build();
+
+            var defaultGYClientMetadata = GYClientMetadata.builder()
+                    .title("null")
+                    .friends(List.of())
+                    .build();
+
+            newMetadata = metadata.orElseGet(() ->
+                    UserMetadata.builder()
+                            .roles(List.of(GYCODINGRoles.COMMON))
+                            .gyMessagesMetadata(defaultGYMessagesMetadata)
+                            .gyClientMetadata(defaultGYClientMetadata)
+                            .build()
+            );
+
+            if(oldMetadata != null) {
+                newMetadata.setPicture((String) oldMetadata.getOrDefault("picture", authFacade.getDefaultPicture(userId)));
+                newMetadata.setRoles((List<GYCODINGRoles>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON)));
+                newMetadata.setGyMessagesMetadata(
+                        GYMessagesMetadata.builder()
+                                .chats((List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).getOrDefault("chats", newMetadata.getGyMessagesMetadata().chats()))
+                                .build()
+                );
+                newMetadata.setGyClientMetadata(
+                        GYClientMetadata.builder()
+                                .title((String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).getOrDefault("title", newMetadata.getGyClientMetadata().title()))
+                                .friends((List<FriendsMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyClient")).getOrDefault("friends", newMetadata.getGyClientMetadata().friends()))
+                                .build());
+            }
+
+            authFacade.setMetadata(userId, newMetadata.toMap(), Boolean.TRUE);
+        } catch(Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
+                    AccountsAPIError.METADATA_NOT_UPDATED.getMessage(),
+                    AccountsAPIError.METADATA_NOT_UPDATED.getStatus()
             );
         }
     }

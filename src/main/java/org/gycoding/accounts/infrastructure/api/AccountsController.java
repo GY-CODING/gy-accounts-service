@@ -2,12 +2,8 @@ package org.gycoding.accounts.infrastructure.api;
 
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.auth.AuthRepository;
-import org.gycoding.accounts.application.service.auth.MetadataRepository;
-import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
-import org.gycoding.accounts.domain.entities.metadata.UserMetadata;
 import org.gycoding.accounts.infrastructure.dto.UserRQDTO;
 import org.gycoding.accounts.infrastructure.dto.UsernameRQDTO;
-import org.gycoding.accounts.infrastructure.dto.metadata.MetadataRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -29,9 +23,6 @@ public class AccountsController {
 
     @Autowired
     private AuthRepository authService = null;
-
-    @Autowired
-    private MetadataRepository metadataService = null;
 
     @PostMapping("/login")
 	public ResponseEntity<?> login(@Valid @RequestBody UserRQDTO body) throws APIException {
@@ -93,7 +84,7 @@ public class AccountsController {
 
     @PutMapping("/update/metadata")
     public ResponseEntity<?> updateMetadata(@RequestHeader String userId) throws APIException {
-        metadataService.updateMetadata(userId);
+        authService.updateMetadata(userId, Optional.empty());
 
         return ResponseEntity.noContent().build();
     }

@@ -10,6 +10,8 @@ import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetad
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 public interface AuthRepository {
     TokenHolder login(String email, String password) throws APIException;
     CreatedUser signUp(String email, String username, String password) throws APIException;
@@ -22,4 +24,6 @@ public interface AuthRepository {
 
     String googleAuth() throws APIException;
     TokenHolder handleGoogleResponse(String code) throws APIException;
+
+    void updateMetadata(String userId, Optional<UserMetadata> metadata) throws APIException;
 }
