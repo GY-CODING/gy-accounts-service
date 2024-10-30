@@ -10,6 +10,8 @@ import org.gycoding.exceptions.model.APIException;
 public interface AuthRepository {
     TokenHolder login(String email, String password) throws APIException;
     CreatedUser signUp(String email, String username, String password) throws APIException;
+    void updateEmail(String userId, String newEmail) throws APIException;
+    void updatePassword(String userId, String newPassword) throws APIException;
     String googleAuth() throws APIException;
     TokenHolder handleGoogleResponse(String code) throws APIException;
 }

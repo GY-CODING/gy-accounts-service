@@ -19,12 +19,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
 public class AccountsController {
     @Autowired
+    private AuthFacade authFacade = null;
+
+    @Autowired
     private AuthRepository authService = null;
+
     @Autowired
     private MetadataRepository metadataService = null;
 
@@ -50,38 +55,58 @@ public class AccountsController {
         return ResponseEntity.ok(authService.handleGoogleResponse(code));
     }
 
-    @PutMapping("/metadata/setup")
-    public ResponseEntity<?> setupMetadata(@RequestHeader String userId) throws APIException {
-        metadataService.setupMetadata(userId);
+    @PostMapping("/update/username")
+    public ResponseEntity<?> updateUsername(
+            @RequestBody UsernameRQDTO body,
+            @RequestHeader String userId
+    ) throws APIException {
+        return ResponseEntity.ok(metadataService.updateUsername(userId, body.username()).toString());
+    }
+
+    @PutMapping("/update/email")
+    public ResponseEntity<?> updateEmail(
+            @Valid @RequestBody String newEmail,
+            @RequestHeader String token
+    ) throws APIException {
+        authService.updateEmail(authFacade.decode(token), newEmail);
 
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/usernames/save")
-    public ResponseEntity<?> saveUsername(
-            @RequestBody UsernameRQDTO body,
-            @RequestHeader String userId
+    @PutMapping("/update/password")
+    public ResponseEntity<?> updatePassword(
+            @Valid @RequestBody String newPassword,
+            @RequestHeader String token
     ) throws APIException {
-        return ResponseEntity.ok(metadataService.saveUsername(userId, body.username()).toString());
+        authService.updatePassword(authFacade.decode(token), newPassword);
+
+        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/pictures/save")
-    public ResponseEntity<?> savePicture(
+    @PostMapping("/update/picture")
+    public ResponseEntity<?> updatePicture(
             @RequestBody MultipartFile picture,
             @RequestHeader String userId
     ) throws APIException {
         if(picture.isEmpty()) {
-            return ResponseEntity.ok(metadataService.savePicture(userId).toString());
+            return ResponseEntity.ok(metadataService.updatePicture(userId).toString());
         }
 
-        return ResponseEntity.ok(metadataService.savePicture(userId, picture).toString());
+        return ResponseEntity.ok(metadataService.updatePicture(userId, picture).toString());
     }
 
-    @GetMapping("/pictures/get")
+    @PutMapping("/update/metadata")
+    public ResponseEntity<?> updateMetadata(@RequestHeader String userId) throws APIException {
+        metadataService.updateMetadata(userId, Optional.empty());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/get/picture")
     public ResponseEntity<?> getPicture(
-            @RequestHeader String userId
+            @RequestHeader String token
     ) throws APIException {
-        final var picture = metadataService.getPicture(userId);
+        final var picture = metadataService.getPicture(authFacade.decode(token));
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(picture.contentType()))

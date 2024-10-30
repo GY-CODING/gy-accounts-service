@@ -101,6 +101,22 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
+    public void updateEmail(String userId, String newEmail) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var user = managementAPI.users().get(userId, null).execute();
+
+        user.setEmail(newEmail);
+    }
+
+    @Override
+    public void updatePassword(String userId, String newPassword) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var user = managementAPI.users().get(userId, null).execute();
+
+        user.setPassword(newPassword);
+    }
+
+    @Override
     public Map<String, Object> getMetadata(String userId) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
         User user               = managementAPI.users().get(userId, null).execute();

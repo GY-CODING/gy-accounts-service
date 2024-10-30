@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MetadataService implements MetadataRepository {
@@ -41,7 +42,7 @@ public class MetadataService implements MetadataRepository {
     private String DEFAULT_PICTURE_URL;
 
     @Override
-    public EntityUsername saveUsername(String userID, String username) throws APIException {
+    public EntityUsername updateUsername(String userId, String username) throws APIException {
         int usernameCount = 0;
         String originalUsername = username;
 
@@ -51,15 +52,38 @@ public class MetadataService implements MetadataRepository {
         }
 
         final var entityUsername = EntityUsername.builder()
-                .userId(userID)
+                .userId(userId)
                 .username(username)
                 .build();
 
-        return usernameMongoService.save(entityUsername);
+        final var savedUsername = usernameMongoService.save(entityUsername);
+
+        this.updateMetadata(
+                userId,
+                Optional.of(
+                        UserMetadata.builder()
+                                .username(savedUsername.username())
+                                .roles(List.of(GYCODINGRoles.COMMON))
+                                .gyClientMetadata(
+                                        GYClientMetadata.builder()
+                                                .title("null")
+                                                .friends(List.of())
+                                                .build()
+                                )
+                                .gyMessagesMetadata(
+                                        GYMessagesMetadata.builder()
+                                                .chats(List.of())
+                                                .build()
+                                )
+                                .build()
+                )
+        );
+
+        return savedUsername;
     }
 
     @Override
-    public EntityPicture savePicture(String userId) throws APIException {
+    public EntityPicture updatePicture(String userId) throws APIException {
         userId = userId.replace("google-oauth2|", "");
         userId = userId.replace("auth0|", "");
 
@@ -83,7 +107,7 @@ public class MetadataService implements MetadataRepository {
     }
 
     @Override
-    public EntityPicture savePicture(String userId, MultipartFile picture) throws APIException {
+    public EntityPicture updatePicture(String userId, MultipartFile picture) throws APIException {
         userId = userId.replace("google-oauth2|", "");
         userId = userId.replace("auth0|", "");
 
@@ -122,9 +146,10 @@ public class MetadataService implements MetadataRepository {
     }
 
     @Override
-    public void setupMetadata(String userId) throws APIException {
+    public void updateMetadata(String userId, Optional<UserMetadata> metadata) throws APIException {
         try {
             final var oldMetadata = authFacade.getMetadata(userId);
+            UserMetadata newMetadata = null;
 
             var defaultGYMessagesMetadata = GYMessagesMetadata.builder()
                     .chats(List.of())
@@ -135,12 +160,14 @@ public class MetadataService implements MetadataRepository {
                     .friends(List.of())
                     .build();
 
-            var newMetadata = UserMetadata.builder()
+            newMetadata = metadata.orElseGet(() -> UserMetadata.builder()
                     .username("null")
                     .roles(List.of(GYCODINGRoles.COMMON))
                     .gyMessagesMetadata(defaultGYMessagesMetadata)
                     .gyClientMetadata(defaultGYClientMetadata)
-                    .build();
+                    .build());
+
+
 
             if(oldMetadata != null) {
                 newMetadata.setUsername(oldMetadata.getOrDefault("username", newMetadata.getUsername()).toString());

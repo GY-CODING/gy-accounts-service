@@ -41,6 +41,32 @@ public class AuthService implements AuthRepository {
     }
 
     @Override
+    public void updateEmail(String userId, String newEmail) throws APIException {
+        try {
+            authFacade.updateEmail(userId, newEmail);
+        } catch(Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.COULD_NOT_UPDATE_EMAIL.getCode(),
+                    AccountsAPIError.COULD_NOT_UPDATE_EMAIL.getMessage(),
+                    AccountsAPIError.COULD_NOT_UPDATE_EMAIL.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public void updatePassword(String userId, String newPassword) throws APIException {
+        try {
+            authFacade.updatePassword(userId, newPassword);
+        } catch(Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.COULD_NOT_UPDATE_PASSWORD.getCode(),
+                    AccountsAPIError.COULD_NOT_UPDATE_PASSWORD.getMessage(),
+                    AccountsAPIError.COULD_NOT_UPDATE_PASSWORD.getStatus()
+            );
+        }
+    }
+
+    @Override
     public CreatedUser signUp(String email, String username, String password) throws APIException {
         try {
             return authFacade.signUp(email, username, password);

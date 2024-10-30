@@ -16,6 +16,9 @@ public interface AuthFacade {
     TokenHolder login(String email, String password) throws Auth0Exception;
     CreatedUser signUp(String email, String username, String password) throws Auth0Exception;
 
+    void updateEmail(String userId, String newEmail) throws Auth0Exception;
+    void updatePassword(String userId, String newPassword) throws Auth0Exception;
+
     String googleAuth();
     TokenHolder handleGoogleResponse(String code) throws Auth0Exception;
 
