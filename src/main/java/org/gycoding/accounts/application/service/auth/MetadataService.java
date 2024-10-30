@@ -1,6 +1,8 @@
 package org.gycoding.accounts.application.service.auth;
 
 import com.auth0.exception.Auth0Exception;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.gycoding.accounts.domain.entities.database.EntityPicture;
 import org.gycoding.accounts.domain.entities.database.EntityUsername;
 import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
@@ -9,6 +11,7 @@ import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.ChatMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetadata;
+import org.gycoding.accounts.domain.entities.model.auth.MultipartFileImpl;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.database.service.PictureMongoService;
@@ -16,6 +19,7 @@ import org.gycoding.accounts.infrastructure.external.database.service.UsernameMo
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,13 +31,14 @@ public class MetadataService implements MetadataRepository {
     @Autowired
     private AuthFacade authFacade = null;
 
-    private final UnirestFacade unirestFacade = new UnirestFacade();
-
     @Autowired
     private UsernameMongoService usernameMongoService = null;
 
     @Autowired
     private PictureMongoService pictureMongoService = null;
+
+    @Value("${gy.accounts.defaultpicture.url}")
+    private String DEFAULT_PICTURE_URL;
 
     @Override
     public EntityUsername saveUsername(String userID, String username) throws APIException {
@@ -55,10 +60,19 @@ public class MetadataService implements MetadataRepository {
 
     @Override
     public EntityPicture savePicture(String userId) throws APIException {
+        userId = userId.replace("google-oauth2|", "");
+        userId = userId.replace("auth0|", "");
+
+        final Double randomCount = Math.random() * 354;
+
         try {
-            final var pictureContent = unirestFacade.get("https://raw.githubusercontent.com/GY-CODING/img-repo/refs/heads/main/gy-accounts/default-profile-pictures/dddepth-001.jpg").getBody();
-            final MultipartFile picture = null;
-            return pictureMongoService.save(userId, picture);
+            return pictureMongoService.save(
+                    EntityPicture.builder()
+                            .name(userId + "-pfp")
+                            .contentType("image/jpg")
+                            .picture(new Binary(BsonBinarySubType.BINARY, UnirestFacade.get(String.format(DEFAULT_PICTURE_URL, randomCount.intValue())).getBody().getBytes()))
+                            .build()
+            );
         } catch(Exception e) {
             throw new APIException(
                     AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
@@ -70,8 +84,17 @@ public class MetadataService implements MetadataRepository {
 
     @Override
     public EntityPicture savePicture(String userId, MultipartFile picture) throws APIException {
+        userId = userId.replace("google-oauth2|", "");
+        userId = userId.replace("auth0|", "");
+
         try {
-            return pictureMongoService.save(userId, picture);
+            return pictureMongoService.save(
+                    EntityPicture.builder()
+                            .name(userId + "-pfp")
+                            .contentType(picture.getContentType())
+                            .picture(new Binary(BsonBinarySubType.BINARY, picture.getBytes()))
+                            .build()
+            );
         } catch(Exception e) {
             throw new APIException(
                     AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
@@ -83,9 +106,13 @@ public class MetadataService implements MetadataRepository {
 
     @Override
     public EntityPicture getPicture(String userId) throws APIException {
+        userId = userId.replace("google-oauth2|", "");
+        userId = userId.replace("auth0|", "");
+
         try {
-            return pictureMongoService.getPicture(userId);
+            return pictureMongoService.getPicture(userId + "-pfp");
         } catch(Exception e) {
+            System.out.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.PICTURE_NOT_FOUND.getCode(),
                     AccountsAPIError.PICTURE_NOT_FOUND.getMessage(),
@@ -110,7 +137,6 @@ public class MetadataService implements MetadataRepository {
 
             var newMetadata = UserMetadata.builder()
                     .username("null")
-                    .picture("https://api.gycoding.com/accounts/auth/pictures/get?userId=" + userId)
                     .roles(List.of(GYCODINGRoles.COMMON))
                     .gyMessagesMetadata(defaultGYMessagesMetadata)
                     .gyClientMetadata(defaultGYClientMetadata)

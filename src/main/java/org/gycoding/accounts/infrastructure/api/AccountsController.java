@@ -70,6 +70,10 @@ public class AccountsController {
             @RequestBody MultipartFile picture,
             @RequestHeader String userId
     ) throws APIException {
+        if(picture.isEmpty()) {
+            return ResponseEntity.ok(metadataService.savePicture(userId).toString());
+        }
+
         return ResponseEntity.ok(metadataService.savePicture(userId, picture).toString());
     }
 
