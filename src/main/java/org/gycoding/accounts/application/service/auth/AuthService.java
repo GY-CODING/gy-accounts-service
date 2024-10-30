@@ -89,30 +89,6 @@ public class AuthService implements AuthRepository {
     }
 
     @Override
-    public EntityPicture updatePicture(String userId) throws APIException {
-        userId = userId.replace("google-oauth2|", "");
-        userId = userId.replace("auth0|", "");
-
-        final Double randomCount = Math.random() * 354;
-
-        try {
-            return pictureMongoService.save(
-                    EntityPicture.builder()
-                            .name(userId + "-pfp")
-                            .contentType("image/jpg")
-                            .picture(new Binary(BsonBinarySubType.BINARY, UnirestFacade.get(String.format(DEFAULT_PICTURE_URL, randomCount.intValue())).getBody().getBytes()))
-                            .build()
-            );
-        } catch(Exception e) {
-            throw new APIException(
-                    AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
-                    AccountsAPIError.PICTURE_NOT_SAVED.getMessage(),
-                    AccountsAPIError.PICTURE_NOT_SAVED.getStatus()
-            );
-        }
-    }
-
-    @Override
     public EntityPicture updatePicture(String userId, MultipartFile picture) throws APIException {
         userId = userId.replace("google-oauth2|", "");
         userId = userId.replace("auth0|", "");

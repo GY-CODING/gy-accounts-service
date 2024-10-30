@@ -88,10 +88,6 @@ public class AccountsController {
             @RequestBody MultipartFile picture,
             @RequestHeader String userId
     ) throws APIException {
-        if(picture.isEmpty()) {
-            return ResponseEntity.ok(authService.updatePicture(userId).toString());
-        }
-
         return ResponseEntity.ok(authService.updatePicture(userId, picture).toString());
     }
 

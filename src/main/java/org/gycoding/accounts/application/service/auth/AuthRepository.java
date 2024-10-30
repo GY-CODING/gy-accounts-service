@@ -17,7 +17,6 @@ public interface AuthRepository {
     EntityUsername updateUsername(String userId, String username) throws APIException;
     void updateEmail(String userId, String email) throws APIException;
     void updatePassword(String userId, String password) throws APIException;
-    EntityPicture updatePicture(String userId) throws APIException;
     EntityPicture updatePicture(String userId, MultipartFile picture) throws APIException;
     EntityPicture getPicture(String userId) throws APIException;
 
