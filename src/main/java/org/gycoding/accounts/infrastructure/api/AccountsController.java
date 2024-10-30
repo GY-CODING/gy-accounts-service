@@ -75,7 +75,7 @@ public class AccountsController {
 
     @GetMapping("/pictures/get")
     public ResponseEntity<?> getPicture(
-            @RequestParam("name") String userId
+            @RequestHeader String userId
     ) throws APIException {
         final var picture = metadataService.getPicture(userId);
 
