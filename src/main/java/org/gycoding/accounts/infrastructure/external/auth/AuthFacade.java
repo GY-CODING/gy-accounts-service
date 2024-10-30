@@ -19,6 +19,7 @@ public interface AuthFacade {
     void updateUsername(String userId, String newUsername) throws Auth0Exception;
     void updateEmail(String userId, String newEmail) throws Auth0Exception;
     void updatePassword(String userId, String newPassword) throws Auth0Exception;
+    void updatePicture(String userId, String newPictureURL) throws Auth0Exception;
 
     String googleAuth();
     TokenHolder handleGoogleResponse(String code) throws Auth0Exception;

@@ -98,11 +98,11 @@ public class AccountsController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/get/picture")
+    @GetMapping("/get/picture/{userId}")
     public ResponseEntity<?> getPicture(
-            @RequestHeader String token
+            @PathVariable String userId
     ) throws APIException {
-        final var picture = authService.getPicture(authFacade.decode(token));
+        final var picture = authService.getPicture(userId);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(picture.contentType()))

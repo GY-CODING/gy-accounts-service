@@ -42,8 +42,8 @@ public class AuthService implements AuthRepository {
     @Autowired
     private PictureMongoService pictureMongoService = null;
 
-    @Value("${gy.accounts.defaultpicture.url}")
-    private String DEFAULT_PICTURE_URL;
+    @Value("${gy.accounts.picture.url}")
+    private String GY_ACCOUNTS_PICTURE_URL;
 
     @Override
     public TokenHolder login(String email, String password) throws APIException {
@@ -90,17 +90,18 @@ public class AuthService implements AuthRepository {
 
     @Override
     public EntityPicture updatePicture(String userId, MultipartFile picture) throws APIException {
-        userId = userId.replace("google-oauth2|", "");
-        userId = userId.replace("auth0|", "");
-
         try {
-            return pictureMongoService.save(
+            final var savedPicture = pictureMongoService.save(
                     EntityPicture.builder()
                             .name(userId + "-pfp")
                             .contentType(picture.getContentType())
                             .picture(new Binary(BsonBinarySubType.BINARY, picture.getBytes()))
                             .build()
             );
+
+            authFacade.updatePicture(userId, GY_ACCOUNTS_PICTURE_URL + userId);
+
+            return savedPicture;
         } catch(Exception e) {
             throw new APIException(
                     AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
@@ -112,9 +113,6 @@ public class AuthService implements AuthRepository {
 
     @Override
     public EntityPicture getPicture(String userId) throws APIException {
-        userId = userId.replace("google-oauth2|", "");
-        userId = userId.replace("auth0|", "");
-
         try {
             return pictureMongoService.getPicture(userId + "-pfp");
         } catch(Exception e) {
