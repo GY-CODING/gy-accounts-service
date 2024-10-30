@@ -52,11 +52,10 @@ public class MetadataService implements MetadataRepository {
     }
 
     @Override
-    public EntityPicture savePicture(MultipartFile picture) throws APIException {
+    public EntityPicture savePicture(String userId, MultipartFile picture) throws APIException {
         try {
-            return pictureMongoService.save(picture);
+            return pictureMongoService.save(userId, picture);
         } catch(Exception e) {
-            System.out.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
                     AccountsAPIError.PICTURE_NOT_SAVED.getMessage(),
@@ -66,11 +65,10 @@ public class MetadataService implements MetadataRepository {
     }
 
     @Override
-    public EntityPicture getPicture(String pictureName) throws APIException {
+    public EntityPicture getPicture(String userId) throws APIException {
         try {
-            return pictureMongoService.getPicture(pictureName);
+            return pictureMongoService.getPicture(userId);
         } catch(Exception e) {
-            System.out.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.PICTURE_NOT_FOUND.getCode(),
                     AccountsAPIError.PICTURE_NOT_FOUND.getMessage(),

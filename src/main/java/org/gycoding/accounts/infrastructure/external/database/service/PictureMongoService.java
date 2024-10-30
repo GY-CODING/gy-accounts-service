@@ -15,17 +15,20 @@ public class PictureMongoService {
     @Autowired
     private PictureMongoRepository pictureMongoRepository;
 
-    public EntityPicture save(MultipartFile picture) throws IOException {
+    public EntityPicture save(String userId, MultipartFile picture) throws IOException {
+        userId = userId.replace("google-oauth2|", "");
+        userId = userId.replace("auth0|", "");
+
         return pictureMongoRepository.insert(
                 EntityPicture.builder()
-                        .name(picture.getOriginalFilename())
+                        .name(userId + "-pfp")
                         .contentType(picture.getContentType())
                         .picture(new Binary(BsonBinarySubType.BINARY, picture.getBytes()))
                 .build()
         );
     }
 
-    public EntityPicture getPicture(String id) {
-        return pictureMongoRepository.findByName(id);
+    public EntityPicture getPicture(String userId) {
+        return pictureMongoRepository.findByName(userId + "-pfp");
     }
 }

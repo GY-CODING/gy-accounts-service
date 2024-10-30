@@ -67,16 +67,17 @@ public class AccountsController {
 
     @PostMapping("/pictures/save")
     public ResponseEntity<?> savePicture(
-            @RequestBody MultipartFile picture
+            @RequestBody MultipartFile picture,
+            @RequestHeader String userId
     ) throws APIException {
-        return ResponseEntity.ok(metadataService.savePicture(picture).toString());
+        return ResponseEntity.ok(metadataService.savePicture(userId, picture).toString());
     }
 
     @GetMapping("/pictures/get")
     public ResponseEntity<?> getPicture(
-            @RequestParam("name") String pictureName
+            @RequestParam("name") String userId
     ) throws APIException {
-        final var picture = metadataService.getPicture(pictureName);
+        final var picture = metadataService.getPicture(userId);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(picture.contentType()))
