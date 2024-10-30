@@ -29,6 +29,9 @@ public class PictureMongoService {
     }
 
     public EntityPicture getPicture(String userId) {
+        userId = userId.replace("google-oauth2|", "");
+        userId = userId.replace("auth0|", "");
+
         return pictureMongoRepository.findByName(userId + "-pfp");
     }
 }
