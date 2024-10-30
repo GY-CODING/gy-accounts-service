@@ -105,7 +105,7 @@ public class AuthFacadeImpl implements AuthFacade {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
         final var user = managementAPI.users().get(userId, null).execute();
 
-        user.setName(newUsername);
+        user.setUsername(newUsername);
     }
 
     @Override
