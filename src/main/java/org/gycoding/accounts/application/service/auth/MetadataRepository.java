@@ -9,9 +9,5 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Optional;
 
 public interface MetadataRepository {
-    EntityUsername updateUsername(String userId, String username) throws APIException;
-    EntityPicture updatePicture(String userId) throws APIException;
-    EntityPicture updatePicture(String userId, MultipartFile picture) throws APIException;
-    EntityPicture getPicture(String userId) throws APIException;
-    void updateMetadata(String token, Optional<UserMetadata> metadata) throws APIException;
+    void updateMetadata(String token) throws APIException;
 }

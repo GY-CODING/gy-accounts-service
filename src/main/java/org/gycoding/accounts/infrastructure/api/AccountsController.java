@@ -60,7 +60,7 @@ public class AccountsController {
             @RequestBody UsernameRQDTO body,
             @RequestHeader String userId
     ) throws APIException {
-        return ResponseEntity.ok(metadataService.updateUsername(userId, body.username()).toString());
+        return ResponseEntity.ok(authService.updateUsername(userId, body.username()).toString());
     }
 
     @PutMapping("/update/email")
@@ -89,15 +89,15 @@ public class AccountsController {
             @RequestHeader String userId
     ) throws APIException {
         if(picture.isEmpty()) {
-            return ResponseEntity.ok(metadataService.updatePicture(userId).toString());
+            return ResponseEntity.ok(authService.updatePicture(userId).toString());
         }
 
-        return ResponseEntity.ok(metadataService.updatePicture(userId, picture).toString());
+        return ResponseEntity.ok(authService.updatePicture(userId, picture).toString());
     }
 
     @PutMapping("/update/metadata")
     public ResponseEntity<?> updateMetadata(@RequestHeader String userId) throws APIException {
-        metadataService.updateMetadata(userId, Optional.empty());
+        metadataService.updateMetadata(userId);
 
         return ResponseEntity.noContent().build();
     }
@@ -106,7 +106,7 @@ public class AccountsController {
     public ResponseEntity<?> getPicture(
             @RequestHeader String token
     ) throws APIException {
-        final var picture = metadataService.getPicture(authFacade.decode(token));
+        final var picture = authService.getPicture(authFacade.decode(token));
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(picture.contentType()))

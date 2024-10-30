@@ -32,124 +32,10 @@ public class MetadataService implements MetadataRepository {
     @Autowired
     private AuthFacade authFacade = null;
 
-    @Autowired
-    private UsernameMongoService usernameMongoService = null;
-
-    @Autowired
-    private PictureMongoService pictureMongoService = null;
-
-    @Value("${gy.accounts.defaultpicture.url}")
-    private String DEFAULT_PICTURE_URL;
-
     @Override
-    public EntityUsername updateUsername(String userId, String username) throws APIException {
-        int usernameCount = 0;
-        String originalUsername = username;
-
-        while(usernameMongoService.existsByUsername(username)) {
-            usernameCount++;
-            username = originalUsername + usernameCount;
-        }
-
-        final var entityUsername = EntityUsername.builder()
-                .userId(userId)
-                .username(username)
-                .build();
-
-        final var savedUsername = usernameMongoService.save(entityUsername);
-
-        this.updateMetadata(
-                userId,
-                Optional.of(
-                        UserMetadata.builder()
-                                .username(savedUsername.username())
-                                .roles(List.of(GYCODINGRoles.COMMON))
-                                .gyClientMetadata(
-                                        GYClientMetadata.builder()
-                                                .title("null")
-                                                .friends(List.of())
-                                                .build()
-                                )
-                                .gyMessagesMetadata(
-                                        GYMessagesMetadata.builder()
-                                                .chats(List.of())
-                                                .build()
-                                )
-                                .build()
-                )
-        );
-
-        return savedUsername;
-    }
-
-    @Override
-    public EntityPicture updatePicture(String userId) throws APIException {
-        userId = userId.replace("google-oauth2|", "");
-        userId = userId.replace("auth0|", "");
-
-        final Double randomCount = Math.random() * 354;
-
-        try {
-            return pictureMongoService.save(
-                    EntityPicture.builder()
-                            .name(userId + "-pfp")
-                            .contentType("image/jpg")
-                            .picture(new Binary(BsonBinarySubType.BINARY, UnirestFacade.get(String.format(DEFAULT_PICTURE_URL, randomCount.intValue())).getBody().getBytes()))
-                            .build()
-            );
-        } catch(Exception e) {
-            throw new APIException(
-                    AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
-                    AccountsAPIError.PICTURE_NOT_SAVED.getMessage(),
-                    AccountsAPIError.PICTURE_NOT_SAVED.getStatus()
-            );
-        }
-    }
-
-    @Override
-    public EntityPicture updatePicture(String userId, MultipartFile picture) throws APIException {
-        userId = userId.replace("google-oauth2|", "");
-        userId = userId.replace("auth0|", "");
-
-        try {
-            return pictureMongoService.save(
-                    EntityPicture.builder()
-                            .name(userId + "-pfp")
-                            .contentType(picture.getContentType())
-                            .picture(new Binary(BsonBinarySubType.BINARY, picture.getBytes()))
-                            .build()
-            );
-        } catch(Exception e) {
-            throw new APIException(
-                    AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
-                    AccountsAPIError.PICTURE_NOT_SAVED.getMessage(),
-                    AccountsAPIError.PICTURE_NOT_SAVED.getStatus()
-            );
-        }
-    }
-
-    @Override
-    public EntityPicture getPicture(String userId) throws APIException {
-        userId = userId.replace("google-oauth2|", "");
-        userId = userId.replace("auth0|", "");
-
-        try {
-            return pictureMongoService.getPicture(userId + "-pfp");
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-            throw new APIException(
-                    AccountsAPIError.PICTURE_NOT_FOUND.getCode(),
-                    AccountsAPIError.PICTURE_NOT_FOUND.getMessage(),
-                    AccountsAPIError.PICTURE_NOT_FOUND.getStatus()
-            );
-        }
-    }
-
-    @Override
-    public void updateMetadata(String userId, Optional<UserMetadata> metadata) throws APIException {
+    public void updateMetadata(String userId) throws APIException {
         try {
             final var oldMetadata = authFacade.getMetadata(userId);
-            UserMetadata newMetadata = null;
 
             var defaultGYMessagesMetadata = GYMessagesMetadata.builder()
                     .chats(List.of())
@@ -160,17 +46,13 @@ public class MetadataService implements MetadataRepository {
                     .friends(List.of())
                     .build();
 
-            newMetadata = metadata.orElseGet(() -> UserMetadata.builder()
-                    .username("null")
+            var newMetadata = UserMetadata.builder()
                     .roles(List.of(GYCODINGRoles.COMMON))
                     .gyMessagesMetadata(defaultGYMessagesMetadata)
                     .gyClientMetadata(defaultGYClientMetadata)
-                    .build());
-
-
+                    .build();
 
             if(oldMetadata != null) {
-                newMetadata.setUsername(oldMetadata.getOrDefault("username", newMetadata.getUsername()).toString());
                 newMetadata.setRoles((List<GYCODINGRoles>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON)));
                 newMetadata.setGyMessagesMetadata(
                         GYMessagesMetadata.builder()

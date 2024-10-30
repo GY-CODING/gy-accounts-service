@@ -16,6 +16,7 @@ public interface AuthFacade {
     TokenHolder login(String email, String password) throws Auth0Exception;
     CreatedUser signUp(String email, String username, String password) throws Auth0Exception;
 
+    void updateUsername(String userId, String newUsername) throws Auth0Exception;
     void updateEmail(String userId, String newEmail) throws Auth0Exception;
     void updatePassword(String userId, String newPassword) throws Auth0Exception;
 

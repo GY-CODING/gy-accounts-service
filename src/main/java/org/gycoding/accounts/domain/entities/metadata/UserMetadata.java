@@ -13,14 +13,12 @@ import java.util.Map;
 @Setter
 @Getter
 public class UserMetadata {
-    private String username;
     private List<GYCODINGRoles> roles;
     private GYClientMetadata gyClientMetadata;
     private GYMessagesMetadata gyMessagesMetadata;
 
     public Map<String, Object> toMap() {
         return Map.of(
-                "username", username,
                 "roles", roles,
                 "gyClient", gyClientMetadata,
                 "gyMessages", gyMessagesMetadata

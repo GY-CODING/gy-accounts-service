@@ -11,6 +11,8 @@ public enum AccountsAPIError {
     INVALID_SIGNUP("SignUp procedure went wrong. Possible causes could be the user already exists or an internal error from the authentication service.", HttpStatus.CONFLICT),
     INVALID_LOGIN("LogIn procedure went wrong. Possible causes could be invalid credentials provided when trying to log in or an internal error from the authentication service.", HttpStatus.UNAUTHORIZED),
 
+    USERNAME_NOT_SAVED("The username could not be saved due to an authentication service error.", HttpStatus.CONFLICT),
+
     PICTURE_NOT_SAVED("The user's picture could not be saved due to an input error.", HttpStatus.CONFLICT),
     PICTURE_NOT_FOUND("The user's picture could not be found.", HttpStatus.NOT_FOUND),
 
