@@ -55,12 +55,12 @@ public class AccountsController {
         return ResponseEntity.ok(authService.handleGoogleResponse(code));
     }
 
-    @PostMapping("/update/username")
+    @PutMapping("/update/username")
     public ResponseEntity<?> updateUsername(
             @RequestBody UsernameRQDTO body,
-            @RequestHeader String userId
+            @RequestHeader String token
     ) throws APIException {
-        return ResponseEntity.ok(authService.updateUsername(userId, body.username()).toString());
+        return ResponseEntity.ok(authService.updateUsername(authFacade.decode(token), body.username()).toString());
     }
 
     @PutMapping("/update/email")
@@ -83,12 +83,12 @@ public class AccountsController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/update/picture")
+    @PutMapping("/update/picture")
     public ResponseEntity<?> updatePicture(
             @RequestBody MultipartFile picture,
-            @RequestHeader String userId
+            @RequestHeader String token
     ) throws APIException {
-        return ResponseEntity.ok(authService.updatePicture(userId, picture).toString());
+        return ResponseEntity.ok(authService.updatePicture(authFacade.decode(token), picture).toString());
     }
 
     @PutMapping("/update/metadata")
