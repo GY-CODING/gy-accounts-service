@@ -1,7 +1,6 @@
 package org.gycoding.accounts.application.service.auth;
 
 import com.auth0.exception.Auth0Exception;
-import org.bson.types.ObjectId;
 import org.gycoding.accounts.domain.entities.database.EntityPicture;
 import org.gycoding.accounts.domain.entities.database.EntityUsername;
 import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
@@ -14,6 +13,7 @@ import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.database.service.PictureMongoService;
 import org.gycoding.accounts.infrastructure.external.database.service.UsernameMongoService;
+import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +26,8 @@ import java.util.List;
 public class MetadataService implements MetadataRepository {
     @Autowired
     private AuthFacade authFacade = null;
+
+    private final UnirestFacade unirestFacade = new UnirestFacade();
 
     @Autowired
     private UsernameMongoService usernameMongoService = null;
@@ -49,6 +51,21 @@ public class MetadataService implements MetadataRepository {
                 .build();
 
         return usernameMongoService.save(entityUsername);
+    }
+
+    @Override
+    public EntityPicture savePicture(String userId) throws APIException {
+        try {
+            final var pictureContent = unirestFacade.get("https://raw.githubusercontent.com/GY-CODING/img-repo/refs/heads/main/gy-accounts/default-profile-pictures/dddepth-001.jpg").getBody();
+            final MultipartFile picture = null;
+            return pictureMongoService.save(userId, picture);
+        } catch(Exception e) {
+            throw new APIException(
+                    AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
+                    AccountsAPIError.PICTURE_NOT_SAVED.getMessage(),
+                    AccountsAPIError.PICTURE_NOT_SAVED.getStatus()
+            );
+        }
     }
 
     @Override
@@ -93,7 +110,7 @@ public class MetadataService implements MetadataRepository {
 
             var newMetadata = UserMetadata.builder()
                     .username("null")
-                    .picture("null")                                      // TODO. Insert random picture for profile pictures.
+                    .picture("https://api.gycoding.com/accounts/auth/pictures/get?userId=" + userId)
                     .roles(List.of(GYCODINGRoles.COMMON))
                     .gyMessagesMetadata(defaultGYMessagesMetadata)
                     .gyClientMetadata(defaultGYClientMetadata)

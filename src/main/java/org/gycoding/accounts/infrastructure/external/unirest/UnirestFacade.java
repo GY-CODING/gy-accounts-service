@@ -2,6 +2,7 @@ package org.gycoding.accounts.infrastructure.external.unirest;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import org.springframework.context.annotation.Bean;
 
 import java.util.Map;
 
