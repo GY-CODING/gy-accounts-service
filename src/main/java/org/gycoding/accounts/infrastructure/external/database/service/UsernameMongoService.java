@@ -1,6 +1,6 @@
 package org.gycoding.accounts.infrastructure.external.database.service;
 
-import org.gycoding.accounts.domain.entities.database.gyclient.EntityUsername;
+import org.gycoding.accounts.domain.entities.database.EntityUsername;
 import org.gycoding.accounts.infrastructure.external.database.repository.UsernameMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

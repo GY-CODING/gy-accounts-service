@@ -1,10 +1,9 @@
 package org.gycoding.accounts.application.service.auth;
 
 import com.auth0.exception.Auth0Exception;
-import com.auth0.json.auth.CreatedUser;
-import com.auth0.json.auth.TokenHolder;
-import org.gycoding.accounts.application.service.gyclient.ClientRepository;
-import org.gycoding.accounts.domain.entities.database.gyclient.EntityUsername;
+import org.bson.types.ObjectId;
+import org.gycoding.accounts.domain.entities.database.EntityPicture;
+import org.gycoding.accounts.domain.entities.database.EntityUsername;
 import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
 import org.gycoding.accounts.domain.entities.metadata.UserMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
@@ -13,10 +12,12 @@ import org.gycoding.accounts.domain.entities.metadata.gymessages.ChatMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetadata;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
+import org.gycoding.accounts.infrastructure.external.database.service.PictureMongoService;
 import org.gycoding.accounts.infrastructure.external.database.service.UsernameMongoService;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,9 @@ public class MetadataService implements MetadataRepository {
 
     @Autowired
     private UsernameMongoService usernameMongoService = null;
+
+    @Autowired
+    private PictureMongoService pictureMongoService = null;
 
     @Override
     public EntityUsername saveUsername(String userID, String username) throws APIException {
@@ -45,6 +49,34 @@ public class MetadataService implements MetadataRepository {
                 .build();
 
         return usernameMongoService.save(entityUsername);
+    }
+
+    @Override
+    public EntityPicture savePicture(MultipartFile picture) throws APIException {
+        try {
+            return pictureMongoService.save(picture);
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+            throw new APIException(
+                    AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
+                    AccountsAPIError.PICTURE_NOT_SAVED.getMessage(),
+                    AccountsAPIError.PICTURE_NOT_SAVED.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public EntityPicture getPicture(String pictureName) throws APIException {
+        try {
+            return pictureMongoService.getPicture(pictureName);
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+            throw new APIException(
+                    AccountsAPIError.PICTURE_NOT_FOUND.getCode(),
+                    AccountsAPIError.PICTURE_NOT_FOUND.getMessage(),
+                    AccountsAPIError.PICTURE_NOT_FOUND.getStatus()
+            );
+        }
     }
 
     @Override

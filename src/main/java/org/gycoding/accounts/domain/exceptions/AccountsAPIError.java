@@ -18,7 +18,8 @@ public enum AccountsAPIError {
     CHAT_ALREADY_EXISTS("The chat already exists inside user's metadata.", HttpStatus.CONFLICT),
     CHAT_NOT_FOUND("The chat was not found inside user's metadata.", HttpStatus.NOT_FOUND),
 
-    USERNAME_ALREADY_EXISTS("The username you are trying to create or modify already exists.", HttpStatus.CONFLICT),
+    PICTURE_NOT_SAVED("The user's picture could not be saved due to an input error.", HttpStatus.CONFLICT),
+    PICTURE_NOT_FOUND("The user's picture could not be found.", HttpStatus.NOT_FOUND),
 
     INVALID_TOKEN_FORMAT("Invalid token format", HttpStatus.BAD_REQUEST),
 

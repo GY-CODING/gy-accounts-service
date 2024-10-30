@@ -11,9 +11,13 @@ import org.gycoding.accounts.infrastructure.dto.metadata.MetadataRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -59,5 +63,25 @@ public class AccountsController {
             @RequestHeader String userId
     ) throws APIException {
         return ResponseEntity.ok(metadataService.saveUsername(userId, body.username()).toString());
+    }
+
+    @PostMapping("/pictures/save")
+    public ResponseEntity<?> savePicture(
+            @RequestBody MultipartFile picture
+    ) throws APIException {
+        return ResponseEntity.ok(metadataService.savePicture(picture).toString());
+    }
+
+    @GetMapping("/pictures/get")
+    public ResponseEntity<?> getPicture(
+            @RequestParam("name") String pictureName
+    ) throws APIException {
+        final var picture = metadataService.getPicture(pictureName);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(picture.contentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + picture.name() + "\"")
+                .header(HttpHeaders.CONTENT_TYPE, picture.contentType())
+                .body(picture.picture().getData());
     }
 }

@@ -1,4 +1,4 @@
-package org.gycoding.accounts.domain.entities.database.gyclient;
+package org.gycoding.accounts.domain.entities.database;
 
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
