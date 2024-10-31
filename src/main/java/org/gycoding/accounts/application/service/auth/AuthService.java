@@ -101,14 +101,6 @@ public class AuthService implements AuthRepository {
                     Optional.of(
                             UserMetadata.builder()
                                     .picture(GY_ACCOUNTS_PICTURE_URL + userId)
-                                    .roles(List.of(GYCODINGRoles.COMMON))
-                                    .gyMessagesMetadata(GYMessagesMetadata.builder()
-                                            .chats(List.of())
-                                            .build())
-                                    .gyClientMetadata(GYClientMetadata.builder()
-                                            .title("null")
-                                            .friends(List.of())
-                                            .build())
                                     .build()
                     )
             );
@@ -219,6 +211,23 @@ public class AuthService implements AuthRepository {
 
             if (metadata.isPresent()) {
                 newMetadata = metadata.get();
+
+                if(oldMetadata != null) {
+                    newMetadata.setPicture(newMetadata.getPicture() != null ? newMetadata.getPicture() : (String) oldMetadata.getOrDefault("picture", authFacade.getDefaultPicture(userId)));
+                    newMetadata.setRoles(newMetadata.getRoles() != null ? newMetadata.getRoles() : (List<GYCODINGRoles>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON)));
+                    newMetadata.setGyMessagesMetadata(
+                            newMetadata.getGyMessagesMetadata() != null ? newMetadata.getGyMessagesMetadata() :
+                                    GYMessagesMetadata.builder()
+                                        .chats((List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).getOrDefault("chats", defaultGYMessagesMetadata.chats()))
+                                        .build()
+                    );
+                    newMetadata.setGyClientMetadata(
+                            newMetadata.getGyClientMetadata() != null ? newMetadata.getGyClientMetadata() :
+                                    GYClientMetadata.builder()
+                                        .title((String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).getOrDefault("title", defaultGYClientMetadata.title()))
+                                        .friends((List<FriendsMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyClient")).getOrDefault("friends", defaultGYClientMetadata.friends()))
+                                        .build());
+                }
             } else {
                 newMetadata = UserMetadata.builder()
                         .picture(authFacade.getDefaultPicture(userId))
@@ -226,25 +235,26 @@ public class AuthService implements AuthRepository {
                         .gyMessagesMetadata(defaultGYMessagesMetadata)
                         .gyClientMetadata(defaultGYClientMetadata)
                         .build();
-            }
 
-            if(oldMetadata != null) {
-                newMetadata.setPicture((String) oldMetadata.getOrDefault("picture", authFacade.getDefaultPicture(userId)));
-                newMetadata.setRoles((List<GYCODINGRoles>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON)));
-                newMetadata.setGyMessagesMetadata(
-                        GYMessagesMetadata.builder()
-                                .chats((List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).getOrDefault("chats", newMetadata.getGyMessagesMetadata().chats()))
-                                .build()
-                );
-                newMetadata.setGyClientMetadata(
-                        GYClientMetadata.builder()
-                                .title((String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).getOrDefault("title", newMetadata.getGyClientMetadata().title()))
-                                .friends((List<FriendsMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyClient")).getOrDefault("friends", newMetadata.getGyClientMetadata().friends()))
-                                .build());
+                if(oldMetadata != null) {
+                    newMetadata.setPicture((String) oldMetadata.getOrDefault("picture", authFacade.getDefaultPicture(userId)));
+                    newMetadata.setRoles((List<GYCODINGRoles>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON)));
+                    newMetadata.setGyMessagesMetadata(
+                            GYMessagesMetadata.builder()
+                                    .chats((List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).getOrDefault("chats", newMetadata.getGyMessagesMetadata().chats()))
+                                    .build()
+                    );
+                    newMetadata.setGyClientMetadata(
+                            GYClientMetadata.builder()
+                                    .title((String) ((HashMap<String, Object>) oldMetadata.get("gyClient")).getOrDefault("title", newMetadata.getGyClientMetadata().title()))
+                                    .friends((List<FriendsMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyClient")).getOrDefault("friends", newMetadata.getGyClientMetadata().friends()))
+                                    .build());
+                }
             }
 
             authFacade.setMetadata(userId, newMetadata.toMap(), Boolean.TRUE);
-        } catch(Auth0Exception e) {
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
                     AccountsAPIError.METADATA_NOT_UPDATED.getMessage(),
