@@ -104,17 +104,31 @@ public class AuthFacadeImpl implements AuthFacade {
     @Override
     public void updateUsername(String userId, String newUsername) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user = managementAPI.users().get(userId, null).execute();
 
-        user.setUsername(newUsername);
+        User updateUser = new User();
+        updateUser.setUsername(newUsername);
+
+        managementAPI.users().update(userId, updateUser).execute();
     }
 
     @Override
     public void updateEmail(String userId, String newEmail) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user = managementAPI.users().get(userId, null).execute();
 
-        user.setEmail(newEmail);
+        User updateUser = new User();
+        updateUser.setEmail(newEmail);
+
+        managementAPI.users().update(userId, updateUser).execute();
+    }
+
+    @Override
+    public void updatePicture(String userId, String newPicture) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+
+        User updateUser = new User();
+        updateUser.setPicture(newPicture);
+
+        managementAPI.users().update(userId, updateUser).execute();
     }
 
     @Override
@@ -123,14 +137,7 @@ public class AuthFacadeImpl implements AuthFacade {
         final var user = managementAPI.users().get(userId, null).execute();
 
         user.setPassword(newPassword);
-    }
-
-    @Override
-    public String getDefaultPicture(String userId) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user = managementAPI.users().get(userId, null).execute();
-
-        return user.getPicture();
+        managementAPI.users().update(userId, user).execute();
     }
 
     @Override
@@ -141,6 +148,7 @@ public class AuthFacadeImpl implements AuthFacade {
         return Profile.builder()
                 .email(user.getEmail())
                 .username(user.getUsername())
+                .picture(user.getPicture())
                 .phoneNumber(user.getPhoneNumber())
                 .build();
     }

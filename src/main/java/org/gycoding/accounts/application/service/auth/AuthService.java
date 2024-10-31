@@ -90,24 +90,19 @@ public class AuthService implements AuthRepository {
     @Override
     public EntityPicture updatePicture(String userId, MultipartFile picture) throws APIException {
         try {
-            userId = userId.replace("auth0|", "");
-            userId = userId.replace("google-oauth2|", "");
+            var formattedUserId = userId;
+            formattedUserId = formattedUserId.replace("auth0|", "");
+            formattedUserId = formattedUserId.replace("google-oauth2|", "");
 
             final var savedPicture = pictureMongoService.save(
                     EntityPicture.builder()
-                            .name(userId + "-pfp")
+                            .name(formattedUserId + "-pfp")
                             .contentType(picture.getContentType())
                             .picture(new Binary(BsonBinarySubType.BINARY, picture.getBytes()))
                             .build()
             );
 
-            this.updateMetadata(userId,
-                    Optional.of(
-                            UserMetadata.builder()
-                                    .picture(GY_ACCOUNTS_PICTURE_URL + userId)
-                                    .build()
-                    )
-            );
+            authFacade.updatePicture(userId, GY_ACCOUNTS_PICTURE_URL + formattedUserId);
 
             return savedPicture;
         } catch(Exception e) {
@@ -198,6 +193,7 @@ public class AuthService implements AuthRepository {
         }
     }
 
+    // Optional metadata for overrides if necessary.
     @Override
     public void updateMetadata(String userId, Optional<UserMetadata> metadata) throws APIException {
         try {
@@ -217,7 +213,6 @@ public class AuthService implements AuthRepository {
                 newMetadata = metadata.get();
 
                 if(oldMetadata != null) {
-                    newMetadata.setPicture(newMetadata.getPicture() != null ? newMetadata.getPicture() : (String) oldMetadata.getOrDefault("picture", authFacade.getDefaultPicture(userId)));
                     newMetadata.setRoles(newMetadata.getRoles() != null ? newMetadata.getRoles() : (List<String>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON.toString())));
                     newMetadata.setGyMessagesMetadata(
                             newMetadata.getGyMessagesMetadata() != null ? newMetadata.getGyMessagesMetadata() :
@@ -234,14 +229,12 @@ public class AuthService implements AuthRepository {
                 }
             } else {
                 newMetadata = UserMetadata.builder()
-                        .picture(authFacade.getDefaultPicture(userId))
                         .roles(List.of(GYCODINGRoles.COMMON.toString()))
                         .gyMessagesMetadata(defaultGYMessagesMetadata)
                         .gyClientMetadata(defaultGYClientMetadata)
                         .build();
 
                 if(oldMetadata != null) {
-                    newMetadata.setPicture((String) oldMetadata.getOrDefault("picture", authFacade.getDefaultPicture(userId)));
                     newMetadata.setRoles((List<String>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON.toString())));
                     newMetadata.setGyMessagesMetadata(
                             GYMessagesMetadata.builder()
@@ -258,7 +251,6 @@ public class AuthService implements AuthRepository {
 
             authFacade.setMetadata(userId, newMetadata.toMap(), Boolean.TRUE);
         } catch(Exception e) {
-            System.out.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
                     AccountsAPIError.METADATA_NOT_UPDATED.getMessage(),
@@ -273,7 +265,6 @@ public class AuthService implements AuthRepository {
             final var userProfileFromAuth0 = authFacade.getProfile(userId);
             final var metadataMap = authFacade.getMetadata(userId);
             final var metadata = UserMetadata.builder()
-                    .picture((String) metadataMap.get("picture"))
                     .roles((List<String>) metadataMap.get("roles"))
                     .gyMessagesMetadata(
                             GYMessagesMetadata.builder()
@@ -291,12 +282,11 @@ public class AuthService implements AuthRepository {
             return Profile.builder()
                     .username(userProfileFromAuth0.getUsername())
                     .email(userProfileFromAuth0.getEmail())
-                    .picture(metadata.getPicture())
+                    .picture(userProfileFromAuth0.getPicture())
                     .roles(metadata.getRoles())
                     .phoneNumber(userProfileFromAuth0.getPhoneNumber())
                     .build();
         } catch(Exception e) {
-            System.out.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.METADATA_NOT_FOUND.getCode(),
                     AccountsAPIError.METADATA_NOT_FOUND.getMessage(),
