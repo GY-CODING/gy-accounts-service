@@ -90,6 +90,9 @@ public class AuthService implements AuthRepository {
     @Override
     public EntityPicture updatePicture(String userId, MultipartFile picture) throws APIException {
         try {
+            userId = userId.replace("auth0|", "");
+            userId = userId.replace("google-oauth2|", "");
+
             final var savedPicture = pictureMongoService.save(
                     EntityPicture.builder()
                             .name(userId + "-pfp")
