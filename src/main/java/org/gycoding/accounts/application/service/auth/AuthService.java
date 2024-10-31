@@ -217,13 +217,16 @@ public class AuthService implements AuthRepository {
                     .friends(List.of())
                     .build();
 
-            newMetadata = metadata.orElseGet(() ->
-                    UserMetadata.builder()
-                            .roles(List.of(GYCODINGRoles.COMMON))
-                            .gyMessagesMetadata(defaultGYMessagesMetadata)
-                            .gyClientMetadata(defaultGYClientMetadata)
-                            .build()
-            );
+            if (metadata.isPresent()) {
+                newMetadata = metadata.get();
+            } else {
+                newMetadata = UserMetadata.builder()
+                        .picture(authFacade.getDefaultPicture(userId))
+                        .roles(List.of(GYCODINGRoles.COMMON))
+                        .gyMessagesMetadata(defaultGYMessagesMetadata)
+                        .gyClientMetadata(defaultGYClientMetadata)
+                        .build();
+            }
 
             if(oldMetadata != null) {
                 newMetadata.setPicture((String) oldMetadata.getOrDefault("picture", authFacade.getDefaultPicture(userId)));
