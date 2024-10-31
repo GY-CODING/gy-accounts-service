@@ -132,7 +132,6 @@ public class AuthService implements AuthRepository {
         try {
             authFacade.updateEmail(userId, email);
         } catch(Auth0Exception e) {
-            System.err.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.COULD_NOT_UPDATE_EMAIL.getCode(),
                     AccountsAPIError.COULD_NOT_UPDATE_EMAIL.getMessage(),
@@ -146,6 +145,7 @@ public class AuthService implements AuthRepository {
         try {
             authFacade.updatePassword(userId, password);
         } catch(Auth0Exception e) {
+            System.err.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.COULD_NOT_UPDATE_PASSWORD.getCode(),
                     AccountsAPIError.COULD_NOT_UPDATE_PASSWORD.getMessage(),
