@@ -14,6 +14,7 @@ import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.ChatMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetadata;
+import org.gycoding.accounts.domain.entities.model.auth.Profile;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.database.service.PictureMongoService;
@@ -214,7 +215,7 @@ public class AuthService implements AuthRepository {
 
                 if(oldMetadata != null) {
                     newMetadata.setPicture(newMetadata.getPicture() != null ? newMetadata.getPicture() : (String) oldMetadata.getOrDefault("picture", authFacade.getDefaultPicture(userId)));
-                    newMetadata.setRoles(newMetadata.getRoles() != null ? newMetadata.getRoles() : (List<GYCODINGRoles>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON)));
+                    newMetadata.setRoles(newMetadata.getRoles() != null ? newMetadata.getRoles() : (List<String>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON.toString())));
                     newMetadata.setGyMessagesMetadata(
                             newMetadata.getGyMessagesMetadata() != null ? newMetadata.getGyMessagesMetadata() :
                                     GYMessagesMetadata.builder()
@@ -231,14 +232,14 @@ public class AuthService implements AuthRepository {
             } else {
                 newMetadata = UserMetadata.builder()
                         .picture(authFacade.getDefaultPicture(userId))
-                        .roles(List.of(GYCODINGRoles.COMMON))
+                        .roles(List.of(GYCODINGRoles.COMMON.toString()))
                         .gyMessagesMetadata(defaultGYMessagesMetadata)
                         .gyClientMetadata(defaultGYClientMetadata)
                         .build();
 
                 if(oldMetadata != null) {
                     newMetadata.setPicture((String) oldMetadata.getOrDefault("picture", authFacade.getDefaultPicture(userId)));
-                    newMetadata.setRoles((List<GYCODINGRoles>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON)));
+                    newMetadata.setRoles((List<String>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON.toString())));
                     newMetadata.setGyMessagesMetadata(
                             GYMessagesMetadata.builder()
                                     .chats((List<ChatMetadata>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).getOrDefault("chats", newMetadata.getGyMessagesMetadata().chats()))
@@ -259,6 +260,44 @@ public class AuthService implements AuthRepository {
                     AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
                     AccountsAPIError.METADATA_NOT_UPDATED.getMessage(),
                     AccountsAPIError.METADATA_NOT_UPDATED.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public Profile getUserProfile(String userId) throws APIException {
+        try {
+            final var userProfileFromAuth0 = authFacade.getProfile(userId);
+            final var metadataMap = authFacade.getMetadata(userId);
+            final var metadata = UserMetadata.builder()
+                    .picture((String) metadataMap.get("picture"))
+                    .roles((List<String>) metadataMap.get("roles"))
+                    .gyMessagesMetadata(
+                            GYMessagesMetadata.builder()
+                                    .chats((List<ChatMetadata>) ((HashMap<String, Object>) metadataMap.get("gyMessages")).get("chats"))
+                                    .build()
+                    )
+                    .gyClientMetadata(
+                            GYClientMetadata.builder()
+                                    .title((String) ((HashMap<String, Object>) metadataMap.get("gyClient")).get("title"))
+                                    .friends((List<FriendsMetadata>) ((HashMap<String, Object>) metadataMap.get("gyClient")).get("friends"))
+                                    .build()
+                    )
+                    .build();
+
+            return Profile.builder()
+                    .username(userProfileFromAuth0.getUsername())
+                    .email(userProfileFromAuth0.getEmail())
+                    .picture(metadata.getPicture())
+                    .roles(metadata.getRoles())
+                    .phoneNumber(userProfileFromAuth0.getPhoneNumber())
+                    .build();
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+            throw new APIException(
+                    AccountsAPIError.METADATA_NOT_FOUND.getCode(),
+                    AccountsAPIError.METADATA_NOT_FOUND.getMessage(),
+                    AccountsAPIError.METADATA_NOT_FOUND.getStatus()
             );
         }
     }

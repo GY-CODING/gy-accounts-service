@@ -14,7 +14,7 @@ import java.util.Map;
 @Getter
 public class UserMetadata {
     private String picture;
-    private List<GYCODINGRoles> roles;
+    private List<String> roles;
     private GYClientMetadata gyClientMetadata;
     private GYMessagesMetadata gyMessagesMetadata;
 

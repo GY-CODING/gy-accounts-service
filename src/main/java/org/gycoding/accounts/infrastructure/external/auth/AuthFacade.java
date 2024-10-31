@@ -5,6 +5,7 @@ import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
+import org.gycoding.accounts.domain.entities.model.auth.Profile;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +21,7 @@ public interface AuthFacade {
     void updateEmail(String userId, String newEmail) throws Auth0Exception;
     void updatePassword(String userId, String newPassword) throws Auth0Exception;
     String getDefaultPicture(String userId) throws Auth0Exception;
+    Profile getProfile(String userId) throws Auth0Exception;
 
     String googleAuth();
     TokenHolder handleGoogleResponse(String code) throws Auth0Exception;

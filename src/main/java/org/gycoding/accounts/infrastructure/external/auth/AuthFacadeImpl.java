@@ -11,6 +11,7 @@ import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
+import org.gycoding.accounts.domain.entities.model.auth.Profile;
 import org.gycoding.accounts.domain.enums.AuthConnections;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
@@ -130,6 +131,18 @@ public class AuthFacadeImpl implements AuthFacade {
         final var user = managementAPI.users().get(userId, null).execute();
 
         return user.getPicture();
+    }
+
+    @Override
+    public Profile getProfile(String userId) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var user = managementAPI.users().get(userId, null).execute();
+
+        return Profile.builder()
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .phoneNumber(user.getPhoneNumber())
+                .build();
     }
 
     @Override

@@ -101,4 +101,11 @@ public class AccountsController {
                 .header(HttpHeaders.CONTENT_TYPE, picture.contentType())
                 .body(picture.picture().getData());
     }
+
+    @GetMapping("/get/profile")
+    public ResponseEntity<?> getUserProfile(
+            @RequestHeader String token
+    ) throws APIException {
+        return ResponseEntity.ok(authService.getUserProfile(authFacade.decode(token)));
+    }
 }
