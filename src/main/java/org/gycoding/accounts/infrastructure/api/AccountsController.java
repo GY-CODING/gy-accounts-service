@@ -48,10 +48,10 @@ public class AccountsController {
 
     @PutMapping("/update/username")
     public ResponseEntity<?> updateUsername(
-            @RequestBody UsernameRQDTO body,
+            @RequestBody String username,
             @RequestHeader String token
     ) throws APIException {
-        return ResponseEntity.ok(authService.updateUsername(authFacade.decode(token), body.username()).toString());
+        return ResponseEntity.ok(authService.updateUsername(authFacade.decode(token), username).toString());
     }
 
     @PutMapping("/update/email")

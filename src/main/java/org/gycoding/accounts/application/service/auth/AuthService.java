@@ -119,7 +119,6 @@ public class AuthService implements AuthRepository {
         try {
             return pictureMongoService.getPicture(userId + "-pfp");
         } catch(Exception e) {
-            System.out.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.PICTURE_NOT_FOUND.getCode(),
                     AccountsAPIError.PICTURE_NOT_FOUND.getMessage(),
@@ -133,6 +132,7 @@ public class AuthService implements AuthRepository {
         try {
             authFacade.updateEmail(userId, email);
         } catch(Auth0Exception e) {
+            System.err.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.COULD_NOT_UPDATE_EMAIL.getCode(),
                     AccountsAPIError.COULD_NOT_UPDATE_EMAIL.getMessage(),
