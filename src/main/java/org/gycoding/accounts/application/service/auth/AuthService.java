@@ -5,9 +5,7 @@ import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.gycoding.accounts.application.service.gyclient.ClientRepository;
 import org.gycoding.accounts.domain.entities.database.EntityPicture;
-import org.gycoding.accounts.domain.entities.database.EntityUsername;
 import org.gycoding.accounts.domain.entities.metadata.GYCODINGRoles;
 import org.gycoding.accounts.domain.entities.metadata.UserMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
@@ -18,8 +16,6 @@ import org.gycoding.accounts.domain.entities.model.auth.Profile;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.database.service.PictureMongoService;
-import org.gycoding.accounts.infrastructure.external.database.service.UsernameMongoService;
-import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,9 +30,6 @@ import java.util.Optional;
 public class AuthService implements AuthRepository {
     @Autowired
     private AuthFacade authFacade = null;
-
-    @Autowired
-    private UsernameMongoService usernameMongoService = null;
 
     @Autowired
     private PictureMongoService pictureMongoService = null;
@@ -58,22 +51,7 @@ public class AuthService implements AuthRepository {
     }
 
     @Override
-    public EntityUsername updateUsername(String userId, String username) throws APIException {
-        int usernameCount = 0;
-        String originalUsername = username;
-
-        while(usernameMongoService.existsByUsername(username)) {
-            usernameCount++;
-            username = originalUsername + usernameCount;
-        }
-
-        final var entityUsername = EntityUsername.builder()
-                .userId(userId)
-                .username(username)
-                .build();
-
-        final var savedUsername = usernameMongoService.save(entityUsername);
-
+    public void updateUsername(String userId, String username) throws APIException {
         try {
             authFacade.updateUsername(userId, username);
         } catch(Auth0Exception e) {
@@ -83,8 +61,6 @@ public class AuthService implements AuthRepository {
                     AccountsAPIError.USERNAME_NOT_SAVED.getStatus()
             );
         }
-
-        return savedUsername;
     }
 
     @Override
@@ -106,6 +82,7 @@ public class AuthService implements AuthRepository {
 
             return savedPicture;
         } catch(Exception e) {
+            System.err.println(e.getMessage());
             throw new APIException(
                     AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
                     AccountsAPIError.PICTURE_NOT_SAVED.getMessage(),

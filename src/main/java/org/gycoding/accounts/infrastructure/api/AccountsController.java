@@ -51,7 +51,8 @@ public class AccountsController {
             @RequestBody String username,
             @RequestHeader String token
     ) throws APIException {
-        return ResponseEntity.ok(authService.updateUsername(authFacade.decode(token), username).toString());
+        authService.updateUsername(authFacade.decode(token), username);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/update/email")
@@ -96,10 +97,10 @@ public class AccountsController {
         final var picture = authService.getPicture(userId);
 
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(picture.contentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + picture.name() + "\"")
-                .header(HttpHeaders.CONTENT_TYPE, picture.contentType())
-                .body(picture.picture().getData());
+                .contentType(MediaType.parseMediaType(picture.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + picture.getName() + "\"")
+                .header(HttpHeaders.CONTENT_TYPE, picture.getContentType())
+                .body(picture.getPicture().getData());
     }
 
     @GetMapping("/get/profile")
