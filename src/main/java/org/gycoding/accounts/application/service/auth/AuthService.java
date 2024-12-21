@@ -56,9 +56,9 @@ public class AuthService implements AuthRepository {
             authFacade.updateUsername(userId, username);
         } catch(Auth0Exception e) {
             throw new APIException(
-                    AccountsAPIError.USERNAME_NOT_SAVED.getCode(),
-                    AccountsAPIError.USERNAME_NOT_SAVED.getMessage(),
-                    AccountsAPIError.USERNAME_NOT_SAVED.getStatus()
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
             );
         }
     }
@@ -84,9 +84,9 @@ public class AuthService implements AuthRepository {
         } catch(Exception e) {
             System.err.println(e.getMessage());
             throw new APIException(
-                    AccountsAPIError.PICTURE_NOT_SAVED.getCode(),
-                    AccountsAPIError.PICTURE_NOT_SAVED.getMessage(),
-                    AccountsAPIError.PICTURE_NOT_SAVED.getStatus()
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
             );
         }
     }

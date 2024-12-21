@@ -5,11 +5,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum AccountsAPIError {
-    INVALID_SIGNUP("SignUp procedure went wrong. Possible causes could be the user already exists or an internal error from the authentication service.", HttpStatus.CONFLICT),
-    INVALID_LOGIN("LogIn procedure went wrong. Possible causes could be invalid credentials provided when trying to log in or an internal error from the authentication service.", HttpStatus.UNAUTHORIZED),
-
-    USERNAME_NOT_SAVED("The username could not be saved due to an authentication service error.", HttpStatus.CONFLICT),
-    PICTURE_NOT_SAVED("The user's picture could not be saved due to an input error.", HttpStatus.CONFLICT),
+    INVALID_LOGIN("Invalid login due to the non existance of the user or invalid password.", HttpStatus.UNAUTHORIZED),
+    INVALID_SIGNUP("Invalid sign up due to the already existance of the user or an authentication error.", HttpStatus.CONFLICT),
 
     RESOURCE_NOT_MODIFIED("The resource could not be modified due to some internal conflict or error.", HttpStatus.NOT_MODIFIED),
     RESOURCE_NOT_FOUND("This resource was not found.", HttpStatus.NOT_FOUND),
