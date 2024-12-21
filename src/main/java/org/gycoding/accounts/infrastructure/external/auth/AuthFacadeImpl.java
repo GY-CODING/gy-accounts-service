@@ -193,16 +193,18 @@ public class AuthFacadeImpl implements AuthFacade {
 
         headers.put("Authorization", "Bearer " + token);
         headers.put("Content-Type", "application/json");
+
         try {
             final var response          = UnirestFacade.get(this.userinfoURL, headers);
             JSONObject jsonResponse     = new JSONObject(response.getBody());
 
             return jsonResponse.getString("sub");
         } catch(JSONException e) {
+            // This code should never be reached since the API Gateway always validate the access token before sending it to the service.
             throw new APIException(
-                    AccountsAPIError.INVALID_TOKEN_FORMAT.getCode(),
-                    AccountsAPIError.INVALID_TOKEN_FORMAT.getMessage(),
-                    AccountsAPIError.INVALID_TOKEN_FORMAT.getStatus()
+                    AccountsAPIError.SERVER_ERROR.getCode(),
+                    AccountsAPIError.SERVER_ERROR.getMessage(),
+                    AccountsAPIError.SERVER_ERROR.getStatus()
             );
         }
     }

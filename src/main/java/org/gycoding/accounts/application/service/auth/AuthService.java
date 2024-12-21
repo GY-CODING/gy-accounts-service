@@ -97,9 +97,9 @@ public class AuthService implements AuthRepository {
             return pictureMongoService.getPicture(userId + "-pfp");
         } catch(Exception e) {
             throw new APIException(
-                    AccountsAPIError.PICTURE_NOT_FOUND.getCode(),
-                    AccountsAPIError.PICTURE_NOT_FOUND.getMessage(),
-                    AccountsAPIError.PICTURE_NOT_FOUND.getStatus()
+                    AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                    AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                    AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
             );
         }
     }
@@ -110,9 +110,9 @@ public class AuthService implements AuthRepository {
             authFacade.updateEmail(userId, email);
         } catch(Auth0Exception e) {
             throw new APIException(
-                    AccountsAPIError.COULD_NOT_UPDATE_EMAIL.getCode(),
-                    AccountsAPIError.COULD_NOT_UPDATE_EMAIL.getMessage(),
-                    AccountsAPIError.COULD_NOT_UPDATE_EMAIL.getStatus()
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
             );
         }
     }
@@ -124,9 +124,9 @@ public class AuthService implements AuthRepository {
         } catch(Auth0Exception e) {
             System.err.println(e.getMessage());
             throw new APIException(
-                    AccountsAPIError.COULD_NOT_UPDATE_PASSWORD.getCode(),
-                    AccountsAPIError.COULD_NOT_UPDATE_PASSWORD.getMessage(),
-                    AccountsAPIError.COULD_NOT_UPDATE_PASSWORD.getStatus()
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
             );
         }
     }
@@ -229,9 +229,9 @@ public class AuthService implements AuthRepository {
             authFacade.setMetadata(userId, newMetadata.toMap(), Boolean.TRUE);
         } catch(Exception e) {
             throw new APIException(
-                    AccountsAPIError.METADATA_NOT_UPDATED.getCode(),
-                    AccountsAPIError.METADATA_NOT_UPDATED.getMessage(),
-                    AccountsAPIError.METADATA_NOT_UPDATED.getStatus()
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
             );
         }
     }
@@ -265,9 +265,9 @@ public class AuthService implements AuthRepository {
                     .build();
         } catch(Exception e) {
             throw new APIException(
-                    AccountsAPIError.METADATA_NOT_FOUND.getCode(),
-                    AccountsAPIError.METADATA_NOT_FOUND.getMessage(),
-                    AccountsAPIError.METADATA_NOT_FOUND.getStatus()
+                    AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                    AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                    AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
             );
         }
     }

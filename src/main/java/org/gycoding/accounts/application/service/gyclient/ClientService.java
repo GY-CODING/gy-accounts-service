@@ -18,9 +18,9 @@ public class ClientService implements ClientRepository {
             return authFacade.getClientMetadata(userID);
         } catch(Exception e) {
             throw new APIException(
-                    AccountsAPIError.METADATA_NOT_FOUND.getCode(),
-                    AccountsAPIError.METADATA_NOT_FOUND.getMessage(),
-                    AccountsAPIError.METADATA_NOT_FOUND.getStatus()
+                    AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                    AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                    AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
             );
         }
     }

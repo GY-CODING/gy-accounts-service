@@ -29,9 +29,9 @@ public class MessagesService implements MessagesRepository {
 
                 if(castedChat.get("chatId").equals(chatRQDTO.chatId())) {
                     throw new APIException(
-                            AccountsAPIError.CHAT_ALREADY_EXISTS.getCode(),
-                            AccountsAPIError.CHAT_ALREADY_EXISTS.getMessage(),
-                            AccountsAPIError.CHAT_ALREADY_EXISTS.getStatus()
+                            AccountsAPIError.CONFLICT.getCode(),
+                            AccountsAPIError.CONFLICT.getMessage(),
+                            AccountsAPIError.CONFLICT.getStatus()
                     );
                 }
             }
@@ -100,9 +100,9 @@ public class MessagesService implements MessagesRepository {
 
             if(!chatFound) {
                 throw new APIException(
-                        AccountsAPIError.CHAT_NOT_FOUND.getCode(),
-                        AccountsAPIError.CHAT_NOT_FOUND.getMessage(),
-                        AccountsAPIError.CHAT_NOT_FOUND.getStatus()
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
                 );
             }
 
