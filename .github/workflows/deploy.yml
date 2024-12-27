@@ -10,5 +10,4 @@ jobs:
      uses: GY-CODING/.github/.github/workflows/koyeb-deploy.yml@master
      secrets: inherit
      with: 
-       project-name: "gy-accounts-service"
-       project-id: ""
+       url: ${{ secrets.ACCOUNTS_KOYEB_DEPLOY_URL }}
