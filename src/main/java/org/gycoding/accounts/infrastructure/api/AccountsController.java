@@ -49,18 +49,18 @@ public class AccountsController {
     @PutMapping("/update/username")
     public ResponseEntity<?> updateUsername(
             @RequestBody String username,
-            @RequestHeader String token
+            @RequestHeader String Authorization
     ) throws APIException {
-        authService.updateUsername(authFacade.decode(token), username);
+        authService.updateUsername(authFacade.decode(Authorization), username);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/update/email")
     public ResponseEntity<?> updateEmail(
             @Valid @RequestBody String newEmail,
-            @RequestHeader String token
+            @RequestHeader String Authorization
     ) throws APIException {
-        authService.updateEmail(authFacade.decode(token), newEmail);
+        authService.updateEmail(authFacade.decode(Authorization), newEmail);
 
         return ResponseEntity.noContent().build();
     }
@@ -68,9 +68,9 @@ public class AccountsController {
     @PutMapping("/update/password")
     public ResponseEntity<?> updatePassword(
             @Valid @RequestBody String newPassword,
-            @RequestHeader String token
+            @RequestHeader String Authorization
     ) throws APIException {
-        authService.updatePassword(authFacade.decode(token), newPassword);
+        authService.updatePassword(authFacade.decode(Authorization), newPassword);
 
         return ResponseEntity.noContent().build();
     }
@@ -78,9 +78,9 @@ public class AccountsController {
     @PutMapping("/update/picture")
     public ResponseEntity<?> updatePicture(
             @RequestBody MultipartFile picture,
-            @RequestHeader String token
+            @RequestHeader String Authorization
     ) throws APIException {
-        return ResponseEntity.ok(authService.updatePicture(authFacade.decode(token), picture).toString());
+        return ResponseEntity.ok(authService.updatePicture(authFacade.decode(Authorization), picture).toString());
     }
 
     @PutMapping("/update/metadata")
@@ -105,8 +105,8 @@ public class AccountsController {
 
     @GetMapping("/get/profile")
     public ResponseEntity<?> getUserProfile(
-            @RequestHeader String token
+            @RequestHeader String Authorization
     ) throws APIException {
-        return ResponseEntity.ok(authService.getUserProfile(authFacade.decode(token)));
+        return ResponseEntity.ok(authService.getUserProfile(authFacade.decode(Authorization)));
     }
 }

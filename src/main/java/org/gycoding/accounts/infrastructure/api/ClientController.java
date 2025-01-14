@@ -18,8 +18,8 @@ public class ClientController {
 
     @GetMapping("/metadata/get")
     public ResponseEntity<?> getClientMetadata(
-            @RequestHeader String token
+            @RequestHeader String Authorization
     ) throws APIException {
-        return ResponseEntity.ok(clientService.getClientMetadata(authFacade.decode(token)));
+        return ResponseEntity.ok(clientService.getClientMetadata(authFacade.decode(Authorization)));
     }
 }

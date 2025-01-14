@@ -21,9 +21,9 @@ public class MessagesController {
 	public ResponseEntity<?> addChat(
             @Valid
             @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader String token
+            @RequestHeader String Authorization
     ) throws APIException {
-        messagesService.addChat(authFacade.decode(token), chatRQDTO);
+        messagesService.addChat(authFacade.decode(Authorization), chatRQDTO);
         return ResponseEntity.noContent().build();
 	}
 
@@ -31,9 +31,9 @@ public class MessagesController {
     public ResponseEntity<?> removeChatWithUserID(
             @Valid
             @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader String token
+            @RequestHeader String Authorization
     ) throws APIException {
-        messagesService.removeChat(authFacade.decode(token), chatRQDTO.chatId());
+        messagesService.removeChat(authFacade.decode(Authorization), chatRQDTO.chatId());
         return ResponseEntity.noContent().build();
     }
   
@@ -41,16 +41,16 @@ public class MessagesController {
     public ResponseEntity<?> setAdminInChat(
             @Valid
             @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader String token
+            @RequestHeader String Authorization
     ) throws APIException {
-        messagesService.setAdmin(authFacade.decode(token), chatRQDTO);
+        messagesService.setAdmin(authFacade.decode(Authorization), chatRQDTO);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/chat/list")
     public ResponseEntity<?> listChats(
-            @RequestHeader String token
+            @RequestHeader String Authorization
     ) throws APIException {
-        return ResponseEntity.ok(messagesService.listChats(authFacade.decode(token)));
+        return ResponseEntity.ok(messagesService.listChats(authFacade.decode(Authorization)));
     }
 }
