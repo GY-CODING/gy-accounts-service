@@ -106,7 +106,6 @@ public class AuthFacadeImpl implements AuthFacade {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
 
         User updateUser = new User();
-        updateUser.setUsername(newUsername);
         updateUser.setName(newUsername);
 
         managementAPI.users().update(userId, updateUser).execute();
@@ -149,7 +148,7 @@ public class AuthFacadeImpl implements AuthFacade {
 
         return Profile.builder()
                 .email(user.getEmail())
-                .username(user.getUsername())
+                .username(user.getUsername() != null ? user.getUsername() : user.getName())
                 .picture(user.getPicture())
                 .phoneNumber(user.getPhoneNumber())
                 .build();
