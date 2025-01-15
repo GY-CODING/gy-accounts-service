@@ -57,13 +57,13 @@ public class AuthService implements AuthRepository {
         try {
             this.updateUsername(userId, profile.username());
             this.updateEmail(userId, profile.email());
-            this.updatePicture(userId, profile.picture());
+            //this.updatePicture(userId, profile.picture());
             this.updatePhoneNumber(userId, profile.phoneNumber());
 
             return ProfileRSDTO.builder()
                     .username(profile.username())
                     .email(profile.email())
-                    .picture(profile.picture())
+                    .picture(null)
                     .phoneNumber(profile.phoneNumber())
                     .build();
         } catch(APIException e) {
