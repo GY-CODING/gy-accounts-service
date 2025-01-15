@@ -14,6 +14,8 @@ import org.gycoding.accounts.domain.entities.metadata.gymessages.ChatMetadata;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.GYMessagesMetadata;
 import org.gycoding.accounts.domain.entities.model.auth.Profile;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
+import org.gycoding.accounts.infrastructure.dto.in.ProfileRSDTO;
+import org.gycoding.accounts.infrastructure.dto.out.ProfileRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.database.service.PictureMongoService;
 import org.gycoding.exceptions.model.APIException;
@@ -51,6 +53,29 @@ public class AuthService implements AuthRepository {
     }
 
     @Override
+    public ProfileRSDTO updateProfile(String userId, ProfileRQDTO profile) throws APIException {
+        try {
+            this.updateUsername(userId, profile.username());
+            this.updateEmail(userId, profile.email());
+            this.updatePicture(userId, profile.picture());
+            this.updatePhoneNumber(userId, profile.phoneNumber());
+
+            return ProfileRSDTO.builder()
+                    .username(profile.username())
+                    .email(profile.email())
+                    .picture(profile.picture())
+                    .phoneNumber(profile.phoneNumber())
+                    .build();
+        } catch(APIException e) {
+            throw new APIException(
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
+    }
+
+    @Override
     public void updateUsername(String userId, String username) throws APIException {
         try {
             authFacade.updateUsername(userId, username);
@@ -83,6 +108,19 @@ public class AuthService implements AuthRepository {
             return savedPicture;
         } catch(Exception e) {
             System.err.println(e.getMessage());
+            throw new APIException(
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public String updatePhoneNumber(String userId, String phoneNumber) throws APIException {
+        try {
+            return authFacade.updatePhoneNumber(userId, phoneNumber);
+        } catch(Auth0Exception e) {
             throw new APIException(
                     AccountsAPIError.CONFLICT.getCode(),
                     AccountsAPIError.CONFLICT.getMessage(),

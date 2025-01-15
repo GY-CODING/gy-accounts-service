@@ -2,7 +2,7 @@ package org.gycoding.accounts.infrastructure.api;
 
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.gymessages.MessagesRepository;
-import org.gycoding.accounts.infrastructure.dto.ChatRQDTO;
+import org.gycoding.accounts.infrastructure.dto.out.ChatRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;

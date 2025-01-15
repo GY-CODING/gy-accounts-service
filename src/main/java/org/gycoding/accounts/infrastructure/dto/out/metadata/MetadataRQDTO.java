@@ -1,4 +1,4 @@
-package org.gycoding.accounts.infrastructure.dto.metadata;
+package org.gycoding.accounts.infrastructure.dto.out.metadata;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

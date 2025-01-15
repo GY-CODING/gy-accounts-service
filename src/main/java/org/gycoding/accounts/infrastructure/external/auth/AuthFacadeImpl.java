@@ -132,6 +132,18 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
+    public String updatePhoneNumber(String userId, String newPhoneNumber) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+
+        User updateUser = new User();
+        updateUser.setPhoneNumber(newPhoneNumber);
+
+        managementAPI.users().update(userId, updateUser).execute();
+
+        return newPhoneNumber;
+    }
+
+    @Override
     public void updatePassword(String userId, String newPassword) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
 

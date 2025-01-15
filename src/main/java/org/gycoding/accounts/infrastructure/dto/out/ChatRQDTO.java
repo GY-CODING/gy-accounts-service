@@ -1,9 +1,8 @@
-package org.gycoding.accounts.infrastructure.dto;
+package org.gycoding.accounts.infrastructure.dto.out;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
-import org.jetbrains.annotations.NotNull;
 
 @Builder
 public record ChatRQDTO(

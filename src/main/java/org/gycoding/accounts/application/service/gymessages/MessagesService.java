@@ -3,7 +3,7 @@ package org.gycoding.accounts.application.service.gymessages;
 import com.auth0.exception.Auth0Exception;
 import org.gycoding.accounts.domain.entities.metadata.gymessages.ChatMetadata;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
-import org.gycoding.accounts.infrastructure.dto.ChatRQDTO;
+import org.gycoding.accounts.infrastructure.dto.out.ChatRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;

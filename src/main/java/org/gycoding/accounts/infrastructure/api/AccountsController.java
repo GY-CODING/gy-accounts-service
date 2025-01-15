@@ -2,8 +2,8 @@ package org.gycoding.accounts.infrastructure.api;
 
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.auth.AuthRepository;
-import org.gycoding.accounts.infrastructure.dto.UserRQDTO;
-import org.gycoding.accounts.infrastructure.dto.UsernameRQDTO;
+import org.gycoding.accounts.infrastructure.dto.out.ProfileRQDTO;
+import org.gycoding.accounts.infrastructure.dto.out.UserRQDTO;
 import org.gycoding.accounts.infrastructure.external.auth.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,15 @@ public class AccountsController {
         return ResponseEntity.ok(authService.handleGoogleResponse(code));
     }
 
-    @PutMapping("/update/username")
+    @PutMapping("/update/profile")
+    public ResponseEntity<?> updateProfile(
+            @RequestBody ProfileRQDTO profile,
+            @RequestHeader String Authorization
+    ) throws APIException {
+        return ResponseEntity.ok(authService.updateProfile(authFacade.decode(Authorization), profile).toString());
+    }
+
+    @PatchMapping("/update/username")
     public ResponseEntity<?> updateUsername(
             @RequestBody String username,
             @RequestHeader String Authorization
@@ -55,7 +63,7 @@ public class AccountsController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/update/email")
+    @PatchMapping("/update/email")
     public ResponseEntity<?> updateEmail(
             @Valid @RequestBody String newEmail,
             @RequestHeader String Authorization
@@ -65,7 +73,7 @@ public class AccountsController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/update/password")
+    @PatchMapping("/update/password")
     public ResponseEntity<?> updatePassword(
             @Valid @RequestBody String newPassword,
             @RequestHeader String Authorization
@@ -75,7 +83,7 @@ public class AccountsController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/update/picture")
+    @PatchMapping("/update/picture")
     public ResponseEntity<?> updatePicture(
             @RequestBody MultipartFile picture,
             @RequestHeader String Authorization
@@ -83,7 +91,7 @@ public class AccountsController {
         return ResponseEntity.ok(authService.updatePicture(authFacade.decode(Authorization), picture).toString());
     }
 
-    @PutMapping("/update/metadata")
+    @PatchMapping("/update/metadata")
     public ResponseEntity<?> updateMetadata(@RequestHeader String userId) throws APIException {
         authService.updateMetadata(userId, Optional.empty());
 
