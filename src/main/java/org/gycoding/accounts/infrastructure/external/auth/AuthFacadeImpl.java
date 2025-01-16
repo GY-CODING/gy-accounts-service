@@ -9,12 +9,13 @@ import com.auth0.json.mgmt.users.User;
 import com.auth0.net.Request;
 import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
-import org.gycoding.accounts.domain.entities.metadata.gyclient.FriendsMetadata;
-import org.gycoding.accounts.domain.entities.metadata.gyclient.GYClientMetadata;
-import org.gycoding.accounts.domain.entities.model.auth.Profile;
-import org.gycoding.accounts.domain.enums.AuthConnections;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
+import org.gycoding.accounts.domain.model.auth.UserMO;
+import org.gycoding.accounts.domain.model.user.metadata.gyclient.FriendMetadataMO;
+import org.gycoding.accounts.domain.model.user.metadata.gyclient.GYClientMetadataMO;
+import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
+import org.gycoding.accounts.shared.AuthConnections;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -80,6 +81,16 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
+    public TokenHolder login(UserMO user) throws Auth0Exception {
+        return authAPI.login(user.email(), user.password()).execute();
+    }
+
+    @Override
+    public CreatedUser signUp(UserMO user) throws Auth0Exception {
+        return authAPI.signUp(user.email(), user.username(), user.password(), AuthConnections.BASIC.name).execute();
+    }
+
+    @Override
     public String googleAuth() {
         return authAPI.authorizeUrl(googleCallbackURL)
                 .withConnection(AuthConnections.GOOGLE.name)
@@ -92,43 +103,71 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public TokenHolder login(String email, String password) throws Auth0Exception {
-        return authAPI.login(email, password).execute();
+    public String getUsername(String userId) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var user = managementAPI.users().get(userId, null).execute();
+
+        return user.getName();
     }
 
     @Override
-    public CreatedUser signUp(String email, String username, String password) throws Auth0Exception {
-        return authAPI.signUp(email, username, password, AuthConnections.BASIC.name).execute();
-    }
-
-    @Override
-    public void updateUsername(String userId, String newUsername) throws Auth0Exception {
+    public String updateUsername(String userId, String newUsername) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
 
         User updateUser = new User();
         updateUser.setName(newUsername);
 
         managementAPI.users().update(userId, updateUser).execute();
+
+        return newUsername;
     }
 
     @Override
-    public void updateEmail(String userId, String newEmail) throws Auth0Exception {
+    public String getEmail(String userId) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var user = managementAPI.users().get(userId, null).execute();
+
+        return user.getEmail();
+    }
+
+    @Override
+    public String updateEmail(String userId, String newEmail) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
 
         User updateUser = new User();
         updateUser.setEmail(newEmail);
 
         managementAPI.users().update(userId, updateUser).execute();
+
+        return newEmail;
     }
 
     @Override
-    public void updatePicture(String userId, String newPicture) throws Auth0Exception {
+    public String getPicture(String userId) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var user = managementAPI.users().get(userId, null).execute();
+
+        return user.getPicture();
+    }
+
+    @Override
+    public String updatePicture(String userId, String newPicture) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
 
         User updateUser = new User();
         updateUser.setPicture(newPicture);
 
         managementAPI.users().update(userId, updateUser).execute();
+
+        return newPicture;
+    }
+
+    @Override
+    public String getPhoneNumber(String userId) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var user = managementAPI.users().get(userId, null).execute();
+
+        return user.getPhoneNumber();
     }
 
     @Override
@@ -154,19 +193,6 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public Profile getProfile(String userId) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user = managementAPI.users().get(userId, null).execute();
-
-        return Profile.builder()
-                .email(user.getEmail())
-                .username(user.getUsername() != null ? user.getUsername() : user.getName())
-                .picture(user.getPicture())
-                .phoneNumber(user.getPhoneNumber())
-                .build();
-    }
-
-    @Override
     public Map<String, Object> getMetadata(String userId) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
         User user               = managementAPI.users().get(userId, null).execute();
@@ -189,12 +215,12 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public GYClientMetadata getClientMetadata(String userId) throws Auth0Exception {
+    public GYClientMetadataMO getClientMetadata(String userId) throws Auth0Exception {
         final var metadata = this.getMetadata(userId);
 
-        return GYClientMetadata.builder()
+        return GYClientMetadataMO.builder()
                 .title((String) ((HashMap<String, Object>) metadata.get("gyClient")).get("title"))
-                .friends((List<FriendsMetadata>) ((HashMap<String, Object>) metadata.get("gyClient")).get("friends"))
+                .friends((List<FriendMetadataMO>) ((HashMap<String, Object>) metadata.get("gyClient")).get("friends"))
                 .build();
     }
 

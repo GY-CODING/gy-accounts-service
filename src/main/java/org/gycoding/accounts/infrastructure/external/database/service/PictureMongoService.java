@@ -1,24 +1,35 @@
 package org.gycoding.accounts.infrastructure.external.database.service;
 
-import org.gycoding.accounts.domain.entities.database.EntityPicture;
+import org.gycoding.accounts.domain.model.user.PictureMO;
+import org.gycoding.accounts.infrastructure.external.database.mapper.UserDatabaseMapper;
+import org.gycoding.accounts.infrastructure.external.database.model.PictureEntity;
 import org.gycoding.accounts.infrastructure.external.database.repository.PictureMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PictureMongoService {
     @Autowired
-    private PictureMongoRepository pictureMongoRepository;
+    private PictureMongoRepository repository;
 
-    public EntityPicture save(EntityPicture picture) {
-        final var originalPicture = this.getPicture(picture.getName());
+    @Qualifier("userDatabaseMapperImpl")
+    @Autowired
+    private UserDatabaseMapper mapper;
 
-        originalPicture.setPicture(picture.getPicture());
+    public PictureMO save(PictureMO picture) {
+        final var originalPicture = repository.findByName(picture.name());
 
-        return pictureMongoRepository.save(originalPicture);
+        if(originalPicture == null) {
+            return mapper.toMO(repository.save(mapper.toEntity(picture)));
+        }
+
+        originalPicture.setPicture(picture.picture());
+
+        return mapper.toMO(repository.save(originalPicture));
     }
 
-    public EntityPicture getPicture(String pictureName) {
-        return pictureMongoRepository.findByName(pictureName);
+    public PictureMO getPicture(String pictureName) {
+        return mapper.toMO(repository.findByName(pictureName));
     }
 }
