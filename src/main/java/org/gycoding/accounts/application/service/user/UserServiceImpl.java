@@ -55,30 +55,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public ProfileODTO getProfile(String userId) throws APIException {
         try {
-            final var metadataMap = authFacade.getMetadata(userId);
-            final var metadata = MetadataMO.builder()
-                    .roles(((List<String>) metadataMap.get("roles")).stream().map(GYCODINGRoles::fromString).toList())
-                    .gyMessages(
-                            GYMessagesMetadataMO.builder()
-                                    .chats((List<ChatMetadataMO>) ((HashMap<String, Object>) metadataMap.get("gyMessages")).get("chats"))
-                                    .build()
-                    )
-                    .gyClient(
-                            GYClientMetadataMO.builder()
-                                    .title((String) ((HashMap<String, Object>) metadataMap.get("gyClient")).get("title"))
-                                    .friends((List<FriendMetadataMO>) ((HashMap<String, Object>) metadataMap.get("gyClient")).get("friends"))
-                                    .build()
-                    )
-                    .build();
-
-            return ProfileODTO.builder()
-                    .username(this.getUsername(userId))
-                    .email(this.getEmail(userId))
-                    .picture(GY_ACCOUNTS_PICTURE_URL + this.getPicture(userId).name())
-                    .roles(metadata.getRoles())
-                    .phoneNumber(this.getPhoneNumber(userId))
-                    .build();
-        } catch(Exception e) {
+            return mapper.toODTO(authFacade.getProfile(userId));
+        } catch(Auth0Exception e) {
             log.error(e.getMessage());
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
@@ -91,13 +69,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public ProfileODTO updateProfile(String userId, ProfileIDTO profile) throws APIException {
         try {
-            this.updateUsername(userId, profile.username());
-            this.updateEmail(userId, profile.email());
-            this.updatePicture(userId, FileUtils.download(profile.picture()));
-            this.updatePhoneNumber(userId, profile.phoneNumber());
-
-            return mapper.toODTO(mapper.toMO(profile));
-        } catch(APIException e) {
+            return mapper.toODTO(authFacade.updateProfile(userId, mapper.toMO(profile)));
+        } catch(Auth0Exception e) {
             log.error(e.getMessage());
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
