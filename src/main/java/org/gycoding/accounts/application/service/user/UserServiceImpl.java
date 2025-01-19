@@ -15,16 +15,9 @@ import org.gycoding.accounts.application.dto.out.user.ProfileODTO;
 import org.gycoding.accounts.application.mapper.UserServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.PictureMO;
-import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
-import org.gycoding.accounts.domain.model.user.metadata.gyclient.FriendMetadataMO;
-import org.gycoding.accounts.domain.model.user.metadata.gyclient.GYClientMetadataMO;
-import org.gycoding.accounts.domain.model.user.metadata.gymessages.ChatMetadataMO;
-import org.gycoding.accounts.domain.model.user.metadata.gymessages.GYMessagesMetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
-import org.gycoding.accounts.infrastructure.external.database.model.PictureEntity;
-import org.gycoding.accounts.infrastructure.external.database.service.PictureMongoService;
-import org.gycoding.accounts.infrastructure.external.utils.FileUtils;
-import org.gycoding.accounts.shared.GYCODINGRoles;
+import org.gycoding.accounts.infrastructure.external.database.repository.impl.PictureRepositoryImpl;
+import org.gycoding.accounts.shared.AccountRoles;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +40,7 @@ public class UserServiceImpl implements UserService {
     private UserServiceMapper mapper = null;
 
     @Autowired
-    private PictureMongoService pictureMongoService = null;
+    private PictureRepositoryImpl pictureRepositoryImpl = null;
 
     @Value("${gy.accounts.picture.url}")
     private String GY_ACCOUNTS_PICTURE_URL;
@@ -142,7 +135,7 @@ public class UserServiceImpl implements UserService {
             userId = userId.replace("auth0|", "");
             userId = userId.replace("google-oauth2|", "");
 
-            return mapper.toODTO(pictureMongoService.getPicture(userId + "-pfp"));
+            return mapper.toODTO(pictureRepositoryImpl.getPicture(userId + "-pfp"));
         } catch(Exception e) {
             log.error(e.getMessage());
             throw new APIException(
@@ -160,7 +153,7 @@ public class UserServiceImpl implements UserService {
             formattedUserId = formattedUserId.replace("auth0|", "");
             formattedUserId = formattedUserId.replace("google-oauth2|", "");
 
-            final var savedPicture = pictureMongoService.save(
+            final var savedPicture = pictureRepositoryImpl.save(
                     PictureMO.builder()
                             .name(formattedUserId + "-pfp")
                             .contentType(picture.getContentType())
@@ -258,7 +251,7 @@ public class UserServiceImpl implements UserService {
                 newMetadata = metadata.get();
 
                 if(oldMetadata != null) {
-                    newMetadata.setRoles(newMetadata.getRoles() != null ? newMetadata.getRoles() : ((List<String>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON.toString()))).stream().map(GYCODINGRoles::fromString).toList());
+                    newMetadata.setRoles(newMetadata.getRoles() != null ? newMetadata.getRoles() : ((List<String>) oldMetadata.getOrDefault("roles", List.of(AccountRoles.COMMON.toString()))).stream().map(AccountRoles::fromString).toList());
                     newMetadata.setGyMessages(
                             newMetadata.getGyMessages() != null ? newMetadata.getGyMessages() :
                                     GYMessagesMetadataIDTO.builder()
@@ -274,13 +267,13 @@ public class UserServiceImpl implements UserService {
                 }
             } else {
                 newMetadata = MetadataIDTO.builder()
-                        .roles(List.of(GYCODINGRoles.COMMON))
+                        .roles(List.of(AccountRoles.COMMON))
                         .gyMessages(defaultGYMessagesMetadata)
                         .gyClient(defaultGYClientMetadata)
                         .build();
 
                 if(oldMetadata != null) {
-                    newMetadata.setRoles(((List<String>) oldMetadata.getOrDefault("roles", List.of(GYCODINGRoles.COMMON))).stream().map(GYCODINGRoles::fromString).toList());
+                    newMetadata.setRoles(((List<String>) oldMetadata.getOrDefault("roles", List.of(AccountRoles.COMMON))).stream().map(AccountRoles::fromString).toList());
                     newMetadata.setGyMessages(
                             GYMessagesMetadataIDTO.builder()
                                     .chats((List<ChatMetadataIDTO>) ((HashMap<String, Object>) oldMetadata.get("gyMessages")).getOrDefault("chats", newMetadata.getGyMessages().chats()))

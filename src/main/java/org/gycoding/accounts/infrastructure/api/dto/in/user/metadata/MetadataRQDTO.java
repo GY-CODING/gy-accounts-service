@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.gyclient.GYClientMetadataRQDTO;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.gymessages.GYMessagesMetadataRQDTO;
-import org.gycoding.accounts.shared.GYCODINGRoles;
+import org.gycoding.accounts.shared.AccountRoles;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class MetadataRQDTO {
-    private List<GYCODINGRoles> roles;
+    private List<AccountRoles> roles;
     private GYClientMetadataRQDTO gyClient;
     private GYMessagesMetadataRQDTO gyMessages;
 

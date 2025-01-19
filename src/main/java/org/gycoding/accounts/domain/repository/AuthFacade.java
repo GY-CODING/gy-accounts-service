@@ -6,7 +6,7 @@ import com.auth0.json.auth.TokenHolder;
 import org.gycoding.accounts.domain.model.auth.UserMO;
 import org.gycoding.accounts.domain.model.user.ProfileMO;
 import org.gycoding.accounts.domain.model.user.metadata.gyclient.GYClientMetadataMO;
-import org.gycoding.accounts.shared.GYCODINGRoles;
+import org.gycoding.accounts.shared.AccountRoles;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.stereotype.Repository;
 
@@ -39,7 +39,7 @@ public interface AuthFacade {
 
     Map<String, Object> getMetadata(String userId) throws Auth0Exception;
     void setMetadata(String userId, Map<String, Object> metadata, Boolean isReset) throws Auth0Exception;
-    List<GYCODINGRoles> getRoles(String userId) throws Auth0Exception;
+    List<AccountRoles> getRoles(String userId) throws Auth0Exception;
 
     GYClientMetadataMO getClientMetadata(String userId) throws Auth0Exception;
 

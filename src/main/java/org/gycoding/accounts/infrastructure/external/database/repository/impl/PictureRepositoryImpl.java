@@ -1,17 +1,16 @@
-package org.gycoding.accounts.infrastructure.external.database.service;
+package org.gycoding.accounts.infrastructure.external.database.repository.impl;
 
 import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.infrastructure.external.database.mapper.UserDatabaseMapper;
-import org.gycoding.accounts.infrastructure.external.database.model.PictureEntity;
-import org.gycoding.accounts.infrastructure.external.database.repository.PictureMongoRepository;
+import org.gycoding.accounts.infrastructure.external.database.repository.PictureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PictureMongoService {
+public class PictureRepositoryImpl {
     @Autowired
-    private PictureMongoRepository repository;
+    private PictureRepository repository;
 
     @Qualifier("userDatabaseMapperImpl")
     @Autowired

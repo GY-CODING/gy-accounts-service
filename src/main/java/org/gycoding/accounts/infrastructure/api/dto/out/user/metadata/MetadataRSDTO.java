@@ -3,7 +3,7 @@ package org.gycoding.accounts.infrastructure.api.dto.out.user.metadata;
 import lombok.*;
 import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.gyclient.GYClientMetadataRSDTO;
 import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.gymessages.GYMessagesMetadataRSDTO;
-import org.gycoding.accounts.shared.GYCODINGRoles;
+import org.gycoding.accounts.shared.AccountRoles;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 public class MetadataRSDTO {
-    private List<GYCODINGRoles> roles;
+    private List<AccountRoles> roles;
     private GYClientMetadataRSDTO gyClient;
     private GYMessagesMetadataRSDTO gyMessages;
 

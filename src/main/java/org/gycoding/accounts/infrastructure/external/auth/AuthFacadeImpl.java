@@ -12,15 +12,12 @@ import kong.unirest.json.JSONObject;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.auth.UserMO;
 import org.gycoding.accounts.domain.model.user.ProfileMO;
-import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.gyclient.FriendMetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.gyclient.GYClientMetadataMO;
-import org.gycoding.accounts.domain.model.user.metadata.gymessages.ChatMetadataMO;
-import org.gycoding.accounts.domain.model.user.metadata.gymessages.GYMessagesMetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
+import org.gycoding.accounts.shared.AccountRoles;
 import org.gycoding.accounts.shared.AuthConnections;
-import org.gycoding.accounts.shared.GYCODINGRoles;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -249,9 +246,9 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public List<GYCODINGRoles> getRoles(String userId) throws Auth0Exception {
+    public List<AccountRoles> getRoles(String userId) throws Auth0Exception {
         final var metadata = this.getMetadata(userId);
-        final var roles = ((List<String>) metadata.get("roles")).stream().map(GYCODINGRoles::fromString).toList();
+        final var roles = ((List<String>) metadata.get("roles")).stream().map(AccountRoles::fromString).toList();
 
         return roles;
     }

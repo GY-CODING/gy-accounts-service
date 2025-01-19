@@ -2,19 +2,19 @@ package org.gycoding.accounts.shared;
 
 import lombok.Getter;
 
-public enum GYCODINGRoles {
+public enum AccountRoles {
     COMMON("COMMON"),
     ADMIN("ADMIN");
 
     @Getter
     public final String role;
 
-    private GYCODINGRoles(String role) {
+    private AccountRoles(String role) {
         this.role    = role;
     }
 
-    public static GYCODINGRoles fromString(String roleString) {
-        for (GYCODINGRoles role : GYCODINGRoles.values()) {
+    public static AccountRoles fromString(String roleString) {
+        for (AccountRoles role : AccountRoles.values()) {
             if (role.role.equals(roleString)) {
                 return role;
             }

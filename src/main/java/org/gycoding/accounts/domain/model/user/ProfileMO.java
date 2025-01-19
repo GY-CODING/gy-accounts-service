@@ -1,7 +1,7 @@
 package org.gycoding.accounts.domain.model.user;
 
 import lombok.Builder;
-import org.gycoding.accounts.shared.GYCODINGRoles;
+import org.gycoding.accounts.shared.AccountRoles;
 
 import java.util.List;
 
@@ -10,6 +10,6 @@ public record ProfileMO(
     String email,
     String username,
     String phoneNumber,
-    List<GYCODINGRoles> roles,
+    List<AccountRoles> roles,
     String picture
 ) { }
