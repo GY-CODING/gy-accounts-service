@@ -7,6 +7,7 @@ import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.infrastructure.api.mapper.products.MessagesControllerMapper;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,11 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/messages")
 public class MessagesController {
     @Autowired
-    private AuthFacade authFacade = null;
-
-    @Autowired
     private MessagesService service = null;
 
+    @Qualifier("messagesControllerMapper")
     @Autowired
     private MessagesControllerMapper mapper = null;
 
@@ -26,9 +25,9 @@ public class MessagesController {
 	public ResponseEntity<?> addChat(
             @Valid
             @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        service.addChat(authFacade.decode(Authorization), mapper.toIDTO(chatRQDTO));
+        service.addChat(userId, mapper.toIDTO(chatRQDTO));
         return ResponseEntity.noContent().build();
 	}
 
@@ -36,9 +35,9 @@ public class MessagesController {
     public ResponseEntity<?> removeChat(
             @Valid
             @RequestParam String chatId,
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        service.removeChat(authFacade.decode(Authorization), chatId);
+        service.removeChat(userId, chatId);
         return ResponseEntity.noContent().build();
     }
   
@@ -46,16 +45,16 @@ public class MessagesController {
     public ResponseEntity<?> setAdminInChat(
             @Valid
             @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        service.setAdmin(authFacade.decode(Authorization), mapper.toIDTO(chatRQDTO));
+        service.setAdmin(userId, mapper.toIDTO(chatRQDTO));
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/chats")
     public ResponseEntity<?> listChats(
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.listChats(authFacade.decode(Authorization)));
+        return ResponseEntity.ok(service.listChats(userId));
     }
 }

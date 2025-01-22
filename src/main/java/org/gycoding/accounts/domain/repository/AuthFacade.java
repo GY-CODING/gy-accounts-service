@@ -42,6 +42,4 @@ public interface AuthFacade {
     List<AccountRoles> getRoles(String userId) throws Auth0Exception;
 
     GYClientMetadataMO getClientMetadata(String userId) throws Auth0Exception;
-
-    String decode(String token) throws APIException;
 }

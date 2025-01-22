@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/client")
 public class ClientController {
     @Autowired
-    private AuthFacade authFacade = null;
-
-    @Autowired
     private ClientService service = null;
 
     @Qualifier("clientControllerMapperImpl")
@@ -24,8 +21,8 @@ public class ClientController {
 
     @GetMapping("/metadata")
     public ResponseEntity<?> getClientMetadata(
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        return ResponseEntity.ok(mapper.toRSDTO(service.getClientMetadata(authFacade.decode(Authorization))));
+        return ResponseEntity.ok(mapper.toRSDTO(service.getClientMetadata(userId)));
     }
 }

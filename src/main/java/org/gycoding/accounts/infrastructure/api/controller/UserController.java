@@ -22,9 +22,6 @@ import java.util.Optional;
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    private AuthFacade authFacade = null;
-
-    @Autowired
     private UserService service = null;
 
     @Qualifier("userControllerMapperImpl")
@@ -33,55 +30,55 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.getProfile(authFacade.decode(Authorization)));
+        return ResponseEntity.ok(service.getProfile(userId));
     }
 
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(
             @RequestBody ProfileRQDTO profile,
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.updateProfile(authFacade.decode(Authorization), mapper.toIDTO(profile)).toString());
+        return ResponseEntity.ok(service.updateProfile(userId, mapper.toIDTO(profile)).toString());
     }
 
     @GetMapping("/username")
     public ResponseEntity<?> getUsername(
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.getUsername(authFacade.decode(Authorization)));
+        return ResponseEntity.ok(service.getUsername(userId));
     }
 
     @PatchMapping("/username")
     public ResponseEntity<?> updateUsername(
             @RequestBody String username,
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        service.updateUsername(authFacade.decode(Authorization), username);
+        service.updateUsername(userId, username);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/email")
     public ResponseEntity<?> getEmail(
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.getEmail(authFacade.decode(Authorization)));
+        return ResponseEntity.ok(service.getEmail(userId));
     }
 
     @PatchMapping("/email")
     public ResponseEntity<?> updateEmail(
             @Valid @RequestBody String newEmail,
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        service.updateEmail(authFacade.decode(Authorization), newEmail);
+        service.updateEmail(userId, newEmail);
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/picture/{userId}")
     public ResponseEntity<?> getPicture(
-            @PathVariable String userId
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
         final var picture = service.getPicture(userId);
 
@@ -95,48 +92,48 @@ public class UserController {
     @PatchMapping("/picture")
     public ResponseEntity<?> updatePicture(
             @RequestBody String picture,
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.updatePicture(authFacade.decode(Authorization), FileUtils.download(picture)).toString());
+        return ResponseEntity.ok(service.updatePicture(userId, FileUtils.download(picture)).toString());
     }
 
     @GetMapping("/phonenumber")
     public ResponseEntity<?> getPhoneNumber(
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.getPhoneNumber(authFacade.decode(Authorization)));
+        return ResponseEntity.ok(service.getPhoneNumber(userId));
     }
 
     @PatchMapping("/phonenumber")
     public ResponseEntity<?> updatePhoneNumber(
             @RequestBody String phoneNumber,
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.updatePhoneNumber(authFacade.decode(Authorization), phoneNumber));
+        return ResponseEntity.ok(service.updatePhoneNumber(userId, phoneNumber));
     }
 
     @PatchMapping("/password")
     public ResponseEntity<?> updatePassword(
             @Valid @RequestBody String newPassword,
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        service.updatePassword(authFacade.decode(Authorization), newPassword);
+        service.updatePassword(userId, newPassword);
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/metadata")
     public ResponseEntity<?> getMetadata(
-            @RequestHeader String Authorization
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
-        service.getMetadata(authFacade.decode(Authorization));
+        service.getMetadata(userId);
 
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @PatchMapping("/metadata")
     public ResponseEntity<?> updateMetadata(
-            @RequestHeader String userId
+            @RequestHeader("x-api-key") String userId
     ) throws APIException {
         service.updateMetadata(userId, Optional.empty());
 
@@ -145,7 +142,7 @@ public class UserController {
 
     @PutMapping("/metadata")
     public ResponseEntity<?> setMetadata(
-            @RequestHeader String userId,
+            @RequestHeader("x-api-key") String userId,
             @RequestBody MetadataRQDTO metadata
     ) throws APIException {
         service.updateMetadata(userId, Optional.of(mapper.toIDTO(metadata)));
