@@ -124,8 +124,6 @@ public class AuthFacadeImpl implements AuthFacade {
 
         User updateUser = new User();
         updateUser.setName(profile.username());
-        updateUser.setEmail(profile.email());
-        updateUser.setPhoneNumber(profile.phoneNumber());
         updateUser.setPicture(profile.picture());
 
         managementAPI.users().update(userId, updateUser).execute();
