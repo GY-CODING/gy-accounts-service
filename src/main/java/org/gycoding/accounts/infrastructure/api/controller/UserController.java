@@ -41,7 +41,7 @@ public class UserController {
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         System.out.println(profile.picture());
-        return ResponseEntity.ok(service.updateProfile(userId, mapper.toIDTO(profile)).toString());
+        return ResponseEntity.ok(service.updateProfile(userId, mapper.toIDTO(profile)));
     }
 
     @GetMapping("/username")
