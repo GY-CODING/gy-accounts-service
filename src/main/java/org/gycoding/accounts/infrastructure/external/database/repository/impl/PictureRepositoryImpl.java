@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PictureRepositoryImpl {
-    @Autowired
     private PictureRepository repository;
 
     @Qualifier("userDatabaseMapperImpl")
