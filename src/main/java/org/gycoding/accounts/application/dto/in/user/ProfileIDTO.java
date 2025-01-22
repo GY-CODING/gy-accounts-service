@@ -4,8 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record ProfileIDTO(
-    String email,
     String username,
-    String phoneNumber,
     String picture
 ) { }
