@@ -34,6 +34,9 @@ public class FileUtils {
         } catch(IOException e) {
             log.error("Error downloading image from URL: {}", imageUrl);
             return null;
+        } catch(Exception e) {
+            log.error(e.getMessage());
+            return null;
         } finally {
             assert connection != null;
             connection.disconnect();
