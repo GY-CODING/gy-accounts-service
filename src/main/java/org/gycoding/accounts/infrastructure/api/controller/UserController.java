@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     private UserService service = null;
 
-    @Qualifier("userControllerMapperImpl")
+    @Qualifier("userControllerMapper")
     @Autowired
     private UserControllerMapper mapper = null;
 
