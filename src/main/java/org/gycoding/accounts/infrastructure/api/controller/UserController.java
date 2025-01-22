@@ -30,7 +30,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.getProfile(userId));
     }
@@ -38,14 +38,14 @@ public class UserController {
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(
             @RequestBody ProfileRQDTO profile,
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.updateProfile(userId, mapper.toIDTO(profile)).toString());
     }
 
     @GetMapping("/username")
     public ResponseEntity<?> getUsername(
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.getUsername(userId));
     }
@@ -53,7 +53,7 @@ public class UserController {
     @PatchMapping("/username")
     public ResponseEntity<?> updateUsername(
             @RequestBody String username,
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.updateUsername(userId, username);
         return ResponseEntity.noContent().build();
@@ -61,7 +61,7 @@ public class UserController {
 
     @GetMapping("/email")
     public ResponseEntity<?> getEmail(
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.getEmail(userId));
     }
@@ -69,7 +69,7 @@ public class UserController {
     @PatchMapping("/email")
     public ResponseEntity<?> updateEmail(
             @Valid @RequestBody String newEmail,
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.updateEmail(userId, newEmail);
 
@@ -78,7 +78,7 @@ public class UserController {
 
     @GetMapping("/picture/{userId}")
     public ResponseEntity<?> getPicture(
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         final var picture = service.getPicture(userId);
 
@@ -92,14 +92,14 @@ public class UserController {
     @PatchMapping("/picture")
     public ResponseEntity<?> updatePicture(
             @RequestBody String picture,
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.updatePicture(userId, FileUtils.download(picture)).toString());
     }
 
     @GetMapping("/phonenumber")
     public ResponseEntity<?> getPhoneNumber(
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.getPhoneNumber(userId));
     }
@@ -107,7 +107,7 @@ public class UserController {
     @PatchMapping("/phonenumber")
     public ResponseEntity<?> updatePhoneNumber(
             @RequestBody String phoneNumber,
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.updatePhoneNumber(userId, phoneNumber));
     }
@@ -115,7 +115,7 @@ public class UserController {
     @PatchMapping("/password")
     public ResponseEntity<?> updatePassword(
             @Valid @RequestBody String newPassword,
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.updatePassword(userId, newPassword);
 
@@ -124,7 +124,7 @@ public class UserController {
 
     @GetMapping("/metadata")
     public ResponseEntity<?> getMetadata(
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.getMetadata(userId);
 
@@ -133,7 +133,7 @@ public class UserController {
 
     @PatchMapping("/metadata")
     public ResponseEntity<?> updateMetadata(
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.updateMetadata(userId, Optional.empty());
 
@@ -142,7 +142,7 @@ public class UserController {
 
     @PutMapping("/metadata")
     public ResponseEntity<?> setMetadata(
-            @RequestHeader("x-api-key") String userId,
+            @RequestHeader("x-user-id") String userId,
             @RequestBody MetadataRQDTO metadata
     ) throws APIException {
         service.updateMetadata(userId, Optional.of(mapper.toIDTO(metadata)));

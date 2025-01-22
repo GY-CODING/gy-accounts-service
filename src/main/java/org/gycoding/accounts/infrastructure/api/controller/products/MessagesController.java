@@ -25,7 +25,7 @@ public class MessagesController {
 	public ResponseEntity<?> addChat(
             @Valid
             @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.addChat(userId, mapper.toIDTO(chatRQDTO));
         return ResponseEntity.noContent().build();
@@ -35,7 +35,7 @@ public class MessagesController {
     public ResponseEntity<?> removeChat(
             @Valid
             @RequestParam String chatId,
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.removeChat(userId, chatId);
         return ResponseEntity.noContent().build();
@@ -45,7 +45,7 @@ public class MessagesController {
     public ResponseEntity<?> setAdminInChat(
             @Valid
             @RequestBody ChatRQDTO chatRQDTO,
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.setAdmin(userId, mapper.toIDTO(chatRQDTO));
         return ResponseEntity.noContent().build();
@@ -53,7 +53,7 @@ public class MessagesController {
 
     @GetMapping("/chats")
     public ResponseEntity<?> listChats(
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.listChats(userId));
     }

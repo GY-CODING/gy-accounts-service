@@ -21,7 +21,7 @@ public class ClientController {
 
     @GetMapping("/metadata")
     public ResponseEntity<?> getClientMetadata(
-            @RequestHeader("x-api-key") String userId
+            @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(mapper.toRSDTO(service.getClientMetadata(userId)));
     }
