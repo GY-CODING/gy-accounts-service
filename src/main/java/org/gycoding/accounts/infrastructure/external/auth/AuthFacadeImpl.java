@@ -121,14 +121,17 @@ public class AuthFacadeImpl implements AuthFacade {
     @Override
     public ProfileMO updateProfile(String userId, ProfileMO profile) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        var user = managementAPI.users().get(userId, null).execute();
 
-        User updateUser = new User();
-        updateUser.setName(profile.username());
-        updateUser.setPicture(profile.picture());
+        var updatedUser = new User();
+        updatedUser.setName(profile.username());
+        updatedUser.setEmail(user.getEmail());
+        updatedUser.setPicture(profile.picture());
+        updatedUser.setPhoneNumber(user.getPhoneNumber());
 
-        managementAPI.users().update(userId, updateUser).execute();
+        managementAPI.users().update(userId, updatedUser).execute();
 
-        return profile;
+        return this.getProfile(userId);
     }
 
     @Override

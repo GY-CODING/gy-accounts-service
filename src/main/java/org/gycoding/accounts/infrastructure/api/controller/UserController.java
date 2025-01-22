@@ -32,7 +32,7 @@ public class UserController {
     public ResponseEntity<?> getProfile(
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.getProfile(userId));
+        return ResponseEntity.ok(mapper.toRSDTO(service.getProfile(userId)));
     }
 
     @PutMapping("/profile")
@@ -40,8 +40,7 @@ public class UserController {
             @RequestBody ProfileRQDTO profile,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        System.out.println(profile.picture());
-        return ResponseEntity.ok(service.updateProfile(userId, mapper.toIDTO(profile)));
+        return ResponseEntity.ok(mapper.toRSDTO(service.updateProfile(userId, mapper.toIDTO(profile))));
     }
 
     @GetMapping("/username")
