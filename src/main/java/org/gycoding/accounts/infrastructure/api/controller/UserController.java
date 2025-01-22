@@ -40,6 +40,7 @@ public class UserController {
             @RequestBody ProfileRQDTO profile,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
+        System.out.println(profile.picture());
         return ResponseEntity.ok(service.updateProfile(userId, mapper.toIDTO(profile)).toString());
     }
 
