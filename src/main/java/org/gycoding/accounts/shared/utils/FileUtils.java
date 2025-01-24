@@ -1,9 +1,10 @@
-package org.gycoding.accounts.infrastructure.external.utils;
+package org.gycoding.accounts.shared.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +41,19 @@ public class FileUtils {
         } finally {
             assert connection != null;
             connection.disconnect();
+        }
+    }
+
+    public static MultipartFile read(String image) {
+        String base64Data = image.split(",")[1];
+
+        byte[] decodedBytes = Base64Utils.decodeFromString(base64Data);
+
+        try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(decodedBytes)) {
+            return new MockMultipartFile("file", "image.png", "image/png", byteArrayInputStream);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
         }
     }
 }

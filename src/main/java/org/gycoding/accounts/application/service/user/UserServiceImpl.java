@@ -13,8 +13,10 @@ import org.gycoding.accounts.application.mapper.UserServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
+import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.domain.repository.PictureRepository;
+import org.gycoding.accounts.shared.utils.FileUtils;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,6 +59,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public ProfileODTO updateProfile(String userId, ProfileIDTO profile) throws APIException {
         try {
+            this.updatePicture(userId, FileUtils.read(profile.picture()));
+
             return mapper.toODTO(authFacade.updateProfile(userId, mapper.toMO(profile)));
         } catch(Auth0Exception e) {
             log.error(e.getMessage());

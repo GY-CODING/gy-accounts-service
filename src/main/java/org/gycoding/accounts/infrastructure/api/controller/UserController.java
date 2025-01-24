@@ -3,7 +3,7 @@ package org.gycoding.accounts.infrastructure.api.controller;
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.user.UserService;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.ProfileRQDTO;
-import org.gycoding.accounts.infrastructure.external.utils.FileUtils;
+import org.gycoding.accounts.shared.utils.FileUtils;
 import org.gycoding.accounts.infrastructure.api.mapper.UserControllerMapper;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +74,7 @@ public class UserController {
             @RequestBody String picture,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.updatePicture(userId, FileUtils.download(picture)).toString());
+        return ResponseEntity.ok(service.updatePicture(userId, FileUtils.read(picture)).toString());
     }
 
     @GetMapping("/phonenumber")
