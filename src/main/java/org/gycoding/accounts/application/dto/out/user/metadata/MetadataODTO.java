@@ -12,6 +12,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class MetadataODTO {
-    private List<AccountRoles> roles;
     private GYMessagesMetadataODTO gyMessages;
+    private ProfileODTO profile;
 }
