@@ -202,21 +202,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateMetadata(String userId, Optional<MetadataIDTO> metadata) throws APIException {
+    public void updateMetadata(String userId) throws APIException {
         try {
-            final var oldMetadata = authFacade.getMetadata(userId);
-
-            if (metadata.isPresent()) {
-
-                var newMetadata = MetadataMO.builder()
-                        .gyMessages(oldMetadata.getGyMessages())
-                        .profile(oldMetadata.getProfile())
-                        .build();
-
-                authFacade.setMetadata(userId, newMetadata);
-            } else {
-                authFacade.setMetadata(userId, oldMetadata);
-            }
+            authFacade.setMetadata(userId, authFacade.getMetadata(userId));
         } catch(Exception e) {
             log.error(e.getMessage());
             throw new APIException(

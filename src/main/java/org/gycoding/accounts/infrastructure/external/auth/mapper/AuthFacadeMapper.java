@@ -75,7 +75,7 @@ public interface AuthFacadeMapper {
                                     .getOrDefault("picture", defaultProfile.picture())
                     )
                     .roles(
-                            ((List<String>) metadata.getOrDefault("roles", List.of(AccountRoles.COMMON))).stream()
+                            ((List<String>) metadata.getOrDefault("roles", List.of(AccountRoles.COMMON.getRole()))).stream()
                                     .map(AccountRoles::fromString)
                                     .toList()
                     )

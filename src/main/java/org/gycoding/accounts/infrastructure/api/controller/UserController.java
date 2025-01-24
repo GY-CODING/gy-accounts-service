@@ -113,7 +113,7 @@ public class UserController {
     public ResponseEntity<?> updateMetadata(
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        service.updateMetadata(userId, Optional.empty());
+        service.updateMetadata(userId);
 
         return ResponseEntity.noContent().build();
     }
