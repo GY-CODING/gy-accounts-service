@@ -2,16 +2,13 @@ package org.gycoding.accounts.infrastructure.api.controller;
 
 import jakarta.validation.Valid;
 import org.gycoding.accounts.application.service.user.UserService;
-import org.gycoding.accounts.domain.repository.AuthFacade;
-import org.gycoding.accounts.infrastructure.api.dto.in.user.ProfileRQDTO;
-import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.MetadataRQDTO;
+import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.ProfileRQDTO;
 import org.gycoding.accounts.infrastructure.external.utils.FileUtils;
 import org.gycoding.accounts.infrastructure.api.mapper.UserControllerMapper;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,26 +56,9 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/email")
-    public ResponseEntity<?> getEmail(
-            @RequestHeader("x-user-id") String userId
-    ) throws APIException {
-        return ResponseEntity.ok(service.getEmail(userId));
-    }
-
-    @PatchMapping("/email")
-    public ResponseEntity<?> updateEmail(
-            @Valid @RequestBody String newEmail,
-            @RequestHeader("x-user-id") String userId
-    ) throws APIException {
-        service.updateEmail(userId, newEmail);
-
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping("/picture/{userId}")
     public ResponseEntity<?> getPicture(
-            @RequestHeader("x-user-id") String userId
+            @PathVariable("userId") String userId
     ) throws APIException {
         final var picture = service.getPicture(userId);
 
@@ -126,9 +106,7 @@ public class UserController {
     public ResponseEntity<?> getMetadata(
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        service.getMetadata(userId);
-
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return ResponseEntity.ok(service.getMetadata(userId));
     }
 
     @PatchMapping("/metadata")
@@ -136,16 +114,6 @@ public class UserController {
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.updateMetadata(userId, Optional.empty());
-
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/metadata")
-    public ResponseEntity<?> setMetadata(
-            @RequestHeader("x-user-id") String userId,
-            @RequestBody MetadataRQDTO metadata
-    ) throws APIException {
-        service.updateMetadata(userId, Optional.of(mapper.toIDTO(metadata)));
 
         return ResponseEntity.noContent().build();
     }

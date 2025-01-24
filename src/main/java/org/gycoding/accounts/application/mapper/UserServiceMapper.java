@@ -1,12 +1,12 @@
 package org.gycoding.accounts.application.mapper;
 
-import org.gycoding.accounts.application.dto.in.user.ProfileIDTO;
+import org.gycoding.accounts.application.dto.in.user.metadata.ProfileIDTO;
 import org.gycoding.accounts.application.dto.in.user.metadata.MetadataIDTO;
 import org.gycoding.accounts.application.dto.out.user.PictureODTO;
-import org.gycoding.accounts.application.dto.out.user.ProfileODTO;
+import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.MetadataODTO;
 import org.gycoding.accounts.domain.model.user.PictureMO;
-import org.gycoding.accounts.domain.model.user.ProfileMO;
+import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -17,9 +17,9 @@ public interface UserServiceMapper {
 
     ProfileMO toMO(ProfileIDTO profile);
 
-    MetadataODTO toODTO(MetadataMO profile);
+    PictureODTO toODTO(PictureMO picture);
 
-    MetadataMO toMO(MetadataIDTO profile);
+    MetadataODTO toODTO(MetadataMO metadata);
 
-    PictureODTO toODTO(PictureMO profile);
+    MetadataMO toMO(MetadataIDTO metadata);
 }

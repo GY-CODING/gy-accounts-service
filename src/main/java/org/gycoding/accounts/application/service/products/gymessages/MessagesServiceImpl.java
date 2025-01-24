@@ -3,33 +3,35 @@ package org.gycoding.accounts.application.service.products.gymessages;
 import com.auth0.exception.Auth0Exception;
 import lombok.extern.slf4j.Slf4j;
 import org.gycoding.accounts.application.dto.in.user.metadata.gymessages.ChatIDTO;
+import org.gycoding.accounts.application.mapper.products.MessagesServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
-import org.gycoding.accounts.domain.model.user.metadata.gymessages.ChatMetadataMO;
+import org.gycoding.accounts.domain.model.user.metadata.gymessages.ChatMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
 public class MessagesServiceImpl implements MessagesService {
     @Autowired
-    private AuthFacade authFacade = null;
+    private AuthFacade authFacade;
+
+    @Qualifier("messagesServiceMapperImpl")
+    @Autowired
+    private MessagesServiceMapper mapper;
 
     @Override
     public void addChat(String userId, ChatIDTO chat) throws APIException {
         try {
             var metadata = authFacade.getMetadata(userId);
-            var gyMessagesMetadata = (Map<String, Object>) metadata.get("gyMessages");
-            var chats = (List<Object>) gyMessagesMetadata.get("chats");
+            var chats = metadata.getGyMessages().chats();
 
-            for(Object chatObject : chats) {
-                var castedChat = (Map<String, Object>) chatObject;
-
-                if(castedChat.get("chatId").equals(chat.chatId())) {
+            for(ChatMO chatObject : chats) {
+                if(chatObject.chatId().equals(chat.chatId())) {
                     throw new APIException(
                             AccountsAPIError.CONFLICT.getCode(),
                             AccountsAPIError.CONFLICT.getMessage(),
@@ -38,14 +40,14 @@ public class MessagesServiceImpl implements MessagesService {
                 }
             }
 
-            var chatMetadata = ChatMetadataMO.builder()
+            var chatMetadata = ChatMO.builder()
                     .chatId(chat.chatId())
                     .isAdmin(chat.isAdmin())
                     .build();
 
             chats.add(chatMetadata);
 
-            authFacade.setMetadata(userId, metadata, Boolean.TRUE);
+            authFacade.setMetadata(userId, metadata);
         } catch(Auth0Exception e) {
             log.error(e.getMessage());
             throw new APIException(
@@ -60,19 +62,16 @@ public class MessagesServiceImpl implements MessagesService {
     public void removeChat(String userId, String chatId) throws APIException {
         try {
             var metadata = authFacade.getMetadata(userId);
-            var gyMessagesMetadata = (Map<String, Object>) metadata.get("gyMessages");
-            var chats = (List<Object>) gyMessagesMetadata.get("chats");
+            var chats = metadata.getGyMessages().chats();
 
-            for(Object chat : chats) {
-                var castedChat = (Map<String, Object>) chat;
-
-                if(castedChat.get("chatId").equals(chatId)) {
+            for(ChatMO chat : chats) {
+                if(chat.chatId().equals(chatId)) {
                     chats.remove(chat);
                     break;
                 }
             }
 
-            authFacade.setMetadata(userId, metadata, Boolean.TRUE);
+            authFacade.setMetadata(userId, metadata);
         } catch(Auth0Exception e) {
             log.error(e.getMessage());
             throw new APIException(
@@ -89,15 +88,15 @@ public class MessagesServiceImpl implements MessagesService {
 
         try {
             var metadata = authFacade.getMetadata(userId);
-            var gyMessagesMetadata = (Map<String, Object>) metadata.get("gyMessages");
-            var chats = (List<Object>) gyMessagesMetadata.get("chats");
+            var chats = metadata.getGyMessages().chats();
 
-            for(Object chatObject : chats) {
-                var castedChat = (Map<String, Object>) chatObject;
-
-                if(castedChat.get("chatId").equals(chat.chatId())) {
+            for(ChatMO chatObject : chats) {
+                if(chatObject.chatId().equals(chat.chatId())) {
                     chatFound = true;
-                    castedChat.replace("isAdmin", chat.isAdmin());
+                    chatObject = ChatMO.builder()
+                            .chatId(chat.chatId())
+                            .isAdmin(chat.isAdmin())
+                            .build();
                     break;
                 }
             }
@@ -110,7 +109,7 @@ public class MessagesServiceImpl implements MessagesService {
                 );
             }
 
-            authFacade.setMetadata(userId, metadata, Boolean.TRUE);
+            authFacade.setMetadata(userId, metadata);
         } catch(Auth0Exception e) {
             log.error(e.getMessage());
             throw new APIException(
@@ -122,11 +121,10 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
-    public List<Object> listChats(String userId) throws APIException {
+    public List<ChatIDTO> listChats(String userId) throws APIException {
         try {
             var metadata = authFacade.getMetadata(userId);
-            var gyMessagesMetadata = (Map<String, Object>) metadata.get("gyMessages");
-            return (List<Object>) gyMessagesMetadata.get("chats");
+            return metadata.getGyMessages().chats().stream().map(mapper::toIDTO).toList();
         } catch(Auth0Exception e) {
             log.error(e.getMessage());
             throw new APIException(

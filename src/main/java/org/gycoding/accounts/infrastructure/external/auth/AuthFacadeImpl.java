@@ -7,27 +7,25 @@ import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import com.auth0.json.mgmt.users.User;
 import com.auth0.net.Request;
-import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
-import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.auth.UserMO;
-import org.gycoding.accounts.domain.model.user.ProfileMO;
-import org.gycoding.accounts.domain.model.user.metadata.gyclient.FriendMetadataMO;
-import org.gycoding.accounts.domain.model.user.metadata.gyclient.GYClientMetadataMO;
+import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
+import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
+import org.gycoding.accounts.infrastructure.external.auth.mapper.AuthFacadeMapper;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
-import org.gycoding.accounts.shared.AccountRoles;
 import org.gycoding.accounts.shared.AuthConnections;
-import org.gycoding.exceptions.model.APIException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Service
 public class AuthFacadeImpl implements AuthFacade {
+    @Qualifier("authFacadeMapperImpl")
+    @Autowired
+    private AuthFacadeMapper mapper = null;
+
     private AuthAPI authAPI;
 
     private String mainDomain;
@@ -106,112 +104,84 @@ public class AuthFacadeImpl implements AuthFacade {
 
     @Override
     public ProfileMO getProfile(String userId) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user = managementAPI.users().get(userId, null).execute();
-
-        return ProfileMO.builder()
-                .username(user.getName())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .picture(user.getPicture())
-                .roles(this.getRoles(userId))
-                .build();
+        return this.getMetadata(userId).getProfile();
     }
 
     @Override
     public ProfileMO updateProfile(String userId, ProfileMO profile) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        var user = managementAPI.users().get(userId, null).execute();
+        final var metadata = this.getMetadata(userId);
 
-        var updatedUser = new User();
-        updatedUser.setName(profile.username());
-        updatedUser.setEmail(user.getEmail());
-        updatedUser.setPicture(profile.picture());
-        updatedUser.setPhoneNumber(user.getPhoneNumber());
+        metadata.setProfile(profile);
 
-        managementAPI.users().update(userId, updatedUser).execute();
+        this.setMetadata(userId, metadata);
 
-        return this.getProfile(userId);
+        return metadata.getProfile();
     }
 
     @Override
     public String getUsername(String userId) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user = managementAPI.users().get(userId, null).execute();
-
-        return user.getName();
+        return this.getMetadata(userId).getProfile().username();
     }
 
     @Override
     public String updateUsername(String userId, String newUsername) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var metadata = this.getMetadata(userId);
+        final var profile = ProfileMO.builder()
+                .username(newUsername)
+                .roles(metadata.getProfile().roles())
+                .picture(metadata.getProfile().picture())
+                .phoneNumber(metadata.getProfile().phoneNumber())
+                .build();
 
-        User updateUser = new User();
-        updateUser.setName(newUsername);
+        metadata.setProfile(profile);
 
-        managementAPI.users().update(userId, updateUser).execute();
+        this.setMetadata(userId, metadata);
 
-        return newUsername;
-    }
-
-    @Override
-    public String getEmail(String userId) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user = managementAPI.users().get(userId, null).execute();
-
-        return user.getEmail();
-    }
-
-    @Override
-    public String updateEmail(String userId, String newEmail) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-
-        User updateUser = new User();
-        updateUser.setEmail(newEmail);
-
-        managementAPI.users().update(userId, updateUser).execute();
-
-        return newEmail;
+        return metadata.getProfile().username();
     }
 
     @Override
     public String getPicture(String userId) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user = managementAPI.users().get(userId, null).execute();
-
-        return user.getPicture();
+        return this.getMetadata(userId).getProfile().picture();
     }
 
     @Override
     public String updatePicture(String userId, String newPicture) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var metadata = this.getMetadata(userId);
+        final var profile = ProfileMO.builder()
+                .username(metadata.getProfile().username())
+                .roles(metadata.getProfile().roles())
+                .picture(newPicture)
+                .phoneNumber(metadata.getProfile().phoneNumber())
+                .build();
 
-        User updateUser = new User();
-        updateUser.setPicture(newPicture);
+        metadata.setProfile(profile);
 
-        managementAPI.users().update(userId, updateUser).execute();
+        this.setMetadata(userId, metadata);
 
-        return newPicture;
+        return metadata.getProfile().username();
     }
 
     @Override
     public String getPhoneNumber(String userId) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user = managementAPI.users().get(userId, null).execute();
-
-        return user.getPhoneNumber();
+        return this.getMetadata(userId).getProfile().phoneNumber();
     }
 
     @Override
     public String updatePhoneNumber(String userId, String newPhoneNumber) throws Auth0Exception {
-        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var metadata = this.getMetadata(userId);
+        final var profile = ProfileMO.builder()
+                .username(metadata.getProfile().username())
+                .roles(metadata.getProfile().roles())
+                .picture(metadata.getProfile().picture())
+                .phoneNumber(newPhoneNumber)
+                .build();
 
-        User updateUser = new User();
-        updateUser.setPhoneNumber(newPhoneNumber);
+        metadata.setProfile(profile);
 
-        managementAPI.users().update(userId, updateUser).execute();
+        this.setMetadata(userId, metadata);
 
-        return newPhoneNumber;
+        return metadata.getProfile().phoneNumber();
     }
 
     @Override
@@ -225,42 +195,22 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public Map<String, Object> getMetadata(String userId) throws Auth0Exception {
+    public MetadataMO getMetadata(String userId) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
         User user               = managementAPI.users().get(userId, null).execute();
 
-        return user.getUserMetadata();
+        return mapper.toMO(user.getUserMetadata());
     }
 
     @Override
-    public void setMetadata(String userId, Map<String, Object> metadata, Boolean isReset) throws Auth0Exception {
-        if(Boolean.TRUE.equals(isReset) || getMetadata(userId) == null) {
-            final var managementAPI      = new ManagementAPI(this.mainDomain, this.getManagementToken());
-            final var user               = new User();
+    public void setMetadata(String userId, MetadataMO metadata) throws Auth0Exception {
+        final var managementAPI      = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        final var user               = new User();
 
-            user.setUserMetadata(metadata);
+        user.setUserMetadata(mapper.toMap(metadata));
 
-            Request<User> request        = managementAPI.users().update(userId, user);
+        Request<User> request        = managementAPI.users().update(userId, user);
 
-            request.execute();
-        }
-    }
-
-    @Override
-    public List<AccountRoles> getRoles(String userId) throws Auth0Exception {
-        final var metadata = this.getMetadata(userId);
-        final var roles = ((List<String>) metadata.get("roles")).stream().map(AccountRoles::fromString).toList();
-
-        return roles;
-    }
-
-    @Override
-    public GYClientMetadataMO getClientMetadata(String userId) throws Auth0Exception {
-        final var metadata = this.getMetadata(userId);
-
-        return GYClientMetadataMO.builder()
-                .title((String) ((HashMap<String, Object>) metadata.get("gyClient")).get("title"))
-                .friends((List<FriendMetadataMO>) ((HashMap<String, Object>) metadata.get("gyClient")).get("friends"))
-                .build();
+        request.execute();
     }
 }

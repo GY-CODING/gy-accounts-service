@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Builder
 public record GYMessagesMetadataMO(
-        List<ChatMetadataMO> chats
+        List<ChatMO> chats
 ) {
     public Map<String, Object> toMap() {
         return Map.of(

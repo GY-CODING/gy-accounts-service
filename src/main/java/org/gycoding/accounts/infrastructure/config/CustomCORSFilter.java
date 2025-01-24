@@ -19,7 +19,6 @@ public class CustomCORSFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println(request.getHeader("Content-Type"));
         String apiKey = request.getHeader("x-api-key");
 
         if (apiKey != null && apiKey.equals(allowedApiKey)) {

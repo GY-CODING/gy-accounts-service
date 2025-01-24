@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PictureRepository extends MongoRepository<PictureEntity, String> {
+public interface PictureMongoRepository extends MongoRepository<PictureEntity, String> {
     PictureEntity findByName(String name);
 }
