@@ -111,7 +111,14 @@ public class AuthFacadeImpl implements AuthFacade {
     public ProfileMO updateProfile(String userId, ProfileMO profile) throws Auth0Exception {
         final var metadata = this.getMetadata(userId);
 
-        metadata.setProfile(profile);
+        metadata.setProfile(
+                ProfileMO.builder()
+                        .username(profile.username())
+                        .roles(metadata.getProfile().roles())
+                        .picture(metadata.getProfile().picture())
+                        .phoneNumber(profile.phoneNumber())
+                        .build()
+        );
 
         this.setMetadata(userId, metadata);
 
