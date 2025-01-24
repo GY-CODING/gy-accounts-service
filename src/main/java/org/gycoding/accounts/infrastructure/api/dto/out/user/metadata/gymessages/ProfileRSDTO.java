@@ -1,4 +1,4 @@
-package org.gycoding.accounts.infrastructure.api.dto.out.user.metadata;
+package org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.gymessages;
 
 import lombok.Builder;
 import org.gycoding.accounts.shared.AccountRoles;
