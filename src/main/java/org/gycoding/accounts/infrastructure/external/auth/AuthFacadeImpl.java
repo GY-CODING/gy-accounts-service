@@ -22,9 +22,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthFacadeImpl implements AuthFacade {
-    @Qualifier("authFacadeMapperImpl")
     @Autowired
-    private AuthFacadeMapper mapper = null;
+    private AuthFacadeMapper mapper;
 
     private AuthAPI authAPI;
 
