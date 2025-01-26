@@ -45,7 +45,13 @@ public class FileUtils {
     }
 
     public static MultipartFile read(String image) {
-        String base64Data = image.split(",")[1];
+        String base64Data = "";
+
+        try {
+            base64Data = image.split(",")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return download(image);
+        }
 
         byte[] decodedBytes = Base64Utils.decodeFromString(base64Data);
 

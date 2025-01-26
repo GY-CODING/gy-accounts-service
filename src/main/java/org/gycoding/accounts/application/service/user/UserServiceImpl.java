@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -59,7 +60,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public ProfileODTO updateProfile(String userId, ProfileIDTO profile) throws APIException {
         try {
-            this.updatePicture(userId, FileUtils.read(profile.picture()));
+            if(!(Objects.equals(profile.picture(), ""))) {
+                this.updatePicture(userId, FileUtils.read(profile.picture()));
+            }
 
             return mapper.toODTO(authFacade.updateProfile(userId, mapper.toMO(profile)));
         } catch(Auth0Exception e) {
