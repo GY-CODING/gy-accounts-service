@@ -20,7 +20,6 @@ public class MessagesServiceImpl implements MessagesService {
     @Autowired
     private AuthFacade authFacade;
 
-    @Qualifier("messagesServiceMapperImpl")
     @Autowired
     private MessagesServiceMapper mapper;
 

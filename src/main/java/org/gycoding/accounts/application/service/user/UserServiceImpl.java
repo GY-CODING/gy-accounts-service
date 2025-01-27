@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AuthFacade authFacade = null;
 
-    @Qualifier("userServiceMapperImpl")
     @Autowired
     private UserServiceMapper mapper = null;
 

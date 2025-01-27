@@ -13,7 +13,6 @@ public class PictureRepositoryImpl implements PictureRepository {
     @Autowired
     private PictureMongoRepository repository;
 
-    @Qualifier("userDatabaseMapperImpl")
     @Autowired
     private UserDatabaseMapper mapper;
 

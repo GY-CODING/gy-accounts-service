@@ -19,7 +19,6 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private AuthFacade authFacade = null;
 
-    @Qualifier("authServiceMapperImpl")
     @Autowired
     private AuthServiceMapper mapper = null;
 

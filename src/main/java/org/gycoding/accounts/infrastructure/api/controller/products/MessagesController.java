@@ -17,7 +17,6 @@ public class MessagesController {
     @Autowired
     private MessagesService service = null;
 
-    @Qualifier("messagesControllerMapperImpl")
     @Autowired
     private MessagesControllerMapper mapper = null;
 

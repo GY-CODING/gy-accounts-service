@@ -16,7 +16,6 @@ public class AuthController {
     @Autowired
     private AuthService service = null;
 
-    @Qualifier("authControllerMapperImpl")
     @Autowired
     private AuthControllerMapper mapper = null;
 
