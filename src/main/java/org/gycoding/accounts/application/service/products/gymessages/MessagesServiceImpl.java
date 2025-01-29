@@ -3,6 +3,7 @@ package org.gycoding.accounts.application.service.products.gymessages;
 import com.auth0.exception.Auth0Exception;
 import lombok.extern.slf4j.Slf4j;
 import org.gycoding.accounts.application.dto.in.user.metadata.gymessages.ChatIDTO;
+import org.gycoding.accounts.application.dto.out.user.metadata.gymessages.ChatODTO;
 import org.gycoding.accounts.application.mapper.products.MessagesServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.metadata.gymessages.ChatMO;
@@ -120,10 +121,10 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
-    public List<ChatIDTO> listChats(String userId) throws APIException {
+    public List<ChatODTO> listChats(String userId) throws APIException {
         try {
             var metadata = authFacade.getMetadata(userId);
-            return metadata.getGyMessages().chats().stream().map(mapper::toIDTO).toList();
+            return metadata.getGyMessages().chats().stream().map(mapper::toODTO).toList();
         } catch(Auth0Exception e) {
             log.error(e.getMessage());
             throw new APIException(

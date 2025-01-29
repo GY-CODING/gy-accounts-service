@@ -54,6 +54,6 @@ public class MessagesController {
     public ResponseEntity<?> listChats(
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.listChats(userId));
+        return ResponseEntity.ok(service.listChats(userId).stream().map(mapper::toRSDTO));
     }
 }

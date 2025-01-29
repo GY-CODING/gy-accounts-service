@@ -30,7 +30,7 @@ public class PictureRepositoryImpl implements PictureRepository {
     }
 
     @Override
-    public PictureMO getPicture(String pictureName) {
+    public PictureMO get(String pictureName) {
         return mapper.toMO(repository.findByName(pictureName));
     }
 }

@@ -51,8 +51,7 @@ public class UserController {
             @RequestBody String username,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        service.updateUsername(userId, username);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(service.updateUsername(userId, username));
     }
 
     @GetMapping("/picture/{userId}")

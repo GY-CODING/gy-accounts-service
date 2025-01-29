@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class AuthFacadeImpl implements AuthFacade {
     @Autowired
@@ -212,6 +214,26 @@ public class AuthFacadeImpl implements AuthFacade {
     public void setMetadata(String userId, MetadataMO metadata) throws Auth0Exception {
         final var managementAPI      = new ManagementAPI(this.mainDomain, this.getManagementToken());
         final var user               = new User();
+
+        if(Objects.equals(metadata.getProfile().username(), "")) {
+            metadata.setProfile(
+                    ProfileMO.builder()
+                            .username(user.getName())
+                            .roles(metadata.getProfile().roles())
+                            .picture(metadata.getProfile().picture())
+                            .phoneNumber(metadata.getProfile().phoneNumber())
+                            .build());
+        }
+
+        if(Objects.equals(metadata.getProfile().picture(), "")) {
+            metadata.setProfile(
+                    ProfileMO.builder()
+                            .username(metadata.getProfile().username())
+                            .roles(metadata.getProfile().roles())
+                            .picture(user.getPicture())
+                            .phoneNumber(metadata.getProfile().phoneNumber())
+                            .build());
+        }
 
         user.setUserMetadata(mapper.toMap(metadata));
 

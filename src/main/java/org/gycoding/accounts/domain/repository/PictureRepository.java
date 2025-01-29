@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PictureRepository {
     PictureMO save(PictureMO picture);
-    PictureMO getPicture(String pictureName);
+    PictureMO get(String pictureName);
 }

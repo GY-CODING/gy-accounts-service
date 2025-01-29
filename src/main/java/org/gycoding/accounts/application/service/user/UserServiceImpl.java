@@ -5,27 +5,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.gycoding.accounts.application.dto.in.user.metadata.ProfileIDTO;
-import org.gycoding.accounts.application.dto.in.user.metadata.MetadataIDTO;
 import org.gycoding.accounts.application.dto.out.user.PictureODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.MetadataODTO;
 import org.gycoding.accounts.application.mapper.UserServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.PictureMO;
-import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
-import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.domain.repository.PictureRepository;
 import org.gycoding.accounts.shared.utils.FileUtils;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -108,7 +103,7 @@ public class UserServiceImpl implements UserService {
             userId = userId.replace("auth0|", "");
             userId = userId.replace("google-oauth2|", "");
 
-            return mapper.toODTO(pictureRepository.getPicture(userId + "-pfp"));
+            return mapper.toODTO(pictureRepository.get(userId + "-pfp"));
         } catch(Exception e) {
             log.error(e.getMessage());
             throw new APIException(
