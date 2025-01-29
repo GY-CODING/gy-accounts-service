@@ -213,7 +213,8 @@ public class AuthFacadeImpl implements AuthFacade {
     @Override
     public void setMetadata(String userId, MetadataMO metadata) throws Auth0Exception {
         final var managementAPI      = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        final var user               = new User();
+        final var user               = managementAPI.users().get(userId, null).execute();
+        var updatedUser              = new User();
 
         if(Objects.equals(metadata.getProfile().username(), "")) {
             metadata.setProfile(
@@ -235,9 +236,9 @@ public class AuthFacadeImpl implements AuthFacade {
                             .build());
         }
 
-        user.setUserMetadata(mapper.toMap(metadata));
+        updatedUser.setUserMetadata(mapper.toMap(metadata));
 
-        Request<User> request        = managementAPI.users().update(userId, user);
+        Request<User> request = managementAPI.users().update(userId, updatedUser);
 
         request.execute();
     }
