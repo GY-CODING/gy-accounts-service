@@ -6,8 +6,6 @@ import lombok.Builder;
 
 @Builder
 public record ChatRSDTO(
-    @JsonProperty("chatId")
     String chatId,
-    @JsonProperty("isAdmin")
     Boolean isAdmin
 ) { }

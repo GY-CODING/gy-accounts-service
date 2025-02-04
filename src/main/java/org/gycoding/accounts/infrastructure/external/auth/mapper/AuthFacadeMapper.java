@@ -43,13 +43,21 @@ public interface AuthFacadeMapper {
         try {
             return GYMessagesMetadataMO.builder()
                     .chats(
-                            (List<ChatMO>) ((HashMap<String, Object>) metadata.get("gyMessages"))
-                                    .getOrDefault("chats", defaultGYMessagesMetadata.chats())
+                            ((List<Map<String, Object>>) ((Map<String, Object>) metadata.get("gyMessages")).get("chats")).stream()
+                                .map(this::chatToMO)
+                                .toList()
                     )
-                    .build();
+            .build();
         } catch(Exception e) {
             return defaultGYMessagesMetadata;
         }
+    }
+
+    private ChatMO chatToMO(Map<String, Object> chat) {
+        return ChatMO.builder()
+                .chatId((String) chat.get("chatId"))
+                .isAdmin((Boolean) chat.get("isAdmin"))
+                .build();
     }
 
     private ProfileMO profileToMO(Map<String, Object> metadata) {

@@ -6,9 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record ChatRQDTO(
-    @JsonProperty("chatId")
     @NotEmpty(message = "Chat ID is required.")
     String chatId,
-    @JsonProperty("admin")
     Boolean isAdmin
 ) { }

@@ -7,12 +7,14 @@ import org.gycoding.accounts.application.dto.out.user.metadata.gymessages.ChatOD
 import org.gycoding.accounts.application.mapper.products.MessagesServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.metadata.gymessages.ChatMO;
+import org.gycoding.accounts.domain.model.user.metadata.gymessages.GYMessagesMetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -45,7 +47,13 @@ public class MessagesServiceImpl implements MessagesService {
                     .isAdmin(chat.isAdmin())
                     .build();
 
-            chats.add(chatMetadata);
+            metadata.setGyMessages(
+                    GYMessagesMetadataMO.builder()
+                        .chats(
+                                new ArrayList<>(chats) {{ add(chatMetadata); }}
+                        )
+                        .build()
+            );
 
             authFacade.setMetadata(userId, metadata);
         } catch(Auth0Exception e) {
@@ -66,7 +74,13 @@ public class MessagesServiceImpl implements MessagesService {
 
             for(ChatMO chat : chats) {
                 if(chat.chatId().equals(chatId)) {
-                    chats.remove(chat);
+                    metadata.setGyMessages(
+                            GYMessagesMetadataMO.builder()
+                                    .chats(
+                                            new ArrayList<>(chats) {{ remove(chat); }}
+                                    )
+                                    .build()
+                    );
                     break;
                 }
             }
