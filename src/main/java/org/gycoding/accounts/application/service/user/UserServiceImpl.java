@@ -1,6 +1,7 @@
 package org.gycoding.accounts.application.service.user;
 
 import com.auth0.exception.Auth0Exception;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -26,13 +27,13 @@ import java.util.Objects;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    private AuthFacade authFacade = null;
+    private AuthFacade authFacade;
 
     @Autowired
-    private UserServiceMapper mapper = null;
+    private UserServiceMapper mapper;
 
     @Autowired
-    private PictureRepository pictureRepository = null;
+    private PictureRepository pictureRepository;
 
     @Value("${gy.accounts.picture.url}")
     private String GY_ACCOUNTS_PICTURE_URL;

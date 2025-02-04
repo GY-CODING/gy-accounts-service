@@ -1,6 +1,7 @@
 package org.gycoding.accounts.infrastructure.api.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.gycoding.accounts.application.service.user.UserService;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.ProfileRQDTO;
 import org.gycoding.accounts.shared.utils.FileUtils;
@@ -16,13 +17,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/user")
 public class UserController {
-    @Autowired
-    private UserService service = null;
+    private final UserService service;
 
-    @Autowired
-    private UserControllerMapper mapper = null;
+    private final UserControllerMapper mapper;
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(

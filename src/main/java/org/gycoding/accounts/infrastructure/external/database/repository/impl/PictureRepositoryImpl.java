@@ -1,20 +1,18 @@
 package org.gycoding.accounts.infrastructure.external.database.repository.impl;
 
+import lombok.AllArgsConstructor;
 import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.repository.PictureRepository;
 import org.gycoding.accounts.infrastructure.external.database.mapper.UserDatabaseMapper;
 import org.gycoding.accounts.infrastructure.external.database.repository.PictureMongoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class PictureRepositoryImpl implements PictureRepository {
-    @Autowired
-    private PictureMongoRepository repository;
+    private final PictureMongoRepository repository;
 
-    @Autowired
-    private UserDatabaseMapper mapper;
+    private final UserDatabaseMapper mapper;
 
     @Override
     public PictureMO save(PictureMO picture) {

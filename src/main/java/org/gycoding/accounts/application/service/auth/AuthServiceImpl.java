@@ -3,24 +3,22 @@ package org.gycoding.accounts.application.service.auth;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gycoding.accounts.application.dto.in.auth.UserIDTO;
 import org.gycoding.accounts.application.mapper.AuthServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.exceptions.model.APIException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    @Autowired
-    private AuthFacade authFacade = null;
+    private final AuthFacade authFacade;
 
-    @Autowired
-    private AuthServiceMapper mapper = null;
+    private final AuthServiceMapper mapper;
 
     @Override
     public TokenHolder login(UserIDTO user) throws APIException {

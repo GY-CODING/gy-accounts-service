@@ -1,6 +1,7 @@
 package org.gycoding.accounts.application.service.products.gymessages;
 
 import com.auth0.exception.Auth0Exception;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gycoding.accounts.application.dto.in.user.metadata.gymessages.ChatIDTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.gymessages.ChatODTO;
@@ -19,12 +20,11 @@ import java.util.List;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class MessagesServiceImpl implements MessagesService {
-    @Autowired
-    private AuthFacade authFacade;
+    private final AuthFacade authFacade;
 
-    @Autowired
-    private MessagesServiceMapper mapper;
+    private final MessagesServiceMapper mapper;
 
     @Override
     public void addChat(String userId, ChatIDTO chat) throws APIException {

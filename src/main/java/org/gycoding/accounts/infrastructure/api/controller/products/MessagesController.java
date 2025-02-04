@@ -1,6 +1,7 @@
 package org.gycoding.accounts.infrastructure.api.controller.products;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.gycoding.accounts.application.service.products.gymessages.MessagesService;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.gymessages.ChatRQDTO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
@@ -12,13 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/messages")
 public class MessagesController {
-    @Autowired
-    private MessagesService service = null;
+    private final MessagesService service;
 
-    @Autowired
-    private MessagesControllerMapper mapper = null;
+    private final MessagesControllerMapper mapper;
 
     @PatchMapping("/chats/add")
 	public ResponseEntity<?> addChat(

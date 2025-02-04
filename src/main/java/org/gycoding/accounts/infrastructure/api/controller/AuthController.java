@@ -1,6 +1,7 @@
 package org.gycoding.accounts.infrastructure.api.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.gycoding.accounts.application.service.auth.AuthService;
 import org.gycoding.accounts.infrastructure.api.dto.in.auth.UserRQDTO;
 import org.gycoding.accounts.infrastructure.api.mapper.AuthControllerMapper;
@@ -11,13 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
-    @Autowired
-    private AuthService service = null;
+    private final AuthService service;
 
-    @Autowired
-    private AuthControllerMapper mapper = null;
+    private final AuthControllerMapper mapper;
 
     @PostMapping("/login")
 	public ResponseEntity<?> login(
