@@ -1,10 +1,14 @@
 package org.gycoding.accounts.infrastructure.external.database.repository.impl;
 
+import kong.unirest.json.JSONObject;
 import lombok.AllArgsConstructor;
 import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.repository.PictureRepository;
 import org.gycoding.accounts.infrastructure.external.database.mapper.UserDatabaseMapper;
 import org.gycoding.accounts.infrastructure.external.database.repository.PictureMongoRepository;
+import org.gycoding.accounts.shared.utils.logger.LogDTO;
+import org.gycoding.accounts.shared.utils.logger.LogLevel;
+import org.gycoding.accounts.shared.utils.logger.Logger;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,6 +1,7 @@
 package org.gycoding.accounts.application.service.user;
 
 import com.auth0.exception.Auth0Exception;
+import kong.unirest.json.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonBinarySubType;
@@ -15,6 +16,9 @@ import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.domain.repository.PictureRepository;
 import org.gycoding.accounts.shared.utils.FileUtils;
+import org.gycoding.accounts.shared.utils.logger.LogDTO;
+import org.gycoding.accounts.shared.utils.logger.LogLevel;
+import org.gycoding.accounts.shared.utils.logger.Logger;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +47,13 @@ public class UserServiceImpl implements UserService {
         try {
             return mapper.toODTO(authFacade.getProfile(userId));
         } catch(Auth0Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while retrieving user profile.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
                     AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
@@ -61,7 +71,13 @@ public class UserServiceImpl implements UserService {
 
             return mapper.toODTO(authFacade.updateProfile(userId, mapper.toMO(profile)));
         } catch(Auth0Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while updating user profile.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
@@ -75,7 +91,13 @@ public class UserServiceImpl implements UserService {
         try {
             return authFacade.getUsername(userId);
         } catch(Auth0Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while retrieving user username.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
                     AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
@@ -89,7 +111,13 @@ public class UserServiceImpl implements UserService {
         try {
             return authFacade.updateUsername(userId, username);
         } catch(Auth0Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while updating user username.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
@@ -106,7 +134,13 @@ public class UserServiceImpl implements UserService {
 
             return mapper.toODTO(pictureRepository.get(userId + "-pfp"));
         } catch(Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while retrieving user profile picture.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
                     AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
@@ -130,11 +164,25 @@ public class UserServiceImpl implements UserService {
                             .build()
             );
 
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.INFO)
+                            .message("User profile picture has been successfully saved to the database.")
+                            .data(JSONObject.stringToValue("{\"userId\": \"" + userId + "\"}"))
+                            .build()
+            );
+
             authFacade.updatePicture(userId, GY_ACCOUNTS_PICTURE_URL + formattedUserId);
 
             return mapper.toODTO(savedPicture);
         } catch(Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while updating user profile picture.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
@@ -148,7 +196,13 @@ public class UserServiceImpl implements UserService {
         try {
             return authFacade.getPhoneNumber(userId);
         } catch(Auth0Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while retrieving user phone number.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
                     AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
@@ -162,7 +216,13 @@ public class UserServiceImpl implements UserService {
         try {
             return authFacade.updatePhoneNumber(userId, phoneNumber);
         } catch(Auth0Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while updating user phone number.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
@@ -176,7 +236,13 @@ public class UserServiceImpl implements UserService {
         try {
             authFacade.updatePassword(userId, password);
         } catch(Auth0Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while updating user password.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
@@ -190,7 +256,13 @@ public class UserServiceImpl implements UserService {
         try {
             return mapper.toODTO(authFacade.getMetadata(userId));
         } catch(Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while retrieving user metadata.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
                     AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
@@ -204,7 +276,13 @@ public class UserServiceImpl implements UserService {
         try {
             authFacade.setMetadata(userId, authFacade.getMetadata(userId));
         } catch(Exception e) {
-            log.error(e.getMessage());
+            Logger.log(
+                    LogDTO.builder()
+                            .level(LogLevel.ERROR)
+                            .message("An error has occurred while refreshing user metadata.")
+                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .build()
+            );
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
