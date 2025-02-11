@@ -10,7 +10,6 @@ import org.gycoding.accounts.application.dto.in.auth.UserIDTO;
 import org.gycoding.accounts.application.mapper.AuthServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.repository.AuthFacade;
-import org.gycoding.accounts.shared.utils.logger.LogDTO;
 import org.gycoding.accounts.shared.utils.logger.LogLevel;
 import org.gycoding.accounts.shared.utils.logger.Logger;
 import org.gycoding.exceptions.model.APIException;
@@ -29,13 +28,8 @@ public class AuthServiceImpl implements AuthService {
         try {
             return authFacade.login(mapper.toMO(user));
         } catch(Auth0Exception e) {
-            Logger.log(
-                    LogDTO.builder()
-                            .level(LogLevel.ERROR)
-                            .message("An error has occurred while logging in.")
-                            .data(new JSONObject().put("error", e.getMessage()))
-                            .build()
-            );
+            Logger.error("An error has occurred while logging in.", new JSONObject().put("error", e.getMessage()));
+
             throw new APIException(
                     AccountsAPIError.INVALID_LOGIN.getCode(),
                     AccountsAPIError.INVALID_LOGIN.getMessage(),
@@ -49,13 +43,8 @@ public class AuthServiceImpl implements AuthService {
         try {
             return authFacade.signUp(mapper.toMO(user));
         } catch(Auth0Exception e) {
-            Logger.log(
-                    LogDTO.builder()
-                            .level(LogLevel.ERROR)
-                            .message("An error has occurred while signing up.")
-                            .data(new JSONObject().put("error", e.getMessage()))
-                            .build()
-            );
+            Logger.error("An error has occurred while signing up.", new JSONObject().put("error", e.getMessage()));
+
             throw new APIException(
                     AccountsAPIError.INVALID_SIGNUP.getCode(),
                     AccountsAPIError.INVALID_SIGNUP.getMessage(),
@@ -69,13 +58,8 @@ public class AuthServiceImpl implements AuthService {
         try {
             return authFacade.googleAuth();
         } catch(Exception e) {
-            Logger.log(
-                    LogDTO.builder()
-                            .level(LogLevel.ERROR)
-                            .message("An unknown error has occurred while retrieving the Google authentication URL.")
-                            .data(new JSONObject().put("error", e.getMessage()))
-                            .build()
-            );
+            Logger.error("An unknown error has occurred while retrieving the Google authentication URL.",  new JSONObject().put("error", e.getMessage()));
+
             throw new APIException(
                     AccountsAPIError.AUTH_ERROR.getCode(),
                     AccountsAPIError.AUTH_ERROR.getMessage(),
@@ -89,13 +73,8 @@ public class AuthServiceImpl implements AuthService {
         try {
             return authFacade.handleGoogleResponse(code);
         } catch(Auth0Exception e) {
-            Logger.log(
-                    LogDTO.builder()
-                            .level(LogLevel.ERROR)
-                            .message("An error has occurred on the callback from Google Authentication.")
-                            .data(new JSONObject().put("error", e.getMessage()))
-                            .build()
-            );
+            Logger.error("An error has occurred on the callback from Google Authentication.", new JSONObject().put("error", e.getMessage()));
+
             throw new APIException(
                     AccountsAPIError.AUTH_ERROR.getCode(),
                     AccountsAPIError.AUTH_ERROR.getMessage(),

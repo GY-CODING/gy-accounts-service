@@ -15,11 +15,9 @@ import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.auth.mapper.AuthFacadeMapper;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
 import org.gycoding.accounts.shared.AuthConnections;
-import org.gycoding.accounts.shared.utils.logger.LogDTO;
 import org.gycoding.accounts.shared.utils.logger.LogLevel;
 import org.gycoding.accounts.shared.utils.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -82,13 +80,7 @@ public class AuthFacadeImpl implements AuthFacade {
         JSONObject jsonResponse     = new JSONObject(response.getBody());
         final var accessToken       = jsonResponse.getString("access_token");
 
-        Logger.log(
-                LogDTO.builder()
-                        .level(LogLevel.INFO)
-                        .message("Management access token generated.")
-                        .data(new JSONObject().put("token", accessToken))
-                        .build()
-        );
+        Logger.info("Management access token generated.", new JSONObject().put("token", accessToken));
 
         return accessToken;
     }

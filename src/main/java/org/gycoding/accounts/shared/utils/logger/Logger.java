@@ -5,18 +5,42 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Map;
 
-public interface Logger {
+public class Logger {
     @Value("${gy.logs.url}")
-    String url = "";
+    private static String url;
 
     @Value("${gy.logs.token}")
-    String token = "";
+    private static String token;
 
-    static void log(LogDTO log) {
+    public static void info(String message, Object data) {
         final var headers = Map.of(
                 "Authorization", token
         );
 
-        UnirestFacade.post(url, headers, log.toString());
+        UnirestFacade.post(url, headers, String.format("{\"level\": \"%s\", \"message\": \"%s\", \"data\": %s}", LogLevel.INFO, message, data));
+    }
+
+    public static void debug(String message, Object data) {
+        final var headers = Map.of(
+                "Authorization", token
+        );
+
+        UnirestFacade.post(url, headers, String.format("{\"level\": \"%s\", \"message\": \"%s\", \"data\": %s}", LogLevel.DEBUG, message, data));
+    }
+
+    public static void warn(String message, Object data) {
+        final var headers = Map.of(
+                "Authorization", token
+        );
+
+        UnirestFacade.post(url, headers, String.format("{\"level\": \"%s\", \"message\": \"%s\", \"data\": %s}", LogLevel.WARN, message, data));
+    }
+
+    public static void error(String message, Object data) {
+        final var headers = Map.of(
+                "Authorization", token
+        );
+
+        UnirestFacade.post(url, headers, String.format("{\"level\": \"%s\", \"message\": \"%s\", \"data\": %s}", LogLevel.ERROR, message, data));
     }
 }

@@ -11,12 +11,9 @@ import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.metadata.gymessages.ChatMO;
 import org.gycoding.accounts.domain.model.user.metadata.gymessages.GYMessagesMetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
-import org.gycoding.accounts.shared.utils.logger.LogDTO;
 import org.gycoding.accounts.shared.utils.logger.LogLevel;
 import org.gycoding.accounts.shared.utils.logger.Logger;
 import org.gycoding.exceptions.model.APIException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,13 +35,8 @@ public class MessagesServiceImpl implements MessagesService {
 
             for(ChatMO chatObject : chats) {
                 if(chatObject.chatId().equals(chat.chatId())) {
-                    Logger.log(
-                            LogDTO.builder()
-                                    .level(LogLevel.ERROR)
-                                    .message("Chat already exists on user's metadata.")
-                                    .data(new JSONObject().put("chatId", chat.chatId()).put("userId", userId))
-                                    .build()
-                    );
+                    Logger.error("Chat already exists on user's metadata.", new JSONObject().put("chatId", chat.chatId()).put("userId", userId));
+
                     throw new APIException(
                             AccountsAPIError.CONFLICT.getCode(),
                             AccountsAPIError.CONFLICT.getMessage(),
@@ -60,21 +52,14 @@ public class MessagesServiceImpl implements MessagesService {
 
             metadata.setGyMessages(
                     GYMessagesMetadataMO.builder()
-                        .chats(
-                                new ArrayList<>(chats) {{ add(chatMetadata); }}
-                        )
+                        .chats(new ArrayList<>(chats) {{ add(chatMetadata); }})
                         .build()
             );
 
             authFacade.setMetadata(userId, metadata);
         } catch(Auth0Exception e) {
-            Logger.log(
-                    LogDTO.builder()
-                            .level(LogLevel.ERROR)
-                            .message("Metadata could not be updated with the new chat.")
-                            .data(new JSONObject().put("error", e.getMessage()).put("chatId", chat.chatId()).put("userId", userId))
-                            .build()
-            );
+            Logger.error("Metadata could not be updated with the new chat.", new JSONObject().put("error", e.getMessage()).put("chatId", chat.chatId()).put("userId", userId));
+
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
@@ -102,13 +87,8 @@ public class MessagesServiceImpl implements MessagesService {
 
             authFacade.setMetadata(userId, metadata);
         } catch(Auth0Exception e) {
-            Logger.log(
-                    LogDTO.builder()
-                            .level(LogLevel.ERROR)
-                            .message("Metadata could not be updated to remove the chat.")
-                            .data(new JSONObject().put("error", e.getMessage()).put("chatId", chatId).put("userId", userId))
-                            .build()
-            );
+            Logger.error("Metadata could not be updated to remove the chat.", new JSONObject().put("error", e.getMessage()).put("chatId", chatId).put("userId", userId));
+
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
@@ -137,13 +117,8 @@ public class MessagesServiceImpl implements MessagesService {
             }
 
             if(!chatFound) {
-                Logger.log(
-                        LogDTO.builder()
-                                .level(LogLevel.ERROR)
-                                .message("Chat was not found on user's metadata.")
-                                .data(new JSONObject().put("chatId", chat.chatId()).put("userId", userId))
-                                .build()
-                );
+                Logger.error("Chat was not found on user's metadata.", new JSONObject().put("chatId", chat.chatId()).put("userId", userId));
+
                 throw new APIException(
                         AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
                         AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
@@ -153,13 +128,8 @@ public class MessagesServiceImpl implements MessagesService {
 
             authFacade.setMetadata(userId, metadata);
         } catch(Auth0Exception e) {
-            Logger.log(
-                    LogDTO.builder()
-                            .level(LogLevel.ERROR)
-                            .message("Metadata could not be updated to set the user as admin of the chat.")
-                            .data(new JSONObject().put("error", e.getMessage()).put("chatId", chat.chatId()).put("userId", userId))
-                            .build()
-            );
+            Logger.error("Metadata could not be updated to set the user as admin of the chat.", new JSONObject().put("error", e.getMessage()).put("chatId", chat.chatId()).put("userId", userId));
+
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
@@ -174,13 +144,8 @@ public class MessagesServiceImpl implements MessagesService {
             var metadata = authFacade.getMetadata(userId);
             return metadata.getGyMessages().chats().stream().map(mapper::toODTO).toList();
         } catch(Auth0Exception e) {
-            Logger.log(
-                    LogDTO.builder()
-                            .level(LogLevel.ERROR)
-                            .message("An error has occurred trying to receive the chats from user's metadata.")
-                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
-                            .build()
-            );
+            Logger.error("An error has occurred trying to receive the chats from user's metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
                     AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
