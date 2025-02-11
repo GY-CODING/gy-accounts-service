@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import java.util.Map;
 
 public interface Logger {
-    @Value("gy.logs.url")
+    @Value("${gy.logs.url}")
     String url = "";
 
-    @Value("gy.logs.token")
+    @Value("${gy.logs.token}")
     String token = "";
 
     static void log(LogDTO log) {
