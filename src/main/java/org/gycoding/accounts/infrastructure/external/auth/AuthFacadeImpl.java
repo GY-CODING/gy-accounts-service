@@ -86,7 +86,7 @@ public class AuthFacadeImpl implements AuthFacade {
                 LogDTO.builder()
                         .level(LogLevel.INFO)
                         .message("Management access token generated.")
-                        .data(JSONObject.stringToValue("{\"token\": \"" + accessToken + "\"}"))
+                        .data(new JSONObject().put("token", accessToken))
                         .build()
         );
 
