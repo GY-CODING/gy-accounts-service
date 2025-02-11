@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while retrieving user profile.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while updating user profile.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while retrieving user username.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while updating user username.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(
@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while retrieving user profile picture.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(
@@ -168,7 +168,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.INFO)
                             .message("User profile picture has been successfully saved to the database.")
-                            .data(JSONObject.stringToValue("{\"userId\": \"" + userId + "\"}"))
+                            .data(new JSONObject().put("userId", userId))
                             .build()
             );
 
@@ -180,7 +180,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while updating user profile picture.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(
@@ -200,7 +200,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while retrieving user phone number.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(
@@ -220,7 +220,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while updating user phone number.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(
@@ -240,7 +240,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while updating user password.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(
@@ -260,7 +260,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while retrieving user metadata.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(
@@ -280,7 +280,7 @@ public class UserServiceImpl implements UserService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while refreshing user metadata.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}, \"userId\": \"" + userId + "\""))
+                            .data(new JSONObject().put("error", e.getMessage()).put("userId", userId))
                             .build()
             );
             throw new APIException(

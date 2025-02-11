@@ -27,23 +27,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public TokenHolder login(UserIDTO user) throws APIException {
         try {
-            final var authCredentials = authFacade.login(mapper.toMO(user));
-
-            Logger.log(
-                    LogDTO.builder()
-                            .level(LogLevel.INFO)
-                            .message("User has successfully logged in.")
-                            .data(JSONObject.stringToValue("{\"token\": \"" + authCredentials.getAccessToken() + "\"}"))
-                            .build()
-            );
-
-            return authCredentials;
+            return authFacade.login(mapper.toMO(user));
         } catch(Auth0Exception e) {
             Logger.log(
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while logging in.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}"))
+                            .data(new JSONObject().put("error", e.getMessage()))
                             .build()
             );
             throw new APIException(
@@ -63,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred while signing up.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}"))
+                            .data(new JSONObject().put("error", e.getMessage()))
                             .build()
             );
             throw new APIException(
@@ -83,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An unknown error has occurred while retrieving the Google authentication URL.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}"))
+                            .data(new JSONObject().put("error", e.getMessage()))
                             .build()
             );
             throw new APIException(
@@ -103,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
                     LogDTO.builder()
                             .level(LogLevel.ERROR)
                             .message("An error has occurred on the callback from Google Authentication.")
-                            .data(JSONObject.stringToValue("{\"error\": \"" + e.getMessage() + "\"}"))
+                            .data(new JSONObject().put("error", e.getMessage()))
                             .build()
             );
             throw new APIException(
