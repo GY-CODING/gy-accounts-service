@@ -1,16 +1,28 @@
 package org.gycoding.accounts.shared.utils.logger;
 
+import jakarta.annotation.PostConstruct;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@Component
 public class Logger {
     @Value("${gy.logs.url}")
-    private static String url;
+    private String initialUrl;
 
     @Value("${gy.logs.token}")
+    private String initialToken;
+
+    private static String url;
     private static String token;
+
+    @PostConstruct
+    public void init() {
+        url = this.initialUrl;
+        token = this.initialToken;
+    }
 
     public static void info(String message, Object data) {
         final var headers = Map.of(
