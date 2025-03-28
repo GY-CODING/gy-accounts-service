@@ -5,6 +5,7 @@ import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.model.user.metadata.gymessages.ChatMO;
 import org.gycoding.accounts.domain.model.user.metadata.gymessages.GYMessagesMetadataMO;
 import org.gycoding.accounts.shared.AccountRoles;
+import org.gycoding.accounts.shared.utils.Base64Utils;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -23,6 +24,7 @@ public interface AuthFacadeMapper {
                         "username", metadata.getProfile().username(),
                         "picture", metadata.getProfile().picture(),
                         "roles", metadata.getProfile().roles(),
+                        "apiKey", metadata.getProfile().apiKey(),
                         "phoneNumber", metadata.getProfile().phoneNumber()
                 )
         );
@@ -64,8 +66,9 @@ public interface AuthFacadeMapper {
         final var defaultProfile = ProfileMO.builder()
                 .picture("")
                 .username("")
-                .phoneNumber("+01123456789")
+                .phoneNumber("+01 123456789")
                 .roles(List.of(AccountRoles.COMMON))
+                .apiKey(Base64Utils.generateApiKey())
                 .build();
 
         try {
@@ -87,6 +90,10 @@ public interface AuthFacadeMapper {
                                     .getOrDefault("roles", List.of(AccountRoles.COMMON.getRole()))).stream()
                                         .map(AccountRoles::fromString)
                                         .toList()
+                    )
+                    .apiKey(
+                            (String) ((HashMap<String, Object>) metadata.get("profile"))
+                                    .getOrDefault("apiKey", defaultProfile.apiKey())
                     )
                     .build();
         } catch(Exception e) {

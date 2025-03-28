@@ -31,4 +31,6 @@ public interface AuthFacade {
 
     MetadataMO getMetadata(String userId) throws Auth0Exception;
     void setMetadata(String userId, MetadataMO metadata) throws Auth0Exception;
+
+    void refreshApiKey(String userId) throws Auth0Exception;
 }

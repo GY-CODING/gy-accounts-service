@@ -1,6 +1,6 @@
 # GY Accounts
 
-![version](https://img.shields.io/badge/version-3.2.0-gold?style=for-the-badge)
+![version](https://img.shields.io/badge/version-3.2.1-gold?style=for-the-badge)
 [![developer](https://img.shields.io/badge/developed-GYCODING-B833FF?style=for-the-badge)](https://gycoding.com)
 [![reference](https://img.shields.io/badge/reference-api_reference-silver?style=for-the-badge)](https://gy-accounts-gy-coding.koyeb.app)
 

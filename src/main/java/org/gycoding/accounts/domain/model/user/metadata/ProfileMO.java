@@ -10,5 +10,6 @@ public record ProfileMO(
     String username,
     String phoneNumber,
     List<AccountRoles> roles,
+    String apiKey,
     String picture
 ) { }

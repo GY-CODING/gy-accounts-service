@@ -115,4 +115,13 @@ public class UserController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/metadata/apikey")
+    public ResponseEntity<?> refreshApiKey(
+            @RequestHeader("x-user-id") String userId
+    ) throws APIException {
+        service.refreshApiKey(userId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

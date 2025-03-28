@@ -12,6 +12,7 @@ import org.gycoding.accounts.application.dto.out.user.metadata.MetadataODTO;
 import org.gycoding.accounts.application.mapper.UserServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.PictureMO;
+import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.domain.repository.PictureRepository;
 import org.gycoding.accounts.shared.utils.FileUtils;
@@ -219,6 +220,23 @@ public class UserServiceImpl implements UserService {
             authFacade.setMetadata(userId, authFacade.getMetadata(userId));
         } catch(Exception e) {
             Logger.error("An error has occurred while refreshing user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+
+            throw new APIException(
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public void refreshApiKey(String userId) throws APIException {
+        try {
+            final var oldMetadata = authFacade.getMetadata(userId);
+
+            authFacade.refreshApiKey(userId);
+        } catch(Exception e) {
+            Logger.error("An error has occurred while updating user API key.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
 
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
