@@ -28,6 +28,8 @@ public class ApiKeyRepositoryImpl implements ApiKeyRepository {
                     .userId(userId)
                     .build()
             );
+
+            return newApiKey;
         }
 
         originalApiKey.setApiKey(newApiKey);
