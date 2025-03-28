@@ -4,6 +4,7 @@ import lombok.Getter;
 
 public enum AccountRoles {
     COMMON("COMMON"),
+    DEVELOPER("DEVELOPER"),
     ADMIN("ADMIN");
 
     @Getter
