@@ -8,10 +8,10 @@ import com.auth0.json.auth.TokenHolder;
 import com.auth0.json.mgmt.users.User;
 import com.auth0.net.Request;
 import kong.unirest.json.JSONObject;
-import org.apache.logging.log4j.util.Base64Util;
 import org.gycoding.accounts.domain.model.auth.UserMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
+import org.gycoding.accounts.domain.repository.ApiKeyRepository;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.auth.mapper.AuthFacadeMapper;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
@@ -28,6 +28,9 @@ import java.util.Objects;
 public class AuthFacadeImpl implements AuthFacade {
     @Autowired
     private AuthFacadeMapper mapper;
+
+    @Autowired
+    private ApiKeyRepository apiKeyRepository;
 
     private AuthAPI authAPI;
 
@@ -258,6 +261,7 @@ public class AuthFacadeImpl implements AuthFacade {
         }
 
         updatedUser.setUserMetadata(mapper.toMap(metadata));
+        apiKeyRepository.save(userId, metadata.getProfile().apiKey());
 
         Request<User> request = managementAPI.users().update(userId, updatedUser);
 
@@ -265,19 +269,28 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public void refreshApiKey(String userId) throws Auth0Exception {
+    public String refreshApiKey(String userId) throws Auth0Exception {
         final var metadata = this.getMetadata(userId);
+
+        final var apiKey = Base64Utils.generateApiKey();
 
         final var profile = ProfileMO.builder()
                 .username(metadata.getProfile().username())
                 .roles(metadata.getProfile().roles())
                 .picture(metadata.getProfile().picture())
                 .phoneNumber(metadata.getProfile().phoneNumber())
-                .apiKey(Base64Utils.generateApiKey())
+                .apiKey(apiKey)
                 .build();
 
         metadata.setProfile(profile);
 
         this.setMetadata(userId, metadata);
+
+        return apiKey;
+    }
+
+    @Override
+    public String decodeApiKey(String apiKey) {
+        return apiKeyRepository.getUserId(apiKey);
     }
 }

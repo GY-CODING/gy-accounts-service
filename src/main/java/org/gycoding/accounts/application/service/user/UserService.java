@@ -28,5 +28,6 @@ public interface UserService {
     MetadataODTO getMetadata(String userId) throws APIException;
     void updateMetadata(String userId) throws APIException;
 
-    void refreshApiKey(String userId) throws APIException;
+    String refreshApiKey(String userId) throws APIException;
+    String decodeApiKey(String apiKey) throws APIException;
 }
