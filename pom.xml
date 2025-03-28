@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.gycoding</groupId>
 	<artifactId>gy-accounts</artifactId>
-	<version>3.2.0</version>
+	<version>3.2.1</version>
 	<name>gy-accounts</name>
 	<description>GY Accounts is a service used by GYCODING for the management of user accounts for their products.</description>
 	<properties>

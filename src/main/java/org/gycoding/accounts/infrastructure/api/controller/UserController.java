@@ -7,14 +7,10 @@ import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.ProfileRQDT
 import org.gycoding.accounts.shared.utils.FileUtils;
 import org.gycoding.accounts.infrastructure.api.mapper.UserControllerMapper;
 import org.gycoding.exceptions.model.APIException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -114,5 +110,19 @@ public class UserController {
         service.updateMetadata(userId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/metadata/apikey/decode")
+    public ResponseEntity<?> decodeApiKey(
+            @RequestParam String key
+    ) throws APIException {
+        return ResponseEntity.ok(service.decodeApiKey(key));
+    }
+
+    @PatchMapping("/metadata/apikey")
+    public ResponseEntity<?> refreshApiKey(
+            @RequestHeader("x-user-id") String userId
+    ) throws APIException {
+        return ResponseEntity.ok(service.refreshApiKey(userId));
     }
 }

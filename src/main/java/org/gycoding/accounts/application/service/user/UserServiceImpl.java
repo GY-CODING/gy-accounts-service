@@ -12,6 +12,7 @@ import org.gycoding.accounts.application.dto.out.user.metadata.MetadataODTO;
 import org.gycoding.accounts.application.mapper.UserServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.PictureMO;
+import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.domain.repository.PictureRepository;
 import org.gycoding.accounts.shared.utils.FileUtils;
@@ -224,6 +225,36 @@ public class UserServiceImpl implements UserService {
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public String refreshApiKey(String userId) throws APIException {
+        try {
+            return authFacade.refreshApiKey(userId);
+        } catch(Exception e) {
+            Logger.error("An error has occurred while updating user API key.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+
+            throw new APIException(
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public String decodeApiKey(String apiKey) throws APIException {
+        try {
+            return authFacade.decodeApiKey(apiKey);
+        } catch(Exception e) {
+            Logger.error("An error has occurred while decoding user API key.", new JSONObject().put("error", e.getMessage()).put("key", apiKey));
+
+            throw new APIException(
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
             );
         }
     }

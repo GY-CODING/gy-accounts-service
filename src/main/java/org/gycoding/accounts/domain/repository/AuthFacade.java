@@ -1,5 +1,6 @@
 package org.gycoding.accounts.domain.repository;
 
+import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
@@ -31,4 +32,7 @@ public interface AuthFacade {
 
     MetadataMO getMetadata(String userId) throws Auth0Exception;
     void setMetadata(String userId, MetadataMO metadata) throws Auth0Exception;
+
+    String refreshApiKey(String userId) throws Auth0Exception;
+    String decodeApiKey(String apiKey);
 }

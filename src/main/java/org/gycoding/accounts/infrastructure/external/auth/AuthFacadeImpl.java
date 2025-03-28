@@ -11,11 +11,12 @@ import kong.unirest.json.JSONObject;
 import org.gycoding.accounts.domain.model.auth.UserMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
+import org.gycoding.accounts.domain.repository.ApiKeyRepository;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.auth.mapper.AuthFacadeMapper;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;
 import org.gycoding.accounts.shared.AuthConnections;
-import org.gycoding.accounts.shared.utils.logger.LogLevel;
+import org.gycoding.accounts.shared.utils.Base64Utils;
 import org.gycoding.accounts.shared.utils.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,9 @@ import java.util.Objects;
 public class AuthFacadeImpl implements AuthFacade {
     @Autowired
     private AuthFacadeMapper mapper;
+
+    @Autowired
+    private ApiKeyRepository apiKeyRepository;
 
     private AuthAPI authAPI;
 
@@ -120,6 +124,7 @@ public class AuthFacadeImpl implements AuthFacade {
                 ProfileMO.builder()
                         .username(profile.username())
                         .roles(metadata.getProfile().roles())
+                        .apiKey(metadata.getProfile().apiKey())
                         .picture(metadata.getProfile().picture())
                         .phoneNumber(profile.phoneNumber())
                         .build()
@@ -165,6 +170,7 @@ public class AuthFacadeImpl implements AuthFacade {
                 .roles(metadata.getProfile().roles())
                 .picture(newPicture)
                 .phoneNumber(metadata.getProfile().phoneNumber())
+                .apiKey(metadata.getProfile().apiKey())
                 .build();
 
         metadata.setProfile(profile);
@@ -220,6 +226,7 @@ public class AuthFacadeImpl implements AuthFacade {
         final var user               = managementAPI.users().get(userId, null).execute();
         var updatedUser              = new User();
 
+        // TODO. These conditions are used for fields that are empty, either use an "class" entity object or do a better mapping.
         if(Objects.equals(metadata.getProfile().username(), "")) {
             metadata.setProfile(
                     ProfileMO.builder()
@@ -227,6 +234,7 @@ public class AuthFacadeImpl implements AuthFacade {
                             .roles(metadata.getProfile().roles())
                             .picture(metadata.getProfile().picture())
                             .phoneNumber(metadata.getProfile().phoneNumber())
+                            .apiKey(metadata.getProfile().apiKey())
                             .build());
         }
 
@@ -237,13 +245,52 @@ public class AuthFacadeImpl implements AuthFacade {
                             .roles(metadata.getProfile().roles())
                             .picture(user.getPicture())
                             .phoneNumber(metadata.getProfile().phoneNumber())
+                            .apiKey(metadata.getProfile().apiKey())
+                            .build());
+        }
+
+        if(Objects.equals(metadata.getProfile().apiKey(), "")) {
+            metadata.setProfile(
+                    ProfileMO.builder()
+                            .username(metadata.getProfile().username())
+                            .roles(metadata.getProfile().roles())
+                            .picture(metadata.getProfile().picture())
+                            .phoneNumber(metadata.getProfile().phoneNumber())
+                            .apiKey(Base64Utils.generateApiKey())
                             .build());
         }
 
         updatedUser.setUserMetadata(mapper.toMap(metadata));
+        apiKeyRepository.save(userId, metadata.getProfile().apiKey());
 
         Request<User> request = managementAPI.users().update(userId, updatedUser);
 
         request.execute();
+    }
+
+    @Override
+    public String refreshApiKey(String userId) throws Auth0Exception {
+        final var metadata = this.getMetadata(userId);
+
+        final var apiKey = Base64Utils.generateApiKey();
+
+        final var profile = ProfileMO.builder()
+                .username(metadata.getProfile().username())
+                .roles(metadata.getProfile().roles())
+                .picture(metadata.getProfile().picture())
+                .phoneNumber(metadata.getProfile().phoneNumber())
+                .apiKey(apiKey)
+                .build();
+
+        metadata.setProfile(profile);
+
+        this.setMetadata(userId, metadata);
+
+        return apiKey;
+    }
+
+    @Override
+    public String decodeApiKey(String apiKey) {
+        return apiKeyRepository.getUserId(apiKey);
     }
 }
