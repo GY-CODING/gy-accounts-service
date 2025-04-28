@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.gycoding.accounts.application.service.user.UserService;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.ProfileRQDTO;
-import org.gycoding.accounts.shared.utils.FileUtils;
 import org.gycoding.accounts.infrastructure.api.mapper.UserControllerMapper;
+import org.gycoding.accounts.shared.utils.FileUtils;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,7 +29,7 @@ public class UserController {
 
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(
-            @RequestBody ProfileRQDTO profile,
+            @Valid @RequestBody ProfileRQDTO profile,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(mapper.toRSDTO(service.updateProfile(userId, mapper.toIDTO(profile))));

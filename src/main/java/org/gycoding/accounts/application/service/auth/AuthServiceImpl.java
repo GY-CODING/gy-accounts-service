@@ -10,9 +10,8 @@ import org.gycoding.accounts.application.dto.in.auth.UserIDTO;
 import org.gycoding.accounts.application.mapper.AuthServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.repository.AuthFacade;
-import org.gycoding.accounts.shared.utils.logger.LogLevel;
-import org.gycoding.accounts.shared.utils.logger.Logger;
 import org.gycoding.exceptions.model.APIException;
+import org.gycoding.logs.logger.Logger;
 import org.springframework.stereotype.Service;
 
 @Slf4j

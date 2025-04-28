@@ -11,9 +11,8 @@ import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.metadata.gymessages.ChatMO;
 import org.gycoding.accounts.domain.model.user.metadata.gymessages.GYMessagesMetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
-import org.gycoding.accounts.shared.utils.logger.LogLevel;
-import org.gycoding.accounts.shared.utils.logger.Logger;
 import org.gycoding.exceptions.model.APIException;
+import org.gycoding.logs.logger.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

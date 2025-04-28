@@ -4,11 +4,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.gycoding.accounts.application.service.products.gymessages.MessagesService;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.gymessages.ChatRQDTO;
-import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.infrastructure.api.mapper.products.MessagesControllerMapper;
 import org.gycoding.exceptions.model.APIException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +19,7 @@ public class MessagesController {
 
     @PatchMapping("/chats/add")
 	public ResponseEntity<?> addChat(
-            @Valid
-            @RequestBody ChatRQDTO chatRQDTO,
+            @Valid @RequestBody ChatRQDTO chatRQDTO,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.addChat(userId, mapper.toIDTO(chatRQDTO));
@@ -32,8 +28,7 @@ public class MessagesController {
 
     @DeleteMapping("/chats")
     public ResponseEntity<?> removeChat(
-            @Valid
-            @RequestParam String chatId,
+            @Valid @RequestParam String chatId,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.removeChat(userId, chatId);
@@ -42,8 +37,7 @@ public class MessagesController {
   
     @PutMapping("/chats/admin")
     public ResponseEntity<?> setAdminInChat(
-            @Valid
-            @RequestBody ChatRQDTO chatRQDTO,
+            @Valid @RequestBody ChatRQDTO chatRQDTO,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         service.setAdmin(userId, mapper.toIDTO(chatRQDTO));
@@ -51,9 +45,7 @@ public class MessagesController {
     }
 
     @GetMapping("/chats")
-    public ResponseEntity<?> listChats(
-            @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    public ResponseEntity<?> listChats(@RequestHeader("x-user-id") String userId) throws APIException {
         return ResponseEntity.ok(service.listChats(userId).stream().map(mapper::toRSDTO));
     }
 }
