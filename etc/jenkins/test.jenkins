@@ -1,16 +1,13 @@
 pipeline {
     agent any
 
-    environment {
-        MAVEN_OPTS = '-Dmaven.repo.local=.m2/repository'
-    }
-
-    tools {
-        maven 'Maven 3.8.6'
-        jdk 'JDK 17'
-    }
-
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Build and Test') {
             steps {
                 sh 'mvn clean test'
@@ -22,11 +19,9 @@ pipeline {
         always {
             junit '**/target/surefire-reports/*.xml'
         }
-
         success {
             echo 'Tests passed!'
         }
-
         failure {
             echo 'Some tests failed.'
         }
