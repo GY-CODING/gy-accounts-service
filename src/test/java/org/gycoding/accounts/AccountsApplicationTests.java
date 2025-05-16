@@ -1,7 +1,7 @@
-package org.gycoding.accounts.bizum;
+package org.gycoding.accounts;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BizumApplicationTests {
+class AccountsApplicationTests {
 }
