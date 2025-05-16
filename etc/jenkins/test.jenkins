@@ -2,15 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('Unit Tests') {
             steps {
-                checkout scm
-            }
-        }
-
-        stage('Build and Test') {
-            steps {
-                sh 'mvn clean test'
+                sh 'mvn clean test --settings src/main/resources/settings.xml''
             }
         }
     }
