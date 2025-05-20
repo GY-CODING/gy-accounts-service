@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Unit Tests') {
             steps {
-                sh 'mvn clean test --settings src/main/resources/settings.xml''
+                sh 'mvn clean test --settings src/main/resources/settings.xml'
             }
         }
     }
