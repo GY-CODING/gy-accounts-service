@@ -9,6 +9,8 @@ environment:
 phases:
   pre_build:
     commands:
+      - echo Installing Maven...
+      - yum install -y maven
       - echo Logging in to Amazon ECR...
       - aws --version
       - REPOSITORY_URI=106452922691.dkr.ecr.eu-north-1.amazonaws.com/gy-accounts-service
