@@ -1,6 +1,9 @@
 version: 0.2
 
-image: maven:3.9.6-eclipse-temurin-17
+environment:
+  computeType: BUILD_GENERAL1_SMALL
+  image: maven:3.9.6-eclipse-temurin-17
+  type: LINUX_CONTAINER
 
 phases:
   pre_build:
