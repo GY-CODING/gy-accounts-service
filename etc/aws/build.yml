@@ -1,10 +1,6 @@
 version: 0.2
 
-environment:
-  computeType: BUILD_GENERAL1_SMALL
-  image: aws/codebuild/standard:5.0
-  type: LINUX_CONTAINER
-
+image: maven:3.9.6-eclipse-temurin-17
 
 phases:
   pre_build:
