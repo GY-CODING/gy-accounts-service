@@ -2,6 +2,7 @@ package org.gycoding.accounts.infrastructure.external.auth.mapper;
 
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
+import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.gymessages.ChatMO;
 import org.gycoding.accounts.domain.model.user.metadata.gymessages.GYMessagesMetadataMO;
 import org.gycoding.accounts.shared.AccountRoles;
@@ -17,6 +18,9 @@ import java.util.Map;
 public interface AuthFacadeMapper {
     default Map<String, Object> toMap(MetadataMO metadata) {
         return Map.of(
+                "books", Map.of(
+                        "friends", metadata.getBooks().friends()
+                ),
                 "gyMessages", Map.of(
                         "chats", metadata.getGyMessages().chats()
                 ),
@@ -32,9 +36,27 @@ public interface AuthFacadeMapper {
 
     default MetadataMO toMO(Map<String, Object> metadata) {
         return MetadataMO.builder()
+                .books(this.booksMetadataToMO(metadata))
                 .gyMessages(this.messagesMetadataToMO(metadata))
                 .profile(this.profileToMO(metadata))
                 .build();
+    }
+
+    private BooksMetadataMO booksMetadataToMO(Map<String, Object> metadata) {
+        final var defaultBooksMetadata = BooksMetadataMO.builder()
+                .friends(List.of())
+                .build();
+
+        try {
+            return BooksMetadataMO.builder()
+                    .friends(
+                            ((List<String>) ((Map<String, Object>) metadata.get("books")).get("friends")).stream()
+                                    .toList()
+                    )
+                    .build();
+        } catch(Exception e) {
+            return defaultBooksMetadata;
+        }
     }
 
     private GYMessagesMetadataMO messagesMetadataToMO(Map<String, Object> metadata) {

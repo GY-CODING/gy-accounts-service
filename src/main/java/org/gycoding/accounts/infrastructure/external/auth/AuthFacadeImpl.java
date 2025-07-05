@@ -11,6 +11,7 @@ import kong.unirest.json.JSONObject;
 import org.gycoding.accounts.domain.model.auth.UserMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
+import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
 import org.gycoding.accounts.domain.repository.ApiKeyRepository;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.auth.mapper.AuthFacadeMapper;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -226,7 +228,7 @@ public class AuthFacadeImpl implements AuthFacade {
         final var user               = managementAPI.users().get(userId, null).execute();
         var updatedUser              = new User();
 
-        // TODO. These conditions are used for fields that are empty, either use an "class" entity object or do a better mapping.
+        // TODO. These conditions are used for fields that are empty, either use a "class" entity object or do a better mapping.
         if(Objects.equals(metadata.getProfile().username(), "")) {
             metadata.setProfile(
                     ProfileMO.builder()

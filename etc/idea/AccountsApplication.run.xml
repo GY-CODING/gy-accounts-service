@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="AccountsApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
-    <module name="gy-accounts" />
+    <module name="gy-accounts-service" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="org.gycoding.accounts.AccountsApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
