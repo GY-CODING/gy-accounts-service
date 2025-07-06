@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
                             .build()
             );
 
-            Logger.error("User profile picture has been successfully saved to the database.", new JSONObject().put("userId", userId));
+            Logger.info("User profile picture has been successfully saved to the database.", new JSONObject().put("userId", userId));
 
             authFacade.updatePicture(userId, GY_ACCOUNTS_PICTURE_URL + formattedUserId);
 
