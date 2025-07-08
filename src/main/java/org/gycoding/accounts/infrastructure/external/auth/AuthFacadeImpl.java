@@ -239,6 +239,7 @@ public class AuthFacadeImpl implements AuthFacade {
                 .execute()
                 .getItems()
                 .stream()
+                .filter(user -> !user.getId().equals(userId))
                 .filter(user -> user.getUserMetadata().containsKey("books"))
                 .filter(user -> mapper.toMO(user.getUserMetadata()).getProfile().username().equalsIgnoreCase(query))
                 .map(user -> {
