@@ -85,7 +85,7 @@ public class BooksServiceImpl implements BooksService {
             return friends.stream()
                     .map(friend -> {
                         try {
-                            return authFacade.getMetadata(friend).getProfile();
+                            return authFacade.getMetadata(authFacade.findUserId(friend)).getProfile();
                         } catch (Auth0Exception e) {
                             throw new RuntimeException();
                         }
@@ -102,10 +102,10 @@ public class BooksServiceImpl implements BooksService {
     }
 
     @Override
-    public FriendRequestODTO sendFriendRequest(String userId, String toUserId) throws APIException {
+    public FriendRequestODTO sendFriendRequest(String userId, UUID to) throws APIException {
         try {
-            if(authFacade.getMetadata(userId).getBooks().friends().contains(toUserId)) {
-                Logger.error("User is already a friend.", toUserId);
+            if(authFacade.getMetadata(userId).getBooks().friends().contains(to)) {
+                Logger.error("User is already a friend.", to);
                 throw new APIException(
                     AccountsAPIError.CONFLICT.getCode(),
                     AccountsAPIError.CONFLICT.getMessage(),
@@ -113,7 +113,7 @@ public class BooksServiceImpl implements BooksService {
                 );
             }
 
-            return booksMapper.toODTO(repository.save(booksMapper.toMO(userId, toUserId)));
+            return booksMapper.toODTO(repository.save(booksMapper.toMO(userId, to)));
         } catch (Auth0Exception e) {
             throw new APIException(
                 AccountsAPIError.AUTH_ERROR.getCode(),
@@ -134,12 +134,12 @@ public class BooksServiceImpl implements BooksService {
                     ));
 
             if(command.equals(FriendRequestCommand.ACCEPT)) {
-                final var senderUserMetadata = authFacade.getMetadata(persistedFriendRequest.to());
+                final var senderUserMetadata = authFacade.getMetadata(authFacade.findUserId(persistedFriendRequest.to()));
                 var senderUserFriends = senderUserMetadata.getBooks().friends();
 
                 senderUserMetadata.setBooks(
                         BooksMetadataMO.builder()
-                                .friends(new ArrayList<>(senderUserFriends) {{ add(userId); }})
+                                .friends(new ArrayList<>(senderUserFriends) {{ add(senderUserMetadata.getProfile().id()); }})
                                 .build()
                 );
 
@@ -152,7 +152,7 @@ public class BooksServiceImpl implements BooksService {
                                 .build()
                 );
 
-                authFacade.setMetadata(persistedFriendRequest.to(), senderUserMetadata);
+                authFacade.setMetadata(authFacade.findUserId(persistedFriendRequest.to()), senderUserMetadata);
                 authFacade.setMetadata(userId, userMetadata);
             }
 

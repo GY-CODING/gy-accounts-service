@@ -20,8 +20,8 @@ public interface BooksServiceMapper {
 
     @Mapping(target = "id", expression = "java(UUID.randomUUID())")
     @Mapping(target = "from", source = "userId")
-    @Mapping(target = "to", source = "toUserId")
-    FriendRequestMO toMO(String userId, String toUserId);
+    @Mapping(target = "to", source = "to")
+    FriendRequestMO toMO(String userId, UUID to);
 
     FriendRequestODTO toODTO(FriendRequestMO friendRequestMO);
 }

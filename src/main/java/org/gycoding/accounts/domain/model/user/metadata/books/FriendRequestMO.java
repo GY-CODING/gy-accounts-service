@@ -8,5 +8,5 @@ import java.util.UUID;
 public record FriendRequestMO(
         UUID id,
         String from,
-        String to
+        UUID to
 ) { }

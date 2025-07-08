@@ -53,6 +53,7 @@ public interface AuthFacadeMapper {
             return BooksMetadataMO.builder()
                     .friends(
                             ((List<String>) ((Map<String, Object>) metadata.get("books")).get("friends")).stream()
+                                    .map(UUID::fromString)
                                     .toList()
                     )
                     .build();

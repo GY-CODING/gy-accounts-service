@@ -11,6 +11,7 @@ import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface AuthFacade {
@@ -18,6 +19,8 @@ public interface AuthFacade {
     CreatedUser signUp(UserMO user) throws Auth0Exception;
     String googleAuth();
     TokenHolder handleGoogleResponse(String code) throws Auth0Exception;
+
+    String findUserId(UUID userId) throws Auth0Exception;
 
     ProfileMO getProfile(String userId) throws Auth0Exception;
     ProfileMO updateProfile(String userId, ProfileMO profile) throws Auth0Exception;

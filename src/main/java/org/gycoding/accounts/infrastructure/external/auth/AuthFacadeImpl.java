@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class AuthFacadeImpl implements AuthFacade {
@@ -112,6 +113,18 @@ public class AuthFacadeImpl implements AuthFacade {
     @Override
     public TokenHolder handleGoogleResponse(String code) throws Auth0Exception {
         return authAPI.exchangeCode(code, googleCallbackURL).execute();
+    }
+
+    @Override
+    public String findUserId(UUID userId) throws Auth0Exception {
+        final var filter = new UserFilter().withQuery("user_metadata.profile.id:" + userId);
+
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        User user               = managementAPI.users().list(filter).execute().getItems().stream()
+                .findFirst()
+                .orElseThrow(() -> new Auth0Exception("User not found with ID: " + userId));
+
+        return user.getId();
     }
 
     @Override

@@ -10,11 +10,12 @@ import org.gycoding.exceptions.model.APIException;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface BooksService {
     List<ProfileODTO> listUsers(String query) throws APIException;
     List<ProfileODTO> listUsers(String userId, String query) throws APIException;
     List<ProfileODTO> listFriends(String userId) throws APIException;
-    FriendRequestODTO sendFriendRequest(String userId, String toUserId) throws APIException;
+    FriendRequestODTO sendFriendRequest(String userId, UUID to) throws APIException;
     void manageFriendRequest(String userId, String requestId, FriendRequestCommand command) throws APIException;
 }
