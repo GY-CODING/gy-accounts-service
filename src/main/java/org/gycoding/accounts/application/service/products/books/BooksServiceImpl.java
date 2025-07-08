@@ -43,7 +43,7 @@ public class BooksServiceImpl implements BooksService {
     private final UserServiceMapper userMapper;
 
     @Override
-    public List<MetadataODTO> listUsers(String query) throws APIException {
+    public List<ProfileODTO> listUsers(String query) throws APIException {
         try {
             return authFacade.listUsers(query).stream()
                     .map(userMapper::toODTO)
@@ -58,9 +58,9 @@ public class BooksServiceImpl implements BooksService {
     }
 
     @Override
-    public List<MetadataODTO> listUsers(String userId, String query) throws APIException {
+    public List<ProfileODTO> listUsers(String userId, String query) throws APIException {
         try {
-            return authFacade.listUsers(query).stream()
+            return authFacade.listUsers(userId, query).stream()
                     .map(userMapper::toODTO)
                     .toList();
         } catch (Auth0Exception e) {

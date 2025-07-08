@@ -12,8 +12,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface BooksService {
-    List<MetadataODTO> listUsers(String query) throws APIException;
-    List<MetadataODTO> listUsers(String userId, String query) throws APIException;
+    List<ProfileODTO> listUsers(String query) throws APIException;
+    List<ProfileODTO> listUsers(String userId, String query) throws APIException;
     List<ProfileODTO> listFriends(String userId) throws APIException;
     FriendRequestODTO sendFriendRequest(String userId, String toUserId) throws APIException;
     void manageFriendRequest(String userId, String requestId, FriendRequestCommand command) throws APIException;

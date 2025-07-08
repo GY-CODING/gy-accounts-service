@@ -27,7 +27,7 @@ public class BooksController {
     ) throws APIException {
         return ResponseEntity.ok(
                 service.listUsers(userId, query).stream()
-                        .map(userMapper::toRSDTO)
+                        .map(userMapper::toPublicRSDTO)
                         .toList()
         );
     }
@@ -38,7 +38,7 @@ public class BooksController {
     ) throws APIException {
         return ResponseEntity.ok(
                 service.listUsers(query).stream()
-                        .map(userMapper::toRSDTO)
+                        .map(userMapper::toPublicRSDTO)
                         .toList()
         );
     }

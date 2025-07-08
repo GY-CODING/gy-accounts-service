@@ -13,5 +13,6 @@ public record ProfileMO(
     String phoneNumber,
     List<AccountRoles> roles,
     String apiKey,
-    String picture
+    String picture,
+    Boolean isFriend
 ) { }

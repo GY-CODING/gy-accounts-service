@@ -101,7 +101,7 @@ public interface AuthFacadeMapper {
                     .id(
                             UUID.fromString(
                                     (String) ((HashMap<String, Object>) metadata.get("profile"))
-                                    .getOrDefault("id", defaultProfile.id())
+                                    .getOrDefault("id", defaultProfile.id().toString())
                             )
                     )
                     .username(

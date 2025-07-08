@@ -33,7 +33,8 @@ public interface AuthFacade {
 
     void updatePassword(String userId, String newPassword) throws Auth0Exception;
 
-    List<MetadataMO> listUsers(String query) throws Auth0Exception;
+    List<ProfileMO> listUsers(String query) throws Auth0Exception;
+    List<ProfileMO> listUsers(String userId, String query) throws Auth0Exception;
 
     MetadataMO getMetadata(String userId) throws Auth0Exception;
     void setMetadata(String userId, MetadataMO metadata) throws Auth0Exception;

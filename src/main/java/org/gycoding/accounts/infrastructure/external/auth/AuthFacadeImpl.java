@@ -216,7 +216,7 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public List<MetadataMO> listUsers(String query) throws Auth0Exception {
+    public List<ProfileMO> listUsers(String query) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
         return managementAPI
                 .users()
@@ -225,18 +225,34 @@ public class AuthFacadeImpl implements AuthFacade {
                 .getItems()
                 .stream()
                 .filter(user -> user.getUserMetadata().containsKey("books"))
-                .map(user -> {
-                    try {
-                        final var metadata = getMetadata(user.getId());
+                .filter(user -> mapper.toMO(user.getUserMetadata()).getProfile().username().equalsIgnoreCase(query))
+                .map(user -> mapper.toMO(user.getUserMetadata()).getProfile())
+                .toList();
+    }
 
-                        if(metadata.getProfile().username().equalsIgnoreCase(query)) {
-                            return metadata;
-                        } else {
-                            return null;
-                        }
-                    } catch (Exception e) {
-                        return null;
-                    }
+    @Override
+    public List<ProfileMO> listUsers(String userId, String query) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        return managementAPI
+                .users()
+                .list(new UserFilter())
+                .execute()
+                .getItems()
+                .stream()
+                .filter(user -> user.getUserMetadata().containsKey("books"))
+                .filter(user -> mapper.toMO(user.getUserMetadata()).getProfile().username().equalsIgnoreCase(query))
+                .map(user -> {
+                    final var profile = mapper.toMO(user.getUserMetadata()).getProfile();
+
+                    return ProfileMO.builder()
+                            .id(profile.id())
+                            .username(profile.username())
+                            .roles(profile.roles())
+                            .picture(profile.picture())
+                            .phoneNumber(profile.phoneNumber())
+                            .apiKey(profile.apiKey())
+                            .isFriend(mapper.toMO(user.getUserMetadata()).getBooks().friends().contains(userId))
+                            .build();
                 })
                 .toList();
     }

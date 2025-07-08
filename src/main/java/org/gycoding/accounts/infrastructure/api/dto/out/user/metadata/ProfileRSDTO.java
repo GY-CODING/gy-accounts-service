@@ -1,5 +1,6 @@
 package org.gycoding.accounts.infrastructure.api.dto.out.user.metadata;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import org.gycoding.accounts.shared.AccountRoles;
 
@@ -13,5 +14,7 @@ public record ProfileRSDTO(
     String phoneNumber,
     List<AccountRoles> roles,
     String apiKey,
-    String picture
+    String picture,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean isFriend
 ) { }
