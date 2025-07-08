@@ -3,12 +3,9 @@ package org.gycoding.accounts.infrastructure.api.controller.products;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.gycoding.accounts.application.service.products.books.BooksService;
-import org.gycoding.accounts.application.service.products.gymessages.MessagesService;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.books.FriendRequestRQDTO;
-import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.gymessages.ChatRQDTO;
 import org.gycoding.accounts.infrastructure.api.mapper.UserControllerMapper;
 import org.gycoding.accounts.infrastructure.api.mapper.products.BooksControllerMapper;
-import org.gycoding.accounts.infrastructure.api.mapper.products.MessagesControllerMapper;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +20,36 @@ public class BooksController {
 
     private final UserControllerMapper userMapper;
 
+    @GetMapping("/users")
+    public ResponseEntity<?> listUsers(
+            @RequestHeader("x-user-id") String userId,
+            @RequestParam String query
+    ) throws APIException {
+        return ResponseEntity.ok(
+                service.listUsers(userId, query).stream()
+                        .map(userMapper::toRSDTO)
+                        .toList()
+        );
+    }
+
+    @GetMapping("/users/public")
+    public ResponseEntity<?> listUsersPublic(
+            @RequestParam String query
+    ) throws APIException {
+        return ResponseEntity.ok(
+                service.listUsers(query).stream()
+                        .map(userMapper::toRSDTO)
+                        .toList()
+        );
+    }
+
     @GetMapping("/friends")
     public ResponseEntity<?> listFriends(
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(
                 service.listFriends(userId).stream()
-                        .map(userMapper::toRSDTO)
+                        .map(userMapper::toPublicRSDTO)
                         .toList()
         );
     }

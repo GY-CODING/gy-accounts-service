@@ -10,7 +10,7 @@ public record ProfileRQDTO(
     String username,
     @NotEmpty(message = "Profile picture is required.")
     String picture,
-    @Pattern(regexp = "^\\+\\d{1,3}\\s\\d{4,14}$", message = "Invalid phone number format")
+    @Pattern(regexp = "^\\+\\d{1,3}\\s\\d{4,14}$", message = "Invalid phone number format.")
     @NotEmpty(message = "Phone number is required (and must use the international prefix separated from the other numbers by a blank space).")
     String phoneNumber
 ) { }

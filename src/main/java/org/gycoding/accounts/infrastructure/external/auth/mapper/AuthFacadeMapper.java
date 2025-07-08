@@ -13,6 +13,7 @@ import org.mapstruct.ReportingPolicy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AuthFacadeMapper {
@@ -25,6 +26,7 @@ public interface AuthFacadeMapper {
                         "chats", metadata.getGyMessages().chats()
                 ),
                 "profile", Map.of(
+                        "id", metadata.getProfile().id(),
                         "username", metadata.getProfile().username(),
                         "picture", metadata.getProfile().picture(),
                         "roles", metadata.getProfile().roles(),
@@ -86,6 +88,7 @@ public interface AuthFacadeMapper {
 
     private ProfileMO profileToMO(Map<String, Object> metadata) {
         final var defaultProfile = ProfileMO.builder()
+                .id(UUID.randomUUID())
                 .picture("")
                 .username("")
                 .phoneNumber("+01 123456789")
@@ -95,6 +98,12 @@ public interface AuthFacadeMapper {
 
         try {
             return ProfileMO.builder()
+                    .id(
+                            UUID.fromString(
+                                    (String) ((HashMap<String, Object>) metadata.get("profile"))
+                                    .getOrDefault("id", defaultProfile.id())
+                            )
+                    )
                     .username(
                             (String) ((HashMap<String, Object>) metadata.get("profile"))
                                     .getOrDefault("username", defaultProfile.username())

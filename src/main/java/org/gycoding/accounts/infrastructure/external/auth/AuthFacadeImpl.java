@@ -2,6 +2,7 @@ package org.gycoding.accounts.infrastructure.external.auth;
 
 import com.auth0.client.auth.AuthAPI;
 import com.auth0.client.mgmt.ManagementAPI;
+import com.auth0.client.mgmt.filter.UserFilter;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
@@ -215,6 +216,32 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
+    public List<MetadataMO> listUsers(String query) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+        return managementAPI
+                .users()
+                .list(new UserFilter())
+                .execute()
+                .getItems()
+                .stream()
+                .filter(user -> user.getUserMetadata().containsKey("books"))
+                .map(user -> {
+                    try {
+                        final var metadata = getMetadata(user.getId());
+
+                        if(metadata.getProfile().username().equalsIgnoreCase(query)) {
+                            return metadata;
+                        } else {
+                            return null;
+                        }
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .toList();
+    }
+
+    @Override
     public MetadataMO getMetadata(String userId) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
         User user               = managementAPI.users().get(userId, null).execute();
@@ -232,6 +259,7 @@ public class AuthFacadeImpl implements AuthFacade {
         if(Objects.equals(metadata.getProfile().username(), "")) {
             metadata.setProfile(
                     ProfileMO.builder()
+                            .id(metadata.getProfile().id())
                             .username(user.getName())
                             .roles(metadata.getProfile().roles())
                             .picture(metadata.getProfile().picture())
@@ -243,6 +271,7 @@ public class AuthFacadeImpl implements AuthFacade {
         if(Objects.equals(metadata.getProfile().picture(), "")) {
             metadata.setProfile(
                     ProfileMO.builder()
+                            .id(metadata.getProfile().id())
                             .username(metadata.getProfile().username())
                             .roles(metadata.getProfile().roles())
                             .picture(user.getPicture())
@@ -254,6 +283,7 @@ public class AuthFacadeImpl implements AuthFacade {
         if(Objects.equals(metadata.getProfile().apiKey(), "")) {
             metadata.setProfile(
                     ProfileMO.builder()
+                            .id(metadata.getProfile().id())
                             .username(metadata.getProfile().username())
                             .roles(metadata.getProfile().roles())
                             .picture(metadata.getProfile().picture())

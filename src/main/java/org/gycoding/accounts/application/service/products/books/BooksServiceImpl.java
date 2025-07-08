@@ -2,9 +2,11 @@ package org.gycoding.accounts.application.service.products.books;
 
 import com.auth0.exception.Auth0Exception;
 import kong.unirest.json.JSONObject;
+import kotlin.Metadata;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gycoding.accounts.application.dto.in.user.metadata.gymessages.ChatIDTO;
+import org.gycoding.accounts.application.dto.out.user.metadata.MetadataODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.books.FriendRequestODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.gymessages.ChatODTO;
@@ -39,6 +41,36 @@ public class BooksServiceImpl implements BooksService {
     private final BooksServiceMapper booksMapper;
 
     private final UserServiceMapper userMapper;
+
+    @Override
+    public List<MetadataODTO> listUsers(String query) throws APIException {
+        try {
+            return authFacade.listUsers(query).stream()
+                    .map(userMapper::toODTO)
+                    .toList();
+        } catch (Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.AUTH_ERROR.getCode(),
+                    AccountsAPIError.AUTH_ERROR.getMessage(),
+                    AccountsAPIError.AUTH_ERROR.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public List<MetadataODTO> listUsers(String userId, String query) throws APIException {
+        try {
+            return authFacade.listUsers(query).stream()
+                    .map(userMapper::toODTO)
+                    .toList();
+        } catch (Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.AUTH_ERROR.getCode(),
+                    AccountsAPIError.AUTH_ERROR.getMessage(),
+                    AccountsAPIError.AUTH_ERROR.getStatus()
+            );
+        }
+    }
 
     @Override
     public List<ProfileODTO> listFriends(String userId) throws APIException {

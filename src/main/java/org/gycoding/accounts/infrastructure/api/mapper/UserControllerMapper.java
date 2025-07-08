@@ -8,6 +8,7 @@ import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.MetadataRQD
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.ProfileRQDTO;
 import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.MetadataRSDTO;
 import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.ProfileRSDTO;
+import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.PublicProfileRSDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -16,6 +17,8 @@ public interface UserControllerMapper {
     ProfileRSDTO toRSDTO(ProfileODTO profile);
 
     ProfileIDTO toIDTO(ProfileRQDTO profile);
+
+    PublicProfileRSDTO toPublicRSDTO(ProfileODTO profile);
 
     MetadataRSDTO toRSDTO(MetadataODTO metadata);
 
