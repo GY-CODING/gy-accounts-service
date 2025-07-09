@@ -12,7 +12,6 @@ import kong.unirest.json.JSONObject;
 import org.gycoding.accounts.domain.model.auth.UserMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
-import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
 import org.gycoding.accounts.domain.repository.ApiKeyRepository;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.auth.mapper.AuthFacadeMapper;
@@ -26,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -116,13 +116,13 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public String findUserId(UUID userId) throws Auth0Exception {
-        final var filter = new UserFilter().withQuery("user_metadata.profile.id:" + userId);
+    public String findUserId(UUID profileId) throws Auth0Exception {
+        final var filter = new UserFilter().withQuery("user_metadata.profile.id:" + profileId);
 
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
         User user               = managementAPI.users().list(filter).execute().getItems().stream()
                 .findFirst()
-                .orElseThrow(() -> new Auth0Exception("User not found with ID: " + userId));
+                .orElseThrow(() -> new Auth0Exception("User not found with Profile ID: " + profileId));
 
         return user.getId();
     }
@@ -229,8 +229,25 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
+    public Optional<ProfileMO> getUser(UUID profileId) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+
+        return managementAPI
+                .users()
+                .list(new UserFilter())
+                .execute()
+                .getItems()
+                .stream()
+                .filter(user -> user.getUserMetadata().containsKey("books"))
+                .filter(user -> mapper.toMO(user.getUserMetadata()).getProfile().id().equals(profileId))
+                .findFirst()
+                .map(user -> mapper.toMO(user.getUserMetadata()).getProfile());
+    }
+
+    @Override
     public List<ProfileMO> listUsers(String query) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+
         return managementAPI
                 .users()
                 .list(new UserFilter())

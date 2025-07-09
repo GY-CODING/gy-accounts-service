@@ -10,6 +10,8 @@ import org.gycoding.exceptions.model.APIException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/books")
@@ -19,6 +21,13 @@ public class BooksController {
     private final BooksControllerMapper booksMapper;
 
     private final UserControllerMapper userMapper;
+
+    @GetMapping("/users/{profileId}")
+    public ResponseEntity<?> getUser(
+            @PathVariable String profileId
+    ) throws APIException {
+        return ResponseEntity.ok(userMapper.toPublicRSDTO(service.getUser(UUID.fromString(profileId))));
+    }
 
     @GetMapping("/users")
     public ResponseEntity<?> listUsers(
@@ -61,6 +70,17 @@ public class BooksController {
     ) throws APIException {
         return ResponseEntity.ok(booksMapper.toRSDTO(service.sendFriendRequest(userId, request.to())));
 	}
+
+    @GetMapping("/friends/request")
+    public ResponseEntity<?> listFriendRequests(
+            @RequestHeader("x-user-id") String userId
+    ) throws APIException {
+        return ResponseEntity.ok(
+                service.listFriendRequests(userId).stream()
+                        .map(booksMapper::toRSDTO)
+                        .toList()
+        );
+    }
 
     @PostMapping("/friends/manage")
     public ResponseEntity<?> manageFriendRequest(

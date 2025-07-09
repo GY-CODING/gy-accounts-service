@@ -1,16 +1,15 @@
 package org.gycoding.accounts.domain.repository;
 
-import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
-import com.auth0.json.mgmt.users.User;
 import org.gycoding.accounts.domain.model.auth.UserMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -20,7 +19,7 @@ public interface AuthFacade {
     String googleAuth();
     TokenHolder handleGoogleResponse(String code) throws Auth0Exception;
 
-    String findUserId(UUID userId) throws Auth0Exception;
+    String findUserId(UUID profileId) throws Auth0Exception;
 
     ProfileMO getProfile(String userId) throws Auth0Exception;
     ProfileMO updateProfile(String userId, ProfileMO profile) throws Auth0Exception;
@@ -36,6 +35,7 @@ public interface AuthFacade {
 
     void updatePassword(String userId, String newPassword) throws Auth0Exception;
 
+    Optional<ProfileMO> getUser(UUID profileId) throws Auth0Exception;
     List<ProfileMO> listUsers(String query) throws Auth0Exception;
     List<ProfileMO> listUsers(String userId, String query) throws Auth0Exception;
 

@@ -11,7 +11,9 @@ import org.gycoding.accounts.infrastructure.external.database.repository.FriendR
 import org.gycoding.accounts.infrastructure.external.database.repository.PictureMongoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +30,13 @@ public class FriendRequestRepositoryImpl implements FriendRequestRepository {
     @Override
     public Optional<FriendRequestMO> get(String requestId) {
         return repository.findById(requestId).map(mapper::toMO);
+    }
+
+    @Override
+    public List<FriendRequestMO> list(UUID profileId) {
+        return repository.findAllByTo(profileId.toString()).stream()
+                .map(mapper::toMO)
+                .toList();
     }
 
     @Override

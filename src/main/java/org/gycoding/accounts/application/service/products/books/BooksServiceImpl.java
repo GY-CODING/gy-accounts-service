@@ -43,6 +43,25 @@ public class BooksServiceImpl implements BooksService {
     private final UserServiceMapper userMapper;
 
     @Override
+    public ProfileODTO getUser(UUID profileId) throws APIException {
+        try {
+            return authFacade.getUser(profileId)
+                    .map(userMapper::toODTO)
+                    .orElseThrow(() -> new APIException(
+                            AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                            AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                            AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                    ));
+        } catch (Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.AUTH_ERROR.getCode(),
+                    AccountsAPIError.AUTH_ERROR.getMessage(),
+                    AccountsAPIError.AUTH_ERROR.getStatus()
+            );
+        }
+    }
+
+    @Override
     public List<ProfileODTO> listUsers(String query) throws APIException {
         try {
             return authFacade.listUsers(query).stream()
@@ -124,6 +143,23 @@ public class BooksServiceImpl implements BooksService {
     }
 
     @Override
+    public List<FriendRequestODTO> listFriendRequests(String userId) throws APIException {
+        try {
+            final var profileId = authFacade.getMetadata(userId).getProfile().id();
+
+            return repository.list(profileId).stream()
+                    .map(booksMapper::toODTO)
+                    .toList();
+        } catch (Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.AUTH_ERROR.getCode(),
+                    AccountsAPIError.AUTH_ERROR.getMessage(),
+                    AccountsAPIError.AUTH_ERROR.getStatus()
+            );
+        }
+    }
+
+    @Override
     public void manageFriendRequest(String userId, String requestId, FriendRequestCommand command) throws APIException {
         try {
             final var persistedFriendRequest = repository.get(requestId)
@@ -133,26 +169,33 @@ public class BooksServiceImpl implements BooksService {
                             AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
                     ));
 
+            final var userMetadata = authFacade.getMetadata(userId);
+
+            if(!persistedFriendRequest.to().equals(userMetadata.getProfile().id())) throw new APIException(
+                    AccountsAPIError.FORBIDDEN.getCode(),
+                    AccountsAPIError.FORBIDDEN.getMessage(),
+                    AccountsAPIError.FORBIDDEN.getStatus()
+            );
+
             if(command.equals(FriendRequestCommand.ACCEPT)) {
-                final var senderUserMetadata = authFacade.getMetadata(authFacade.findUserId(persistedFriendRequest.to()));
+                final var senderUserMetadata = authFacade.getMetadata(persistedFriendRequest.from());
                 var senderUserFriends = senderUserMetadata.getBooks().friends();
 
                 senderUserMetadata.setBooks(
                         BooksMetadataMO.builder()
-                                .friends(new ArrayList<>(senderUserFriends) {{ add(senderUserMetadata.getProfile().id()); }})
+                                .friends(new ArrayList<>(senderUserFriends) {{ add(userMetadata.getProfile().id()); }})
                                 .build()
                 );
 
-                final var userMetadata = authFacade.getMetadata(userId);
                 var userFriends = userMetadata.getBooks().friends();
 
                 userMetadata.setBooks(
                         BooksMetadataMO.builder()
-                                .friends(new ArrayList<>(userFriends) {{ add(persistedFriendRequest.to()); }})
+                                .friends(new ArrayList<>(userFriends) {{ add(senderUserMetadata.getProfile().id()); }})
                                 .build()
                 );
 
-                authFacade.setMetadata(authFacade.findUserId(persistedFriendRequest.to()), senderUserMetadata);
+                authFacade.setMetadata(persistedFriendRequest.from(), senderUserMetadata);
                 authFacade.setMetadata(userId, userMetadata);
             }
 
