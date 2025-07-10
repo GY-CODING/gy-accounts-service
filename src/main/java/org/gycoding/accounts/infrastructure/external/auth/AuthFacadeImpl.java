@@ -138,6 +138,7 @@ public class AuthFacadeImpl implements AuthFacade {
 
         metadata.setProfile(
                 ProfileMO.builder()
+                        .id(metadata.getProfile().id())
                         .username(profile.username())
                         .roles(metadata.getProfile().roles())
                         .apiKey(metadata.getProfile().apiKey())
@@ -182,6 +183,7 @@ public class AuthFacadeImpl implements AuthFacade {
     public String updatePicture(String userId, String newPicture) throws Auth0Exception {
         final var metadata = this.getMetadata(userId);
         final var profile = ProfileMO.builder()
+                .id(metadata.getProfile().id())
                 .username(metadata.getProfile().username())
                 .roles(metadata.getProfile().roles())
                 .picture(newPicture)
