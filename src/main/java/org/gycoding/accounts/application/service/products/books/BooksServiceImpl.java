@@ -43,55 +43,6 @@ public class BooksServiceImpl implements BooksService {
     private final UserServiceMapper userMapper;
 
     @Override
-    public ProfileODTO getUser(UUID profileId) throws APIException {
-        try {
-            return authFacade.getUser(profileId)
-                    .map(userMapper::toODTO)
-                    .orElseThrow(() -> new APIException(
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                    ));
-        } catch (Auth0Exception e) {
-            throw new APIException(
-                    AccountsAPIError.AUTH_ERROR.getCode(),
-                    AccountsAPIError.AUTH_ERROR.getMessage(),
-                    AccountsAPIError.AUTH_ERROR.getStatus()
-            );
-        }
-    }
-
-    @Override
-    public List<ProfileODTO> listUsers(String query) throws APIException {
-        try {
-            return authFacade.listUsers(query).stream()
-                    .map(userMapper::toODTO)
-                    .toList();
-        } catch (Auth0Exception e) {
-            throw new APIException(
-                    AccountsAPIError.AUTH_ERROR.getCode(),
-                    AccountsAPIError.AUTH_ERROR.getMessage(),
-                    AccountsAPIError.AUTH_ERROR.getStatus()
-            );
-        }
-    }
-
-    @Override
-    public List<ProfileODTO> listUsers(String userId, String query) throws APIException {
-        try {
-            return authFacade.listUsers(userId, query).stream()
-                    .map(userMapper::toODTO)
-                    .toList();
-        } catch (Auth0Exception e) {
-            throw new APIException(
-                    AccountsAPIError.AUTH_ERROR.getCode(),
-                    AccountsAPIError.AUTH_ERROR.getMessage(),
-                    AccountsAPIError.AUTH_ERROR.getStatus()
-            );
-        }
-    }
-
-    @Override
     public List<ProfileODTO> listFriends(String userId) throws APIException {
         try {
             final var metadata = authFacade.getMetadata(userId);

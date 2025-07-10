@@ -8,9 +8,17 @@ import org.gycoding.accounts.application.dto.out.user.metadata.MetadataODTO;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface UserService {
+    ProfileODTO getUser(UUID profileId) throws APIException;
+    ProfileODTO getUser(String userId, UUID profileId) throws APIException;
+
+    List<ProfileODTO> listUsers(String query) throws APIException;
+    List<ProfileODTO> listUsers(String userId, String query) throws APIException;
+
     ProfileODTO getProfile(String userId) throws APIException;
     ProfileODTO updateProfile(String userId, ProfileIDTO profile) throws APIException;
 
@@ -30,4 +38,7 @@ public interface UserService {
 
     String refreshApiKey(String userId) throws APIException;
     String decodeApiKey(String apiKey) throws APIException;
+
+    UUID transform(String userId) throws APIException;
+    String transform(UUID profileId) throws APIException;
 }

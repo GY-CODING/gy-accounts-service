@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BooksService {
-    ProfileODTO getUser(UUID profileId) throws APIException;
-    List<ProfileODTO> listUsers(String query) throws APIException;
-    List<ProfileODTO> listUsers(String userId, String query) throws APIException;
     List<ProfileODTO> listFriends(String userId) throws APIException;
     FriendRequestODTO sendFriendRequest(String userId, UUID to) throws APIException;
     List<FriendRequestODTO> listFriendRequests(String userId) throws APIException;

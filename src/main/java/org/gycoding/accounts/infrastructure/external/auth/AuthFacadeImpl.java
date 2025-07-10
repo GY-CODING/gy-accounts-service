@@ -238,10 +238,36 @@ public class AuthFacadeImpl implements AuthFacade {
                 .execute()
                 .getItems()
                 .stream()
-                .filter(user -> user.getUserMetadata().containsKey("books"))
                 .filter(user -> mapper.toMO(user.getUserMetadata()).getProfile().id().equals(profileId))
                 .findFirst()
                 .map(user -> mapper.toMO(user.getUserMetadata()).getProfile());
+    }
+
+    @Override
+    public Optional<ProfileMO> getUser(String userId, UUID profileId) throws Auth0Exception {
+        final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
+
+        return managementAPI
+                .users()
+                .list(new UserFilter())
+                .execute()
+                .getItems()
+                .stream()
+                .filter(user -> mapper.toMO(user.getUserMetadata()).getProfile().id().equals(profileId))
+                .findFirst()
+                .map(user -> {
+                    final var profile = mapper.toMO(user.getUserMetadata()).getProfile();
+
+                    return ProfileMO.builder()
+                            .id(profile.id())
+                            .username(profile.username())
+                            .roles(profile.roles())
+                            .picture(profile.picture())
+                            .phoneNumber(profile.phoneNumber())
+                            .apiKey(profile.apiKey())
+                            .isFriend(mapper.toMO(user.getUserMetadata()).getBooks().friends().contains(profileId))
+                            .build();
+                });
     }
 
     @Override
@@ -254,7 +280,6 @@ public class AuthFacadeImpl implements AuthFacade {
                 .execute()
                 .getItems()
                 .stream()
-                .filter(user -> user.getUserMetadata().containsKey("books"))
                 .filter(user -> mapper.toMO(user.getUserMetadata()).getProfile().username().equalsIgnoreCase(query))
                 .map(user -> mapper.toMO(user.getUserMetadata()).getProfile())
                 .toList();
@@ -270,7 +295,6 @@ public class AuthFacadeImpl implements AuthFacade {
                 .getItems()
                 .stream()
                 .filter(user -> !user.getId().equals(userId))
-                .filter(user -> user.getUserMetadata().containsKey("books"))
                 .filter(user -> mapper.toMO(user.getUserMetadata()).getProfile().username().equalsIgnoreCase(query))
                 .map(user -> {
                     final var profile = mapper.toMO(user.getUserMetadata()).getProfile();

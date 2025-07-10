@@ -22,7 +22,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -38,6 +40,74 @@ public class UserServiceImpl implements UserService {
 
     @Value("${gy.accounts.picture.url}")
     private String GY_ACCOUNTS_PICTURE_URL;
+
+    @Override
+    public ProfileODTO getUser(UUID profileId) throws APIException {
+        try {
+            return authFacade.getUser(profileId)
+                    .map(mapper::toODTO)
+                    .orElseThrow(() -> new APIException(
+                            AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                            AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                            AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                    ));
+        } catch (Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.AUTH_ERROR.getCode(),
+                    AccountsAPIError.AUTH_ERROR.getMessage(),
+                    AccountsAPIError.AUTH_ERROR.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public ProfileODTO getUser(String userId, UUID profileId) throws APIException {
+        try {
+            return authFacade.getUser(userId, profileId)
+                    .map(mapper::toODTO)
+                    .orElseThrow(() -> new APIException(
+                            AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                            AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                            AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                    ));
+        } catch (Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.AUTH_ERROR.getCode(),
+                    AccountsAPIError.AUTH_ERROR.getMessage(),
+                    AccountsAPIError.AUTH_ERROR.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public List<ProfileODTO> listUsers(String query) throws APIException {
+        try {
+            return authFacade.listUsers(query).stream()
+                    .map(mapper::toODTO)
+                    .toList();
+        } catch (Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.AUTH_ERROR.getCode(),
+                    AccountsAPIError.AUTH_ERROR.getMessage(),
+                    AccountsAPIError.AUTH_ERROR.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public List<ProfileODTO> listUsers(String userId, String query) throws APIException {
+        try {
+            return authFacade.listUsers(userId, query).stream()
+                    .map(mapper::toODTO)
+                    .toList();
+        } catch (Auth0Exception e) {
+            throw new APIException(
+                    AccountsAPIError.AUTH_ERROR.getCode(),
+                    AccountsAPIError.AUTH_ERROR.getMessage(),
+                    AccountsAPIError.AUTH_ERROR.getStatus()
+            );
+        }
+    }
 
     @Override
     public ProfileODTO getProfile(String userId) throws APIException {
@@ -248,6 +318,36 @@ public class UserServiceImpl implements UserService {
             return authFacade.decodeApiKey(apiKey);
         } catch(Exception e) {
             Logger.error("An error has occurred while decoding user API key.", new JSONObject().put("error", e.getMessage()).put("key", apiKey));
+
+            throw new APIException(
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public UUID transform(String userId) throws APIException {
+        try {
+            return authFacade.getMetadata(userId).getProfile().id();
+        } catch(Exception e) {
+            Logger.error("An error has occurred while obtaining user to transform userId into profileId.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+
+            throw new APIException(
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public String transform(UUID profileId) throws APIException {
+        try {
+            return authFacade.findUserId(profileId);
+        } catch(Exception e) {
+            Logger.error("An error has occurred while obtaining user to transform userId into userId.", new JSONObject().put("error", e.getMessage()).put("profileId", profileId));
 
             throw new APIException(
                     AccountsAPIError.CONFLICT.getCode(),

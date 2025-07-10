@@ -22,36 +22,6 @@ public class BooksController {
 
     private final UserControllerMapper userMapper;
 
-    @GetMapping("/users/{profileId}")
-    public ResponseEntity<?> getUser(
-            @PathVariable String profileId
-    ) throws APIException {
-        return ResponseEntity.ok(userMapper.toPublicRSDTO(service.getUser(UUID.fromString(profileId))));
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<?> listUsers(
-            @RequestHeader("x-user-id") String userId,
-            @RequestParam String query
-    ) throws APIException {
-        return ResponseEntity.ok(
-                service.listUsers(userId, query).stream()
-                        .map(userMapper::toPublicRSDTO)
-                        .toList()
-        );
-    }
-
-    @GetMapping("/users/public")
-    public ResponseEntity<?> listUsersPublic(
-            @RequestParam String query
-    ) throws APIException {
-        return ResponseEntity.ok(
-                service.listUsers(query).stream()
-                        .map(userMapper::toPublicRSDTO)
-                        .toList()
-        );
-    }
-
     @GetMapping("/friends")
     public ResponseEntity<?> listFriends(
             @RequestHeader("x-user-id") String userId

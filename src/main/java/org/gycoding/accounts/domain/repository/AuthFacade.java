@@ -36,6 +36,7 @@ public interface AuthFacade {
     void updatePassword(String userId, String newPassword) throws Auth0Exception;
 
     Optional<ProfileMO> getUser(UUID profileId) throws Auth0Exception;
+    Optional<ProfileMO> getUser(String userId, UUID profileId) throws Auth0Exception;
     List<ProfileMO> listUsers(String query) throws Auth0Exception;
     List<ProfileMO> listUsers(String userId, String query) throws Auth0Exception;
 
