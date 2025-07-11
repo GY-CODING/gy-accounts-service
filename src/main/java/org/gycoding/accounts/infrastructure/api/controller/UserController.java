@@ -151,11 +151,11 @@ public class UserController {
         return ResponseEntity.ok(service.getMetadata(userId));
     }
 
-    @PatchMapping("/metadata")
-    public ResponseEntity<?> setMetadata(
+    @PostMapping("/metadata")
+    public ResponseEntity<?> initMetadata(
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        service.setMetadata(userId);
+        service.initMetadata(userId);
 
         return ResponseEntity.noContent().build();
     }

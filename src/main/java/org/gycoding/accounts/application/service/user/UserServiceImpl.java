@@ -16,9 +16,11 @@ import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
+import org.gycoding.accounts.domain.model.user.metadata.messages.MessagesMetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.domain.repository.MetadataRepository;
 import org.gycoding.accounts.domain.repository.PictureRepository;
+import org.gycoding.accounts.shared.AccountRoles;
 import org.gycoding.accounts.shared.utils.Base64Utils;
 import org.gycoding.accounts.shared.utils.FileUtils;
 import org.gycoding.exceptions.model.APIException;
@@ -295,29 +297,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void setMetadata(String userId) throws APIException {
+    public void initMetadata(String userId) throws APIException {
         try {
-            final var defaultMetadata = MetadataMO.builder()
-                    .userId(userId)
-                    .books(
-                            BooksMetadataMO.builder()
-                                    .friends(List.of())
-                                    .build()
-                    )
-                    .profile(
-                            ProfileMO.builder()
-                                    .id(UUID.randomUUID())
-                                    .username("New User")
-                                    .apiKey(Base64Utils.generateApiKey())
-                                    .build()
-                    )
-                    .build();
+            final var userMetadata = metadataRepository.get(userId);
+
+            if(userMetadata.isPresent()) {
+                return;
+            }
+
+            final var user = authFacade.getUser(userId);
 
             metadataRepository.update(
                     MetadataMO.builder()
-                            .profile(defaultMetadata.profile())
+                            .userId(userId)
+                            .profile(
+                                    ProfileMO.builder()
+                                            .id(UUID.randomUUID())
+                                            .roles(List.of(AccountRoles.COMMON))
+                                            .apiKey(Base64Utils.generateApiKey())
+                                            .username(user.getUsername())
+                                            .phoneNumber(user.getPhoneNumber())
+                                            .email(user.getEmail())
+                                            .build()
+                            )
+                            .books(
+                                    BooksMetadataMO.builder()
+                                            .friends(List.of())
+                                            .biography(String.format("Hi, I'm %s. Nice to meet you!", user.getUsername()))
+                                            .build()
+                            )
+                            .messages(
+                                    MessagesMetadataMO.builder()
+                                            .chats(List.of())
+                                            .build()
+                            )
                             .build()
             );
+
+            updatePicture(userId, FileUtils.read(user.getPicture()));
         } catch(Exception e) {
             Logger.error("An error has occurred while setting user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
 

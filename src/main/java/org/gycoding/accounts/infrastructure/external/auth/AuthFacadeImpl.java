@@ -100,15 +100,9 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public String findUserId(UUID profileId) throws Auth0Exception {
-        final var filter = new UserFilter().withQuery("user_metadata.profile.id:" + profileId);
-
+    public User getUser(String userId) throws Auth0Exception {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
-        User user               = managementAPI.users().list(filter).execute().getItems().stream()
-                .findFirst()
-                .orElseThrow(() -> new Auth0Exception("User not found with Profile ID: " + profileId));
-
-        return user.getId();
+        return managementAPI.users().get(userId, null).execute();
     }
 
     @Override
