@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
             updatedMetadata = metadataRepository.update(
                     MetadataMO.builder()
                             .userId(userId)
-                            .profile(mapper.toMO(profile, String.format("%s/%s", GY_ACCOUNTS_PICTURE_URL, picture.name())))
+                            .profile(mapper.toMO(profile, GY_ACCOUNTS_PICTURE_URL + picture.name()))
                             .build()
             );
         } else {
@@ -318,6 +318,7 @@ public class UserServiceImpl implements UserService {
                                             .username(user.getName())
                                             .phoneNumber(user.getPhoneNumber())
                                             .email(user.getEmail())
+                                            .picture(GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name())
                                             .build()
                             )
                             .books(
@@ -334,7 +335,7 @@ public class UserServiceImpl implements UserService {
                             .build()
             );
 
-            updatePicture(userId, FileUtils.read(user.getPicture()));
+            ;
         } catch(Exception e) {
             Logger.error("An error has occurred while setting user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
 
