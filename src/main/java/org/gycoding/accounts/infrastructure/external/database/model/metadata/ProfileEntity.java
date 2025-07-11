@@ -16,6 +16,7 @@ public class ProfileEntity {
     @Field("id")
     private String id;
     private String username;
+    private String email;
     private String phoneNumber;
     private List<AccountRoles> roles;
     private String apiKey;
