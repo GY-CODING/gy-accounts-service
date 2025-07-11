@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
             updatedMetadata = metadataRepository.update(
                     MetadataMO.builder()
                             .userId(userId)
-                            .profile(mapper.toMO(profile, GY_ACCOUNTS_PICTURE_URL + picture.name()))
+                            .profile(mapper.toMO(profile, GY_ACCOUNTS_PICTURE_URL + picture.name().replace("-pfp", "")))
                             .build()
             );
         } else {
@@ -318,7 +318,7 @@ public class UserServiceImpl implements UserService {
                                             .username(user.getName())
                                             .phoneNumber(user.getPhoneNumber())
                                             .email(user.getEmail())
-                                            .picture(GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name())
+                                            .picture(GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", ""))
                                             .build()
                             )
                             .books(
