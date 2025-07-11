@@ -2,8 +2,8 @@ package org.gycoding.accounts.infrastructure.api.controller.products;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.gycoding.accounts.application.service.products.gymessages.MessagesService;
-import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.gymessages.ChatRQDTO;
+import org.gycoding.accounts.application.service.products.messages.MessagesService;
+import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.messages.ChatRQDTO;
 import org.gycoding.accounts.infrastructure.api.mapper.products.MessagesControllerMapper;
 import org.gycoding.exceptions.model.APIException;
 import org.springframework.http.ResponseEntity;

@@ -3,7 +3,7 @@ package org.gycoding.accounts.infrastructure.api.dto.in.user.metadata;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.gymessages.GYMessagesMetadataRQDTO;
+import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.messages.MessagesMetadataRQDTO;
 import org.gycoding.accounts.shared.AccountRoles;
 
 import java.util.List;
@@ -13,5 +13,5 @@ import java.util.List;
 @Setter
 public class MetadataRQDTO {
     private List<AccountRoles> roles;
-    private GYMessagesMetadataRQDTO gyMessages;
+    private MessagesMetadataRQDTO messages;
 }

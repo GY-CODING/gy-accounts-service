@@ -1,6 +1,5 @@
 package org.gycoding.accounts.application.service.user;
 
-import org.gycoding.accounts.application.dto.in.user.metadata.MetadataIDTO;
 import org.gycoding.accounts.application.dto.in.user.metadata.ProfileIDTO;
 import org.gycoding.accounts.application.dto.out.user.PictureODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
@@ -9,7 +8,6 @@ import org.gycoding.exceptions.model.APIException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface UserService {
@@ -34,7 +32,7 @@ public interface UserService {
     void updatePassword(String userId, String password) throws APIException;
 
     MetadataODTO getMetadata(String userId) throws APIException;
-    void updateMetadata(String userId) throws APIException;
+    void setMetadata(String userId) throws APIException;
 
     String refreshApiKey(String userId) throws APIException;
     String decodeApiKey(String apiKey) throws APIException;

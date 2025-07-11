@@ -7,6 +7,6 @@ import java.util.UUID;
 @Builder
 public record FriendRequestMO(
         UUID id,
-        String from,
+        UUID from,
         UUID to
 ) { }

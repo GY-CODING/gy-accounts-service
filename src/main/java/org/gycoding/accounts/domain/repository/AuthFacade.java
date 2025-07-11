@@ -21,28 +21,5 @@ public interface AuthFacade {
 
     String findUserId(UUID profileId) throws Auth0Exception;
 
-    ProfileMO getProfile(String userId) throws Auth0Exception;
-    ProfileMO updateProfile(String userId, ProfileMO profile) throws Auth0Exception;
-
-    String getUsername(String userId) throws Auth0Exception;
-    String updateUsername(String userId, String newUsername) throws Auth0Exception;
-
-    String getPhoneNumber(String userId) throws Auth0Exception;
-    String updatePhoneNumber(String userId, String newPhoneNumber) throws Auth0Exception;
-
-    String getPicture(String userId) throws Auth0Exception;
-    String updatePicture(String userId, String newPicture) throws Auth0Exception;
-
     void updatePassword(String userId, String newPassword) throws Auth0Exception;
-
-    Optional<ProfileMO> getUser(UUID profileId) throws Auth0Exception;
-    Optional<ProfileMO> getUser(String userId, UUID profileId) throws Auth0Exception;
-    List<ProfileMO> listUsers(String query) throws Auth0Exception;
-    List<ProfileMO> listUsers(String userId, String query) throws Auth0Exception;
-
-    MetadataMO getMetadata(String userId) throws Auth0Exception;
-    void setMetadata(String userId, MetadataMO metadata) throws Auth0Exception;
-
-    String refreshApiKey(String userId) throws Auth0Exception;
-    String decodeApiKey(String apiKey);
 }

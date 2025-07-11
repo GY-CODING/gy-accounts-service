@@ -1,4 +1,4 @@
-package org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.gymessages;
+package org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.messages;
 
 import lombok.Builder;
 
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 @Builder
-public record GYMessagesMetadataRSDTO(
+public record MessagesMetadataRSDTO(
         List<ChatRSDTO> chats
 ) {
     public Map<String, Object> toMap() {

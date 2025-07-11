@@ -1,9 +1,9 @@
-package org.gycoding.accounts.application.dto.out.user.metadata.gymessages;
+package org.gycoding.accounts.application.dto.in.user.metadata.messages;
 
 import lombok.Builder;
 
 @Builder
-public record ChatMetadataODTO(
+public record ChatIDTO(
         String chatId,
         boolean isAdmin
 ) {

@@ -2,6 +2,7 @@ package org.gycoding.accounts.application.service.user;
 
 import com.auth0.exception.Auth0Exception;
 import kong.unirest.json.JSONObject;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -12,8 +13,13 @@ import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.mapper.UserServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.PictureMO;
+import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
+import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
+import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
+import org.gycoding.accounts.domain.repository.MetadataRepository;
 import org.gycoding.accounts.domain.repository.PictureRepository;
+import org.gycoding.accounts.shared.utils.Base64Utils;
 import org.gycoding.accounts.shared.utils.FileUtils;
 import org.gycoding.exceptions.model.APIException;
 import org.gycoding.logs.logger.Logger;
@@ -38,157 +44,158 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PictureRepository pictureRepository;
 
+    @Autowired
+    private MetadataRepository metadataRepository;
+
     @Value("${gy.accounts.picture.url}")
     private String GY_ACCOUNTS_PICTURE_URL;
 
     @Override
     public ProfileODTO getUser(UUID profileId) throws APIException {
-        try {
-            return authFacade.getUser(profileId)
-                    .map(mapper::toODTO)
-                    .orElseThrow(() -> new APIException(
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                    ));
-        } catch (Auth0Exception e) {
-            throw new APIException(
-                    AccountsAPIError.AUTH_ERROR.getCode(),
-                    AccountsAPIError.AUTH_ERROR.getMessage(),
-                    AccountsAPIError.AUTH_ERROR.getStatus()
-            );
-        }
+        final var userMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        return mapper.toODTO(userMetadata.profile());
     }
 
     @Override
     public ProfileODTO getUser(String userId, UUID profileId) throws APIException {
+        final var requestedUserMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
         try {
-            return authFacade.getUser(userId, profileId)
-                    .map(mapper::toODTO)
-                    .orElseThrow(() -> new APIException(
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                    ));
-        } catch (Auth0Exception e) {
-            throw new APIException(
-                    AccountsAPIError.AUTH_ERROR.getCode(),
-                    AccountsAPIError.AUTH_ERROR.getMessage(),
-                    AccountsAPIError.AUTH_ERROR.getStatus()
-            );
+            return mapper.toODTO(userMetadata.profile(), userMetadata.books().friends().contains(requestedUserMetadata.profile().id()));
+        } catch(NullPointerException e) {
+            return mapper.toODTO(userMetadata.profile());
         }
     }
 
     @Override
     public List<ProfileODTO> listUsers(String query) throws APIException {
         try {
-            return authFacade.listUsers(query).stream()
+            return metadataRepository.list(query).stream()
+                    .map(MetadataMO::profile)
                     .map(mapper::toODTO)
                     .toList();
-        } catch (Auth0Exception e) {
+        } catch (Exception e) {
             throw new APIException(
-                    AccountsAPIError.AUTH_ERROR.getCode(),
-                    AccountsAPIError.AUTH_ERROR.getMessage(),
-                    AccountsAPIError.AUTH_ERROR.getStatus()
+                    AccountsAPIError.SERVER_ERROR.getCode(),
+                    AccountsAPIError.SERVER_ERROR.getMessage(),
+                    AccountsAPIError.SERVER_ERROR.getStatus()
             );
         }
     }
 
     @Override
     public List<ProfileODTO> listUsers(String userId, String query) throws APIException {
+        final var requestedProfiles = metadataRepository.list(query).stream()
+                .map(MetadataMO::profile)
+                .toList();
+
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
         try {
-            return authFacade.listUsers(userId, query).stream()
+            return requestedProfiles.stream()
+                    .map(profile -> mapper.toODTO(profile, userMetadata.books().friends().contains(profile.id())))
+                    .toList();
+        } catch(NullPointerException e) {
+            return requestedProfiles.stream()
                     .map(mapper::toODTO)
                     .toList();
-        } catch (Auth0Exception e) {
-            throw new APIException(
-                    AccountsAPIError.AUTH_ERROR.getCode(),
-                    AccountsAPIError.AUTH_ERROR.getMessage(),
-                    AccountsAPIError.AUTH_ERROR.getStatus()
-            );
         }
     }
 
     @Override
     public ProfileODTO getProfile(String userId) throws APIException {
-        try {
-            return mapper.toODTO(authFacade.getProfile(userId));
-        } catch(Auth0Exception e) {
-            Logger.error("An error has occurred while retrieving user profile.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
 
-            throw new APIException(
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-            );
-        }
+        return mapper.toODTO(userMetadata.profile());
     }
 
     @Override
     public ProfileODTO updateProfile(String userId, ProfileIDTO profile) throws APIException {
-        try {
-            if(!(Objects.equals(profile.picture(), ""))) {
-                this.updatePicture(userId, FileUtils.read(profile.picture()));
-            }
+        MetadataMO updatedMetadata = null;
 
-            return mapper.toODTO(authFacade.updateProfile(userId, mapper.toMO(profile)));
-        } catch(Auth0Exception e) {
-            Logger.error("An error has occurred while updating user profile.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+        if(!(Objects.equals(profile.picture(), ""))) {
+            final var picture = updatePicture(userId, FileUtils.read(profile.picture()));
 
-            throw new APIException(
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
+            updatedMetadata = metadataRepository.update(
+                    MetadataMO.builder()
+                            .userId(userId)
+                            .profile(mapper.toMO(profile, String.format("%s/%s", GY_ACCOUNTS_PICTURE_URL, picture.name())))
+                            .build()
+            );
+        } else {
+            updatedMetadata = metadataRepository.update(
+                    MetadataMO.builder()
+                            .userId(userId)
+                            .profile(mapper.toMO(profile))
+                            .build()
             );
         }
+
+        return mapper.toODTO(updatedMetadata.profile());
     }
 
     @Override
     public String getUsername(String userId) throws APIException {
-        try {
-            return authFacade.getUsername(userId);
-        } catch(Auth0Exception e) {
-            Logger.error("An error has occurred while retrieving user username.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
 
-            throw new APIException(
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-            );
-        }
+        return userMetadata.profile().username();
     }
 
     @Override
     public String updateUsername(String userId, String username) throws APIException {
-        try {
-            return authFacade.updateUsername(userId, username);
-        } catch(Auth0Exception e) {
-            Logger.error("An error has occurred while updating user username.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+        final var userMetadata = metadataRepository.update(
+                MetadataMO.builder()
+                        .userId(userId)
+                        .profile(
+                                ProfileMO.builder()
+                                        .username(username)
+                                        .build()
+                        )
+                        .build()
+        );
 
-            throw new APIException(
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
-            );
-        }
+        return userMetadata.profile().username();
     }
 
     @Override
-    public PictureODTO getPicture(String userId) throws APIException {
-        try {
-            userId = userId.replace("auth0|", "");
-            userId = userId.replace("google-oauth2|", "");
+    public PictureODTO getPicture(String userId) {
+        userId = userId.replace("auth0|", "");
+        userId = userId.replace("google-oauth2|", "");
 
-            return mapper.toODTO(pictureRepository.get(userId + "-pfp"));
-        } catch(Exception e) {
-            Logger.error("An error has occurred while retrieving user profile picture.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
-
-            throw new APIException(
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-            );
-        }
+        return mapper.toODTO(pictureRepository.get(userId + "-pfp"));
     }
 
     @Override
@@ -208,8 +215,6 @@ public class UserServiceImpl implements UserService {
 
             Logger.info("User profile picture has been successfully saved to the database.", new JSONObject().put("userId", userId));
 
-            authFacade.updatePicture(userId, GY_ACCOUNTS_PICTURE_URL + formattedUserId);
-
             return mapper.toODTO(savedPicture);
         } catch(Exception e) {
             Logger.error("An error has occurred while updating user profile picture.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
@@ -224,32 +229,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String getPhoneNumber(String userId) throws APIException {
-        try {
-            return authFacade.getPhoneNumber(userId);
-        } catch(Auth0Exception e) {
-            Logger.error("An error has occurred while retrieving user phone number.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
 
-            throw new APIException(
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-            );
-        }
+        return userMetadata.profile().phoneNumber();
     }
 
     @Override
     public String updatePhoneNumber(String userId, String phoneNumber) throws APIException {
-        try {
-            return authFacade.updatePhoneNumber(userId, phoneNumber);
-        } catch(Auth0Exception e) {
-            Logger.error("An error has occurred while updating user phone number.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+        final var userMetadata = metadataRepository.update(
+                MetadataMO.builder()
+                        .userId(userId)
+                        .profile(
+                                ProfileMO.builder()
+                                        .phoneNumber(phoneNumber)
+                                        .build()
+                        )
+                        .build()
+        );
 
-            throw new APIException(
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
-            );
-        }
+        return userMetadata.profile().phoneNumber();
     }
 
     @Override
@@ -269,25 +272,42 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public MetadataODTO getMetadata(String userId) throws APIException {
-        try {
-            return mapper.toODTO(authFacade.getMetadata(userId));
-        } catch(Exception e) {
-            Logger.error("An error has occurred while retrieving user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
-
-            throw new APIException(
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
                     AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
                     AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
                     AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-            );
-        }
+                ));
+
+        return mapper.toODTO(userMetadata);
     }
 
     @Override
-    public void updateMetadata(String userId) throws APIException {
+    public void setMetadata(String userId) throws APIException {
         try {
-            authFacade.setMetadata(userId, authFacade.getMetadata(userId));
+            final var defaultMetadata = MetadataMO.builder()
+                    .userId(userId)
+                    .books(
+                            BooksMetadataMO.builder()
+                                    .friends(List.of())
+                                    .build()
+                    )
+                    .profile(
+                            ProfileMO.builder()
+                                    .id(UUID.randomUUID())
+                                    .username("New User")
+                                    .apiKey(Base64Utils.generateApiKey())
+                                    .build()
+                    )
+                    .build();
+
+            metadataRepository.update(
+                    MetadataMO.builder()
+                            .profile(defaultMetadata.profile())
+                            .build()
+            );
         } catch(Exception e) {
-            Logger.error("An error has occurred while refreshing user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+            Logger.error("An error has occurred while setting user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
 
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
@@ -299,61 +319,53 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String refreshApiKey(String userId) throws APIException {
-        try {
-            return authFacade.refreshApiKey(userId);
-        } catch(Exception e) {
-            Logger.error("An error has occurred while updating user API key.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+        final var userMetadata = metadataRepository.update(
+                MetadataMO.builder()
+                        .userId(userId)
+                        .profile(
+                                ProfileMO.builder()
+                                        .apiKey(Base64Utils.generateApiKey())
+                                        .build()
+                        )
+                        .build()
+        );
 
-            throw new APIException(
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
-                    AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
-            );
-        }
+        return userMetadata.profile().apiKey();
     }
 
     @Override
     public String decodeApiKey(String apiKey) throws APIException {
-        try {
-            return authFacade.decodeApiKey(apiKey);
-        } catch(Exception e) {
-            Logger.error("An error has occurred while decoding user API key.", new JSONObject().put("error", e.getMessage()).put("key", apiKey));
+        final var userMetadata = metadataRepository.getByApiKey(apiKey)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
 
-            throw new APIException(
-                    AccountsAPIError.CONFLICT.getCode(),
-                    AccountsAPIError.CONFLICT.getMessage(),
-                    AccountsAPIError.CONFLICT.getStatus()
-            );
-        }
+        return userMetadata.userId();
     }
 
     @Override
     public UUID transform(String userId) throws APIException {
-        try {
-            return authFacade.getMetadata(userId).getProfile().id();
-        } catch(Exception e) {
-            Logger.error("An error has occurred while obtaining user to transform userId into profileId.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
 
-            throw new APIException(
-                    AccountsAPIError.CONFLICT.getCode(),
-                    AccountsAPIError.CONFLICT.getMessage(),
-                    AccountsAPIError.CONFLICT.getStatus()
-            );
-        }
+        return userMetadata.profile().id();
     }
 
     @Override
     public String transform(UUID profileId) throws APIException {
-        try {
-            return authFacade.findUserId(profileId);
-        } catch(Exception e) {
-            Logger.error("An error has occurred while obtaining user to transform userId into userId.", new JSONObject().put("error", e.getMessage()).put("profileId", profileId));
+        final var userMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
 
-            throw new APIException(
-                    AccountsAPIError.CONFLICT.getCode(),
-                    AccountsAPIError.CONFLICT.getMessage(),
-                    AccountsAPIError.CONFLICT.getStatus()
-            );
-        }
+        return userMetadata.userId();
     }
 }

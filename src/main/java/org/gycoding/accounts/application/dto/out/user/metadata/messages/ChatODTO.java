@@ -1,4 +1,4 @@
-package org.gycoding.accounts.application.dto.out.user.metadata.gymessages;
+package org.gycoding.accounts.application.dto.out.user.metadata.messages;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;

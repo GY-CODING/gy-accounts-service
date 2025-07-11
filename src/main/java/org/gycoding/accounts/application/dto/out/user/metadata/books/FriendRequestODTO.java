@@ -7,6 +7,6 @@ import java.util.UUID;
 @Builder
 public record FriendRequestODTO(
         UUID id,
-        String from,
-        String to
+        UUID from,
+        UUID to
 ) { }
