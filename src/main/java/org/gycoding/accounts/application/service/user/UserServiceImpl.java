@@ -315,7 +315,7 @@ public class UserServiceImpl implements UserService {
                                             .id(UUID.randomUUID())
                                             .roles(List.of(AccountRoles.COMMON))
                                             .apiKey(Base64Utils.generateApiKey())
-                                            .username(user.getUsername())
+                                            .username(user.getName())
                                             .phoneNumber(user.getPhoneNumber())
                                             .email(user.getEmail())
                                             .build()
@@ -323,7 +323,7 @@ public class UserServiceImpl implements UserService {
                             .books(
                                     BooksMetadataMO.builder()
                                             .friends(List.of())
-                                            .biography(String.format("Hi, I'm %s. Nice to meet you!", user.getUsername()))
+                                            .biography(String.format("Hi, I'm %s. Nice to meet you!", user.getName()))
                                             .build()
                             )
                             .messages(
