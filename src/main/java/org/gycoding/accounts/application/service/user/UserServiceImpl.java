@@ -307,7 +307,7 @@ public class UserServiceImpl implements UserService {
 
             final var user = authFacade.getUser(userId);
 
-            metadataRepository.update(
+            metadataRepository.save(
                     MetadataMO.builder()
                             .userId(userId)
                             .profile(
