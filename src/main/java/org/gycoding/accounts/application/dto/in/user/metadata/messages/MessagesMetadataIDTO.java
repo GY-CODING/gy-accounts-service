@@ -1,4 +1,4 @@
-package org.gycoding.accounts.domain.model.user.metadata.gymessages;
+package org.gycoding.accounts.application.dto.in.user.metadata.messages;
 
 import lombok.Builder;
 
@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 @Builder
-public record GYMessagesMetadataMO(
-        List<ChatMO> chats
+public record MessagesMetadataIDTO(
+        List<ChatIDTO> chats
 ) {
     public Map<String, Object> toMap() {
         return Map.of(

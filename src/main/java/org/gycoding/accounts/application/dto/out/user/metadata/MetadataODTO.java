@@ -2,10 +2,7 @@ package org.gycoding.accounts.application.dto.out.user.metadata;
 
 import lombok.*;
 import org.gycoding.accounts.application.dto.out.user.metadata.books.BooksMetadataODTO;
-import org.gycoding.accounts.application.dto.out.user.metadata.gymessages.GYMessagesMetadataODTO;
-import org.gycoding.accounts.shared.AccountRoles;
-
-import java.util.List;
+import org.gycoding.accounts.application.dto.out.user.metadata.messages.MessagesMetadataODTO;
 
 @Data
 @Builder
@@ -14,6 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class MetadataODTO {
     private BooksMetadataODTO books;
-    private GYMessagesMetadataODTO gyMessages;
+    private MessagesMetadataODTO messages;
     private ProfileODTO profile;
 }

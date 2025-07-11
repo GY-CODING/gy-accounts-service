@@ -1,4 +1,4 @@
-package org.gycoding.accounts.domain.model.user.metadata.gymessages;
+package org.gycoding.accounts.domain.model.user.metadata.messages;
 
 import lombok.Builder;
 

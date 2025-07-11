@@ -1,7 +1,7 @@
-package org.gycoding.accounts.application.service.products.gymessages;
+package org.gycoding.accounts.application.service.products.messages;
 
-import org.gycoding.accounts.application.dto.in.user.metadata.gymessages.ChatIDTO;
-import org.gycoding.accounts.application.dto.out.user.metadata.gymessages.ChatODTO;
+import org.gycoding.accounts.application.dto.in.user.metadata.messages.ChatIDTO;
+import org.gycoding.accounts.application.dto.out.user.metadata.messages.ChatODTO;
 import org.gycoding.exceptions.model.APIException;
 
 import java.util.List;

@@ -9,13 +9,20 @@ import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserServiceMapper {
     ProfileODTO toODTO(ProfileMO profile);
 
+    @Mapping(target = "isFriend", source = "isFriend")
+    ProfileODTO toODTO(ProfileMO profile, Boolean isFriend);
+
     ProfileMO toMO(ProfileIDTO profile);
+
+    @Mapping(target = "picture", source = "picture")
+    ProfileMO toMO(ProfileIDTO profile, String picture);
 
     PictureODTO toODTO(PictureMO picture);
 

@@ -145,10 +145,10 @@ public class UserController {
     }
 
     @PatchMapping("/metadata")
-    public ResponseEntity<?> updateMetadata(
+    public ResponseEntity<?> setMetadata(
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        service.updateMetadata(userId);
+        service.setMetadata(userId);
 
         return ResponseEntity.noContent().build();
     }
