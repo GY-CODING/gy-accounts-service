@@ -11,6 +11,7 @@ import java.util.UUID;
 public record ProfileRSDTO(
     UUID id,
     String username,
+    String email,
     String phoneNumber,
     List<AccountRoles> roles,
     String apiKey,

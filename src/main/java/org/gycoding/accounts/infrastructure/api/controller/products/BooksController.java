@@ -3,6 +3,7 @@ package org.gycoding.accounts.infrastructure.api.controller.products;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.gycoding.accounts.application.service.products.books.BooksService;
+import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.books.BiographyRQDTO;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.books.FriendRequestRQDTO;
 import org.gycoding.accounts.infrastructure.api.mapper.UserControllerMapper;
 import org.gycoding.accounts.infrastructure.api.mapper.products.BooksControllerMapper;
@@ -61,5 +62,13 @@ public class BooksController {
         service.manageFriendRequest(userId, requestId, request.command());
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/biography")
+    public ResponseEntity<?> updateBiography(
+            @Valid @RequestBody BiographyRQDTO biography,
+            @RequestHeader("x-user-id") String userId
+    ) throws APIException {
+        return ResponseEntity.ok(service.updateBiography(userId, biography.biography()));
     }
 }

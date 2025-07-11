@@ -79,9 +79,9 @@ public class UserServiceImpl implements UserService {
                 ));
 
         try {
-            return mapper.toODTO(userMetadata.profile(), userMetadata.books().friends().contains(requestedUserMetadata.profile().id()));
+            return mapper.toODTO(requestedUserMetadata.profile(), userMetadata.books().friends().contains(requestedUserMetadata.profile().id()));
         } catch(NullPointerException e) {
-            return mapper.toODTO(userMetadata.profile());
+            return mapper.toODTO(requestedUserMetadata.profile());
         }
     }
 
@@ -188,6 +188,18 @@ public class UserServiceImpl implements UserService {
         );
 
         return userMetadata.profile().username();
+    }
+
+    @Override
+    public String getEmail(String userId) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        return userMetadata.profile().email();
     }
 
     @Override

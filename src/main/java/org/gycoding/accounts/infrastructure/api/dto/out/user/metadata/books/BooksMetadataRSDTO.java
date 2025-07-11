@@ -7,5 +7,6 @@ import java.util.UUID;
 
 @Builder
 public record BooksMetadataRSDTO(
-        List<String> friends
+        List<String> friends,
+        String biography
 ) { }

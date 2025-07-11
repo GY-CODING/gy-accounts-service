@@ -13,4 +13,5 @@ public interface BooksService {
     FriendRequestODTO sendFriendRequest(String userId, UUID to) throws APIException;
     List<FriendRequestODTO> listFriendRequests(String userId) throws APIException;
     void manageFriendRequest(String userId, String requestId, FriendRequestCommand command) throws APIException;
+    String updateBiography(String userId, String biography) throws APIException;
 }

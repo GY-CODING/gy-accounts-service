@@ -91,6 +91,13 @@ public class UserController {
         return ResponseEntity.ok(service.updateUsername(userId, username));
     }
 
+    @GetMapping("/email")
+    public ResponseEntity<?> getEmail(
+            @RequestHeader("x-user-id") String userId
+    ) throws APIException {
+        return ResponseEntity.ok(service.getEmail(userId));
+    }
+
     @GetMapping("/picture/{userId}")
     public ResponseEntity<?> getPicture(
             @PathVariable("userId") String userId

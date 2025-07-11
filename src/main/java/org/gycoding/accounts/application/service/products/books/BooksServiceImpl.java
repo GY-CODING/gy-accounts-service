@@ -165,4 +165,18 @@ public class BooksServiceImpl implements BooksService {
 
         friendRequestRepository.delete(requestId);
     }
+
+    @Override
+    public String updateBiography(String userId, String biography) throws APIException {
+        return metadataRepository.update(
+                MetadataMO.builder()
+                        .userId(userId)
+                        .books(
+                                BooksMetadataMO.builder()
+                                        .biography(biography)
+                                        .build()
+                        )
+                        .build()
+        ).books().biography();
+    }
 }

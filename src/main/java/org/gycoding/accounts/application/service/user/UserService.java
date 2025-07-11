@@ -23,6 +23,8 @@ public interface UserService {
     String getUsername(String userId) throws APIException;
     String updateUsername(String userId, String username) throws APIException;
 
+    String getEmail(String userId) throws APIException;
+
     PictureODTO getPicture(String userId) throws APIException;
     PictureODTO updatePicture(String userId, MultipartFile picture) throws APIException;
 
