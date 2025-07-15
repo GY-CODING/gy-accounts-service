@@ -12,9 +12,12 @@ import java.util.UUID;
 public interface BooksService {
     BooksProfileODTO getProfile(UUID profileId) throws APIException;
     BooksProfileODTO getProfile(String userId, UUID profileId) throws APIException;
+
     List<BooksProfileODTO> listFriends(String userId) throws APIException;
     FriendRequestODTO sendFriendRequest(String userId, UUID to) throws APIException;
     List<FriendRequestODTO> listFriendRequests(String userId) throws APIException;
     void manageFriendRequest(String userId, String requestId, FriendRequestCommand command) throws APIException;
+    void removeFriend(String userId, UUID friendProfileId) throws APIException;
+
     String updateBiography(String userId, String biography) throws APIException;
 }

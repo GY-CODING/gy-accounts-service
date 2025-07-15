@@ -201,6 +201,55 @@ public class BooksServiceImpl implements BooksService {
     }
 
     @Override
+    public void removeFriend(String userId, UUID friendProfileId) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        final var friendMetadata = metadataRepository.get(friendProfileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        if(!userMetadata.books().friends().contains(friendProfileId)) {
+            Logger.error("User is not a friend.", friendProfileId);
+
+            throw new APIException(
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
+
+        metadataRepository.update(
+                MetadataMO.builder()
+                        .userId(userMetadata.userId())
+                        .books(
+                                BooksMetadataMO.builder()
+                                        .friends(new ArrayList<>(userMetadata.books().friends()) {{ remove(friendMetadata.profile().id()); }})
+                                        .build()
+                        )
+                        .build()
+        );
+
+        metadataRepository.update(
+                MetadataMO.builder()
+                        .userId(friendMetadata.userId())
+                        .books(
+                                BooksMetadataMO.builder()
+                                        .friends(new ArrayList<>(friendMetadata.books().friends()) {{ remove(userMetadata.profile().id()); }})
+                                        .build()
+                        )
+                        .build()
+        );
+    }
+
+    @Override
     public String updateBiography(String userId, String biography) throws APIException {
         return metadataRepository.update(
                 MetadataMO.builder()

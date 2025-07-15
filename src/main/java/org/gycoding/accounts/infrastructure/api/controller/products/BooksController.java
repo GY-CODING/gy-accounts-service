@@ -77,6 +77,16 @@ public class BooksController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/friends/{id}")
+    public ResponseEntity<?> removeFriend(
+            @RequestHeader("x-user-id") String userId,
+            @PathVariable("id") String friendProfileId
+    ) throws APIException {
+        service.removeFriend(userId, UUID.fromString(friendProfileId));
+
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/biography")
     public ResponseEntity<?> updateBiography(
             @Valid @RequestBody BiographyRQDTO biography,
