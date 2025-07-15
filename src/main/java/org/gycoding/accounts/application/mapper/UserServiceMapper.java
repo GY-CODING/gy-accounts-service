@@ -2,6 +2,7 @@ package org.gycoding.accounts.application.mapper;
 
 import org.gycoding.accounts.application.dto.in.user.metadata.ProfileIDTO;
 import org.gycoding.accounts.application.dto.in.user.metadata.MetadataIDTO;
+import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.PictureODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.MetadataODTO;

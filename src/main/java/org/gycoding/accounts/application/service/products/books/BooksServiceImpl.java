@@ -3,6 +3,7 @@ package org.gycoding.accounts.application.service.products.books;
 import com.auth0.exception.Auth0Exception;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.books.FriendRequestODTO;
 import org.gycoding.accounts.application.mapper.UserServiceMapper;
@@ -32,12 +33,45 @@ public class BooksServiceImpl implements BooksService {
 
     private MetadataRepository metadataRepository;
 
-    private final BooksServiceMapper booksMapper;
-
-    private final UserServiceMapper userMapper;
+    private final BooksServiceMapper mapper;
 
     @Override
-    public List<ProfileODTO> listFriends(String userId) throws APIException {
+    public BooksProfileODTO getProfile(UUID profileId) throws APIException {
+        final var userMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        return mapper.toODTO(userMetadata.profile(), userMetadata.books().biography());
+    }
+
+    @Override
+    public BooksProfileODTO getProfile(String userId, UUID profileId) throws APIException {
+        final var requestedUserMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        try {
+            return mapper.toODTO(requestedUserMetadata.profile(), requestedUserMetadata.books().biography(), userMetadata.books().friends().contains(requestedUserMetadata.profile().id()));
+        } catch(NullPointerException e) {
+            return mapper.toODTO(requestedUserMetadata.profile(), requestedUserMetadata.books().biography());
+        }
+    }
+
+    @Override
+    public List<BooksProfileODTO> listFriends(String userId) throws APIException {
             final var userMetadata = metadataRepository.get(userId)
                     .orElseThrow(() -> new APIException(
                             AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
@@ -55,7 +89,7 @@ public class BooksServiceImpl implements BooksService {
             return friends.stream()
                     .map(friend -> metadataRepository.get(friend).orElseThrow(RuntimeException::new))
                     .map(MetadataMO::profile)
-                    .map(userMapper::toODTO)
+                    .map(profile -> mapper.toODTO(profile, userMetadata.books().biography()))
                     .toList();
         } catch (RuntimeException e) {
             throw new APIException(
@@ -76,7 +110,7 @@ public class BooksServiceImpl implements BooksService {
                 ));
 
         return friendRequestRepository.list(userMetadata.profile().id()).stream()
-                .map(booksMapper::toODTO)
+                .map(mapper::toODTO)
                 .toList();
     }
 
@@ -100,7 +134,7 @@ public class BooksServiceImpl implements BooksService {
         }
 
         try {
-            return booksMapper.toODTO(friendRequestRepository.save(booksMapper.toMO(userMetadata.profile().id(), to)));
+            return mapper.toODTO(friendRequestRepository.save(mapper.toMO(userMetadata.profile().id(), to)));
         } catch (Exception e) {
             throw new APIException(
                 AccountsAPIError.CONFLICT.getCode(),

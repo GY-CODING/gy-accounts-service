@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
-    ProfileODTO getUser(UUID profileId) throws APIException;
-    ProfileODTO getUser(String userId, UUID profileId) throws APIException;
-
     List<ProfileODTO> listUsers(String query) throws APIException;
     List<ProfileODTO> listUsers(String userId, String query) throws APIException;
 

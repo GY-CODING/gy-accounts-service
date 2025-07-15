@@ -19,9 +19,22 @@ import java.util.UUID;
 public class BooksController {
     private final BooksService service;
 
-    private final BooksControllerMapper booksMapper;
+    private final BooksControllerMapper mapper;
 
-    private final UserControllerMapper userMapper;
+    @GetMapping("/{profileId}/public")
+    public ResponseEntity<?> getProfilePublic(
+            @PathVariable String profileId
+    ) throws APIException {
+        return ResponseEntity.ok(mapper.toPublicRSDTO(service.getProfile(UUID.fromString(profileId))));
+    }
+
+    @GetMapping("/{profileId}")
+    public ResponseEntity<?> getProfile(
+            @RequestHeader("x-user-id") String userId,
+            @PathVariable String profileId
+    ) throws APIException {
+        return ResponseEntity.ok(mapper.toRSDTO(service.getProfile(userId, UUID.fromString(profileId))));
+    }
 
     @GetMapping("/friends")
     public ResponseEntity<?> listFriends(
@@ -29,7 +42,7 @@ public class BooksController {
     ) throws APIException {
         return ResponseEntity.ok(
                 service.listFriends(userId).stream()
-                        .map(userMapper::toPublicRSDTO)
+                        .map(mapper::toPublicRSDTO)
                         .toList()
         );
     }
@@ -39,7 +52,7 @@ public class BooksController {
             @Valid @RequestBody FriendRequestRQDTO request,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        return ResponseEntity.ok(booksMapper.toRSDTO(service.sendFriendRequest(userId, request.to())));
+        return ResponseEntity.ok(mapper.toRSDTO(service.sendFriendRequest(userId, request.to())));
 	}
 
     @GetMapping("/friends/request")
@@ -48,7 +61,7 @@ public class BooksController {
     ) throws APIException {
         return ResponseEntity.ok(
                 service.listFriendRequests(userId).stream()
-                        .map(booksMapper::toRSDTO)
+                        .map(mapper::toRSDTO)
                         .toList()
         );
     }

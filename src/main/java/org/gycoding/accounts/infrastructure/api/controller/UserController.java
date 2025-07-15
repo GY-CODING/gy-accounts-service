@@ -23,21 +23,6 @@ public class UserController {
 
     private final UserControllerMapper mapper;
 
-    @GetMapping("/{profileId}")
-    public ResponseEntity<?> getUser(
-            @RequestHeader("x-user-id") String userId,
-            @PathVariable String profileId
-    ) throws APIException {
-        return ResponseEntity.ok(mapper.toPublicRSDTO(service.getUser(userId, UUID.fromString(profileId))));
-    }
-
-    @GetMapping("/{profileId}/public")
-    public ResponseEntity<?> getUserPublic(
-            @PathVariable String profileId
-    ) throws APIException {
-        return ResponseEntity.ok(mapper.toPublicRSDTO(service.getUser(UUID.fromString(profileId))));
-    }
-
     @GetMapping("/list")
     public ResponseEntity<?> listUsers(
             @RequestHeader("x-user-id") String userId,

@@ -53,41 +53,6 @@ public class UserServiceImpl implements UserService {
     private String GY_ACCOUNTS_PICTURE_URL;
 
     @Override
-    public ProfileODTO getUser(UUID profileId) throws APIException {
-        final var userMetadata = metadataRepository.get(profileId)
-                .orElseThrow(() -> new APIException(
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                ));
-
-        return mapper.toODTO(userMetadata.profile());
-    }
-
-    @Override
-    public ProfileODTO getUser(String userId, UUID profileId) throws APIException {
-        final var requestedUserMetadata = metadataRepository.get(profileId)
-                .orElseThrow(() -> new APIException(
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                ));
-
-        final var userMetadata = metadataRepository.get(userId)
-                .orElseThrow(() -> new APIException(
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                ));
-
-        try {
-            return mapper.toODTO(requestedUserMetadata.profile(), userMetadata.books().friends().contains(requestedUserMetadata.profile().id()));
-        } catch(NullPointerException e) {
-            return mapper.toODTO(requestedUserMetadata.profile());
-        }
-    }
-
-    @Override
     public List<ProfileODTO> listUsers(String query) throws APIException {
         try {
             return metadataRepository.list(query).stream()
