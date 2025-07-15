@@ -15,6 +15,7 @@ import org.gycoding.accounts.domain.model.user.metadata.books.FriendRequestComma
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.domain.repository.FriendRequestRepository;
 import org.gycoding.accounts.domain.repository.MetadataRepository;
+import org.gycoding.accounts.domain.repository.NotificationsFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.gycoding.logs.logger.Logger;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,11 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class BooksServiceImpl implements BooksService {
-    private final AuthFacade authFacade;
-
     private final FriendRequestRepository friendRequestRepository;
 
-    private MetadataRepository metadataRepository;
+    private final NotificationsFacade notificationsFacade;
+
+    private final MetadataRepository metadataRepository;
 
     private final BooksServiceMapper mapper;
 
@@ -134,7 +135,28 @@ public class BooksServiceImpl implements BooksService {
         }
 
         try {
-            return mapper.toODTO(friendRequestRepository.save(mapper.toMO(userMetadata.profile().id(), to)));
+            friendRequestRepository.list(to).stream()
+                    .filter(request -> request.from().equals(userMetadata.profile().id()))
+                    .findFirst()
+                    .ifPresent(request -> {
+                        throw new RuntimeException();
+                    });
+        } catch (RuntimeException e) {
+            Logger.error("Friend request already exists.", to);
+
+            throw new APIException(
+                AccountsAPIError.CONFLICT.getCode(),
+                AccountsAPIError.CONFLICT.getMessage(),
+                AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
+
+        try {
+            final var friendRequest = mapper.toODTO(friendRequestRepository.save(mapper.toMO(userMetadata.profile().id(), to)));
+
+            notificationsFacade.notify(friendRequest.toString());
+
+            return friendRequest;
         } catch (Exception e) {
             throw new APIException(
                 AccountsAPIError.CONFLICT.getCode(),

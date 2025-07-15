@@ -262,45 +262,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void initMetadata(String userId) throws APIException {
+    public void syncMetadata(String userId) throws APIException {
         try {
             final var userMetadata = metadataRepository.get(userId);
 
             if(userMetadata.isPresent()) {
+                // TODO. Add fields that didn't exist before on the user's metadata.
                 return;
             }
 
             final var user = authFacade.getUser(userId);
 
             metadataRepository.save(
-                    MetadataMO.builder()
-                            .userId(userId)
-                            .profile(
-                                    ProfileMO.builder()
-                                            .id(UUID.randomUUID())
-                                            .roles(List.of(AccountRoles.COMMON))
-                                            .apiKey(Base64Utils.generateApiKey())
-                                            .username(user.getName())
-                                            .phoneNumber(user.getPhoneNumber())
-                                            .email(user.getEmail())
-                                            .picture(GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", ""))
-                                            .build()
-                            )
-                            .books(
-                                    BooksMetadataMO.builder()
-                                            .friends(List.of())
-                                            .biography(String.format("Hi, I'm %s. Nice to meet you!", user.getName()))
-                                            .build()
-                            )
-                            .messages(
-                                    MessagesMetadataMO.builder()
-                                            .chats(List.of())
-                                            .build()
-                            )
-                            .build()
+                    mapper.toDefaultMO(
+                        userId,
+                        user,
+                        GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "")
+                    )
             );
-
-            ;
         } catch(Exception e) {
             Logger.error("An error has occurred while setting user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
 

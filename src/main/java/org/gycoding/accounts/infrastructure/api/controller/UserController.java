@@ -137,10 +137,10 @@ public class UserController {
     }
 
     @PostMapping("/metadata")
-    public ResponseEntity<?> initMetadata(
+    public ResponseEntity<?> syncMetadata(
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        service.initMetadata(userId);
+        service.syncMetadata(userId);
 
         return ResponseEntity.noContent().build();
     }
