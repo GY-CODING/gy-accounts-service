@@ -89,8 +89,7 @@ public class BooksServiceImpl implements BooksService {
         try {
             return friends.stream()
                     .map(friend -> metadataRepository.get(friend).orElseThrow(RuntimeException::new))
-                    .map(MetadataMO::profile)
-                    .map(profile -> mapper.toODTO(profile, userMetadata.books().biography()))
+                    .map(friendMetadata -> mapper.toODTO(friendMetadata.profile(), friendMetadata.books().biography()))
                     .toList();
         } catch (RuntimeException e) {
             throw new APIException(
