@@ -39,7 +39,9 @@ public class MetadataRepositoryImpl implements MetadataRepository {
                         AccountsAPIError.RESOURCE_NOT_FOUND.status
                 ));
 
-        return mapper.toMO(repository.save(mapper.toUpdatedEntity(persistedMetadata, metadata)));
+        final var te= mapper.toMO(repository.save(mapper.toUpdatedEntity(persistedMetadata, metadata)));
+
+        return te;
     }
 
     @Override
