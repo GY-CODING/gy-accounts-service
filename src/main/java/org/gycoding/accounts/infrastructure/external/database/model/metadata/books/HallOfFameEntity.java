@@ -1,17 +1,16 @@
 package org.gycoding.accounts.infrastructure.external.database.model.metadata.books;
 
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
-public class BooksMetadataEntity {
-    private List<String> friends;
-    private String biography;
-    private HallOfFameEntity hallOfFame;
+public class HallOfFameEntity {
+    private List<String> books;
+    private String quote;
 }

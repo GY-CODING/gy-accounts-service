@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.gycoding.accounts.application.service.products.books.BooksService;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.books.BiographyRQDTO;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.books.FriendRequestRQDTO;
+import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.books.HallOfFameRQDTO;
 import org.gycoding.accounts.infrastructure.api.mapper.UserControllerMapper;
 import org.gycoding.accounts.infrastructure.api.mapper.products.BooksControllerMapper;
 import org.gycoding.exceptions.model.APIException;
@@ -93,5 +94,20 @@ public class BooksController {
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.updateBiography(userId, biography.biography()));
+    }
+
+    @GetMapping("/{profileId}/halloffame")
+    public ResponseEntity<?> getHallOfFame(
+            @PathVariable String profileId
+    ) throws APIException {
+        return ResponseEntity.ok(service.getHallOfFame(UUID.fromString(profileId)));
+    }
+
+    @PutMapping("/halloffame")
+    public ResponseEntity<?> updateHallOfFame(
+            @Valid @RequestBody HallOfFameRQDTO hallOfFame,
+            @RequestHeader("x-user-id") String userId
+    ) throws APIException {
+        return ResponseEntity.ok(service.updateHallOfFame(userId, mapper.toIDTO(hallOfFame)));
     }
 }

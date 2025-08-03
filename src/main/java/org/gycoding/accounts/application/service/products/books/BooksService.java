@@ -1,6 +1,8 @@
 package org.gycoding.accounts.application.service.products.books;
 
+import org.gycoding.accounts.application.dto.in.user.metadata.books.HallOfFameIDTO;
 import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
+import org.gycoding.accounts.application.dto.out.books.HallOfFameODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.books.FriendRequestODTO;
 import org.gycoding.accounts.domain.model.user.metadata.books.FriendRequestCommand;
@@ -20,4 +22,7 @@ public interface BooksService {
     void removeFriend(String userId, UUID friendProfileId) throws APIException;
 
     String updateBiography(String userId, String biography) throws APIException;
+
+    HallOfFameODTO getHallOfFame(UUID profileId) throws APIException;
+    HallOfFameODTO updateHallOfFame(String userId, HallOfFameIDTO hallOfFame) throws APIException;
 }

@@ -3,7 +3,9 @@ package org.gycoding.accounts.application.service.products.books;
 import com.auth0.exception.Auth0Exception;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gycoding.accounts.application.dto.in.user.metadata.books.HallOfFameIDTO;
 import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
+import org.gycoding.accounts.application.dto.out.books.HallOfFameODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.books.FriendRequestODTO;
 import org.gycoding.accounts.application.mapper.UserServiceMapper;
@@ -73,18 +75,18 @@ public class BooksServiceImpl implements BooksService {
 
     @Override
     public List<BooksProfileODTO> listFriends(String userId) throws APIException {
-            final var userMetadata = metadataRepository.get(userId)
-                    .orElseThrow(() -> new APIException(
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                    ));
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
 
-            final var friends = userMetadata.books().friends();
+        final var friends = userMetadata.books().friends();
 
-            if(friends.isEmpty()) {
-                return List.of();
-            }
+        if(friends.isEmpty()) {
+            return List.of();
+        }
 
         try {
             return friends.stream()
@@ -282,5 +284,37 @@ public class BooksServiceImpl implements BooksService {
                         )
                         .build()
         ).books().biography();
+    }
+
+    @Override
+    public HallOfFameODTO getHallOfFame(UUID profileId) throws APIException {
+        try {
+            final var userMetadata = metadataRepository.get(profileId)
+                    .orElseThrow(RuntimeException::new);
+
+            return mapper.toODTO(userMetadata.books().hallOfFame());
+        } catch (RuntimeException e) {
+            throw new APIException(
+                    AccountsAPIError.SERVER_ERROR.getCode(),
+                    AccountsAPIError.SERVER_ERROR.getMessage(),
+                    AccountsAPIError.SERVER_ERROR.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public HallOfFameODTO updateHallOfFame(String userId, HallOfFameIDTO hallOfFame) throws APIException {
+        return mapper.toODTO(
+                metadataRepository.update(
+                    MetadataMO.builder()
+                            .userId(userId)
+                            .books(
+                                    BooksMetadataMO.builder()
+                                            .hallOfFame(mapper.toMO(hallOfFame))
+                                            .build()
+                            )
+                            .build()
+            ).books().hallOfFame()
+        );
     }
 }
