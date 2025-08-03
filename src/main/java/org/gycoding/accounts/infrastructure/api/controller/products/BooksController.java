@@ -103,7 +103,7 @@ public class BooksController {
         return ResponseEntity.ok(service.getHallOfFame(UUID.fromString(profileId)));
     }
 
-    @PutMapping("/halloffame")
+    @PatchMapping("/halloffame")
     public ResponseEntity<?> updateHallOfFame(
             @Valid @RequestBody HallOfFameRQDTO hallOfFame,
             @RequestHeader("x-user-id") String userId
