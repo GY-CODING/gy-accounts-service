@@ -9,5 +9,6 @@ import java.util.UUID;
 public record BooksMetadataMO(
         List<UUID> friends,
         String biography,
-        HallOfFameMO hallOfFame
+        HallOfFameMO hallOfFame,
+        List<ActivityMO> activity
 ) { }

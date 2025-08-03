@@ -14,4 +14,5 @@ public class BooksMetadataEntity {
     private List<String> friends;
     private String biography;
     private HallOfFameEntity hallOfFame;
+    private List<ActivityEntity> activity;
 }

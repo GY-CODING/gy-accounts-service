@@ -3,7 +3,9 @@ package org.gycoding.accounts.application.service.products.books;
 import com.auth0.exception.Auth0Exception;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gycoding.accounts.application.dto.in.user.metadata.books.ActivityIDTO;
 import org.gycoding.accounts.application.dto.in.user.metadata.books.HallOfFameIDTO;
+import org.gycoding.accounts.application.dto.out.books.ActivityODTO;
 import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
 import org.gycoding.accounts.application.dto.out.books.HallOfFameODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
@@ -288,18 +290,14 @@ public class BooksServiceImpl implements BooksService {
 
     @Override
     public HallOfFameODTO getHallOfFame(UUID profileId) throws APIException {
-        try {
-            final var userMetadata = metadataRepository.get(profileId)
-                    .orElseThrow(RuntimeException::new);
+        final var userMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
 
-            return mapper.toODTO(userMetadata.books().hallOfFame());
-        } catch (RuntimeException e) {
-            throw new APIException(
-                    AccountsAPIError.SERVER_ERROR.getCode(),
-                    AccountsAPIError.SERVER_ERROR.getMessage(),
-                    AccountsAPIError.SERVER_ERROR.getStatus()
-            );
-        }
+        return mapper.toODTO(userMetadata.books().hallOfFame());
     }
 
     @Override
@@ -316,5 +314,48 @@ public class BooksServiceImpl implements BooksService {
                             .build()
             ).books().hallOfFame()
         );
+    }
+
+    @Override
+    public List<ActivityODTO> listActivities(UUID profileId) throws APIException {
+        final var userMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
+
+        return userMetadata.books().activity().stream()
+                .map(mapper::toODTO)
+                .toList();
+    }
+
+    @Override
+    public ActivityODTO setActivity(String userId, ActivityIDTO activity) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
+
+        final var mappedActivity = mapper.toMO(activity);
+
+        metadataRepository.update(
+                MetadataMO.builder()
+                        .userId(userId)
+                        .books(
+                                BooksMetadataMO.builder()
+                                        .activity(
+                                                userMetadata.books().activity() != null ?
+                                                new ArrayList<>(userMetadata.books().activity()) {{ add(mappedActivity); }} :
+                                                List.of(mappedActivity)
+                                        )
+                                        .build()
+                        )
+                        .build()
+        );
+
+        return mapper.toODTO(mappedActivity);
     }
 }

@@ -1,6 +1,8 @@
 package org.gycoding.accounts.application.service.products.books;
 
+import org.gycoding.accounts.application.dto.in.user.metadata.books.ActivityIDTO;
 import org.gycoding.accounts.application.dto.in.user.metadata.books.HallOfFameIDTO;
+import org.gycoding.accounts.application.dto.out.books.ActivityODTO;
 import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
 import org.gycoding.accounts.application.dto.out.books.HallOfFameODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
@@ -25,4 +27,7 @@ public interface BooksService {
 
     HallOfFameODTO getHallOfFame(UUID profileId) throws APIException;
     HallOfFameODTO updateHallOfFame(String userId, HallOfFameIDTO hallOfFame) throws APIException;
+
+    List<ActivityODTO> listActivities(UUID profileId) throws APIException;
+    ActivityODTO setActivity(String userId, ActivityIDTO activity) throws APIException;
 }
