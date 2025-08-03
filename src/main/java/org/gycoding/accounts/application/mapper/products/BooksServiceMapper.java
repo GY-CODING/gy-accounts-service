@@ -1,12 +1,15 @@
 package org.gycoding.accounts.application.mapper.products;
 
+import org.gycoding.accounts.application.dto.in.user.metadata.books.ActivityIDTO;
 import org.gycoding.accounts.application.dto.in.user.metadata.books.BooksMetadataIDTO;
 import org.gycoding.accounts.application.dto.in.user.metadata.books.HallOfFameIDTO;
+import org.gycoding.accounts.application.dto.out.books.ActivityODTO;
 import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
 import org.gycoding.accounts.application.dto.out.books.HallOfFameODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.books.BooksMetadataODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.books.FriendRequestODTO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
+import org.gycoding.accounts.domain.model.user.metadata.books.ActivityMO;
 import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.books.FriendRequestMO;
 import org.gycoding.accounts.domain.model.user.metadata.books.HallOfFameMO;
@@ -38,4 +41,8 @@ public interface BooksServiceMapper {
     HallOfFameODTO toODTO(HallOfFameMO hallOfFame);
 
     HallOfFameMO toMO(HallOfFameIDTO hallOfFame);
+
+    ActivityODTO toODTO(ActivityMO activity);
+
+    ActivityMO toMO(ActivityIDTO activity);
 }

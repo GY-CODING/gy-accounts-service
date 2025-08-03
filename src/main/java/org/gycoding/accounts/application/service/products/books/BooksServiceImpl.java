@@ -3,7 +3,9 @@ package org.gycoding.accounts.application.service.products.books;
 import com.auth0.exception.Auth0Exception;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gycoding.accounts.application.dto.in.user.metadata.books.ActivityIDTO;
 import org.gycoding.accounts.application.dto.in.user.metadata.books.HallOfFameIDTO;
+import org.gycoding.accounts.application.dto.out.books.ActivityODTO;
 import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
 import org.gycoding.accounts.application.dto.out.books.HallOfFameODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
@@ -316,5 +318,26 @@ public class BooksServiceImpl implements BooksService {
                             .build()
             ).books().hallOfFame()
         );
+    }
+
+    @Override
+    public List<ActivityODTO> listActivities(UUID profileId) throws APIException {
+        try {
+            final var userMetadata = metadataRepository.get(profileId)
+                    .orElseThrow(RuntimeException::new);
+
+            return List.of(); //mapper.toODTO(userMetadata.books().hallOfFame());
+        } catch (RuntimeException e) {
+            throw new APIException(
+                    AccountsAPIError.SERVER_ERROR.getCode(),
+                    AccountsAPIError.SERVER_ERROR.getMessage(),
+                    AccountsAPIError.SERVER_ERROR.getStatus()
+            );
+        }
+    }
+
+    @Override
+    public ActivityODTO setActivity(String userId, ActivityIDTO activity) throws APIException {
+        return null;
     }
 }

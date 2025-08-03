@@ -3,6 +3,7 @@ package org.gycoding.accounts.infrastructure.api.controller.products;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.gycoding.accounts.application.service.products.books.BooksService;
+import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.books.ActivityRQDTO;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.books.BiographyRQDTO;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.books.FriendRequestRQDTO;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.books.HallOfFameRQDTO;
@@ -103,11 +104,26 @@ public class BooksController {
         return ResponseEntity.ok(service.getHallOfFame(UUID.fromString(profileId)));
     }
 
-    @PutMapping("/halloffame")
+    @PatchMapping("/halloffame")
     public ResponseEntity<?> updateHallOfFame(
             @Valid @RequestBody HallOfFameRQDTO hallOfFame,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.updateHallOfFame(userId, mapper.toIDTO(hallOfFame)));
+    }
+
+    @GetMapping("/{profileId}/activity")
+    public ResponseEntity<?> listActivities(
+            @PathVariable String profileId
+    ) throws APIException {
+        return ResponseEntity.ok(service.listActivities(UUID.fromString(profileId)));
+    }
+
+    @PostMapping("/activity")
+    public ResponseEntity<?> setActivity(
+            @Valid @RequestBody ActivityRQDTO activity,
+            @RequestHeader("x-user-id") String userId
+    ) throws APIException {
+        return ResponseEntity.ok(service.setActivity(userId, mapper.toIDTO(activity)));
     }
 }
