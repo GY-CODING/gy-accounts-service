@@ -16,9 +16,10 @@ import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.books.Frie
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.Date;
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports = { UUID.class })
+@Mapper(componentModel = "spring", imports = { UUID.class, Date.class })
 public interface BooksControllerMapper {
     FriendRequestRSDTO toRSDTO(FriendRequestODTO friendRequest);
 
@@ -31,6 +32,7 @@ public interface BooksControllerMapper {
     HallOfFameRSDTO toRSDTO(HallOfFameODTO hallOfFame);
 
     @Mapping(target = "id", expression = "java(UUID.randomUUID())")
+    @Mapping(target = "date", expression = "java(new Date())")
     ActivityIDTO toIDTO(ActivityRQDTO activity);
 
     ActivityRSDTO toRSDTO(ActivityODTO activity);

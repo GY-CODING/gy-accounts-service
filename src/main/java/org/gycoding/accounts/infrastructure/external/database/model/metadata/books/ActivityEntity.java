@@ -2,6 +2,7 @@ package org.gycoding.accounts.infrastructure.external.database.model.metadata.bo
 
 import lombok.*;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -12,4 +13,5 @@ import java.util.UUID;
 public class ActivityEntity {
     private String id;
     private String message;
+    private Date date;
 }
