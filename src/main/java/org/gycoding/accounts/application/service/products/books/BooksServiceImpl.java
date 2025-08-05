@@ -304,7 +304,7 @@ public class BooksServiceImpl implements BooksService {
     }
 
     @Override
-    public HallOfFameODTO updateHallOfFame(String userId, HallOfFameIDTO hallOfFame) throws APIException {
+    public HallOfFameODTO setHallOfFame(String userId, HallOfFameIDTO hallOfFame) throws APIException {
         final var userMetadata = metadataRepository.get(userId)
                 .orElseThrow(() -> new APIException(
                         AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
@@ -376,6 +376,33 @@ public class BooksServiceImpl implements BooksService {
         });
 
         return mapper.toODTO(mapper.toMO(hallOfFame));
+    }
+
+    @Override
+    public HallOfFameODTO removeBookFromHallOfFame(String userId, String bookId) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
+
+        return mapper.toODTO(
+                metadataRepository.update(
+                        MetadataMO.builder()
+                                .userId(userId)
+                                .books(
+                                        BooksMetadataMO.builder()
+                                                .hallOfFame(
+                                                        HallOfFameMO.builder()
+                                                                .books(new ArrayList<>(userMetadata.books().hallOfFame().books()) {{ remove(bookId); }})
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                                .build()
+                ).books().hallOfFame()
+        );
     }
 
     @Override

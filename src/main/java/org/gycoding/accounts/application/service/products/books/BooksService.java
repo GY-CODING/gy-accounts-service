@@ -26,7 +26,8 @@ public interface BooksService {
     String updateBiography(String userId, String biography) throws APIException;
 
     HallOfFameODTO getHallOfFame(UUID profileId) throws APIException;
-    HallOfFameODTO updateHallOfFame(String userId, HallOfFameIDTO hallOfFame) throws APIException;
+    HallOfFameODTO setHallOfFame(String userId, HallOfFameIDTO hallOfFame) throws APIException;
+    HallOfFameODTO removeBookFromHallOfFame(String userId, String bookId) throws APIException;
 
     List<ActivityODTO> listActivities(UUID profileId) throws APIException;
     ActivityODTO setActivity(String userId, ActivityIDTO activity) throws APIException;

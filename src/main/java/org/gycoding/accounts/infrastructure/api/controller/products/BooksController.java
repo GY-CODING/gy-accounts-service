@@ -105,11 +105,19 @@ public class BooksController {
     }
 
     @PatchMapping("/halloffame")
-    public ResponseEntity<?> updateHallOfFame(
+    public ResponseEntity<?> setHallOfFame(
             @Valid @RequestBody HallOfFameRQDTO hallOfFame,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        return ResponseEntity.ok(mapper.toRSDTO(service.updateHallOfFame(userId, mapper.toIDTO(hallOfFame))));
+        return ResponseEntity.ok(mapper.toRSDTO(service.setHallOfFame(userId, mapper.toIDTO(hallOfFame))));
+    }
+
+    @DeleteMapping("/halloffame/book/{bookId}")
+    public ResponseEntity<?> removeBookFromHallOfFame(
+            @PathVariable("bookId") String bookId,
+            @RequestHeader("x-user-id") String userId
+    ) throws APIException {
+        return ResponseEntity.ok(mapper.toRSDTO(service.removeBookFromHallOfFame(userId, bookId)));
     }
 
     @GetMapping("/{profileId}/activity")
