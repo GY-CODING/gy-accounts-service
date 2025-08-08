@@ -352,6 +352,16 @@ public class BooksServiceImpl implements BooksService {
                         AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
                 );
 
+        if(bookId == null || bookId.isBlank()) {
+            Logger.error("Book ID cannot be null or blank.", userId);
+
+            throw new APIException(
+                    AccountsAPIError.BAD_REQUEST.getCode(),
+                    AccountsAPIError.BAD_REQUEST.getMessage(),
+                    AccountsAPIError.BAD_REQUEST.getStatus()
+            );
+        }
+
         return mapper.toODTO(
                 metadataRepository.update(
                         MetadataMO.builder()
@@ -387,7 +397,7 @@ public class BooksServiceImpl implements BooksService {
                                         BooksMetadataMO.builder()
                                                 .hallOfFame(
                                                         HallOfFameMO.builder()
-                                                                .quote(quote)
+                                                                .quote(quote != null ? quote : "")
                                                                 .build()
                                                 )
                                                 .build()
