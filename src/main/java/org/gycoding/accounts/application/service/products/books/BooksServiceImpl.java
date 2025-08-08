@@ -1,23 +1,18 @@
 package org.gycoding.accounts.application.service.products.books;
 
-import com.auth0.exception.Auth0Exception;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gycoding.accounts.application.dto.in.user.metadata.books.ActivityIDTO;
-import org.gycoding.accounts.application.dto.in.user.metadata.books.HallOfFameIDTO;
 import org.gycoding.accounts.application.dto.out.books.ActivityODTO;
 import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
 import org.gycoding.accounts.application.dto.out.books.HallOfFameODTO;
-import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.books.FriendRequestODTO;
-import org.gycoding.accounts.application.mapper.UserServiceMapper;
 import org.gycoding.accounts.application.mapper.products.BooksServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.books.FriendRequestCommand;
 import org.gycoding.accounts.domain.model.user.metadata.books.HallOfFameMO;
-import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.domain.repository.FriendRequestRepository;
 import org.gycoding.accounts.domain.repository.MetadataRepository;
 import org.gycoding.accounts.domain.repository.NotificationsFacade;
@@ -25,9 +20,7 @@ import org.gycoding.exceptions.model.APIException;
 import org.gycoding.logs.logger.Logger;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -304,7 +297,7 @@ public class BooksServiceImpl implements BooksService {
     }
 
     @Override
-    public HallOfFameODTO setHallOfFame(String userId, HallOfFameIDTO hallOfFame) throws APIException {
+    public HallOfFameODTO addBookToHallOfFame(String userId, String bookId) throws APIException {
         final var userMetadata = metadataRepository.get(userId)
                 .orElseThrow(() -> new APIException(
                         AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
@@ -312,23 +305,8 @@ public class BooksServiceImpl implements BooksService {
                         AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
                 );
 
-        metadataRepository.update(
-                MetadataMO.builder()
-                        .userId(userId)
-                        .books(
-                                BooksMetadataMO.builder()
-                                        .hallOfFame(
-                                                HallOfFameMO.builder()
-                                                        .quote(hallOfFame.quote())
-                                                        .build()
-                                        )
-                                        .build()
-                        )
-                        .build()
-        );
-
-        if((5 - userMetadata.books().hallOfFame().books().size()) < hallOfFame.books().size()) {
-            Logger.error("You cannot have more than 5 books on your Hall of Fame.", userId);
+        if(userMetadata.books().hallOfFame().books().contains(bookId)) {
+            Logger.error("The book trying to be set on Hall of Fame is already there.", userId);
 
             throw new APIException(
                     AccountsAPIError.CONFLICT.getCode(),
@@ -337,45 +315,32 @@ public class BooksServiceImpl implements BooksService {
             );
         }
 
-        hallOfFame.books().forEach(book -> {
-            try {
-                final var metadata = metadataRepository.get(userId)
-                        .orElseThrow(() -> new APIException(
-                                AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                                AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                                AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
-                        );
+        if(userMetadata.books().hallOfFame().books().size() >= 5) {
+            Logger.error("You cannot have more than 5 bookId on your Hall of Fame.", userId);
 
-                if(metadata.books().hallOfFame().books().contains(book)) {
-                    Logger.error("Book is already in Hall of Fame.", userId);
+            throw new APIException(
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
 
-                    throw new APIException(
-                            AccountsAPIError.CONFLICT.getCode(),
-                            AccountsAPIError.CONFLICT.getMessage(),
-                            AccountsAPIError.CONFLICT.getStatus()
-                    );
-                }
-
-                metadataRepository.update(
-                        MetadataMO.builder()
-                                .userId(userId)
-                                .books(
-                                        BooksMetadataMO.builder()
-                                                .hallOfFame(
-                                                        HallOfFameMO.builder()
-                                                                .books(new ArrayList<>(metadata.books().hallOfFame().books()) {{ add(book); }})
-                                                                .build()
-                                                )
-                                                .build()
-                                )
-                                .build()
-                );
-            } catch (APIException e) {
-                Logger.error("Something went wrong when trying to update Hall of Fame books of user.", userId);
-            }
-        });
-
-        return mapper.toODTO(mapper.toMO(hallOfFame));
+        return mapper.toODTO(
+            metadataRepository.update(
+                    MetadataMO.builder()
+                            .userId(userId)
+                            .books(
+                                    BooksMetadataMO.builder()
+                                            .hallOfFame(
+                                                    HallOfFameMO.builder()
+                                                            .books(new ArrayList<>(userMetadata.books().hallOfFame().books()) {{ add(bookId); }})
+                                                            .build()
+                                            )
+                                            .build()
+                            )
+                            .build()
+            ).books().hallOfFame()
+        );
     }
 
     @Override
@@ -396,6 +361,33 @@ public class BooksServiceImpl implements BooksService {
                                                 .hallOfFame(
                                                         HallOfFameMO.builder()
                                                                 .books(new ArrayList<>(userMetadata.books().hallOfFame().books()) {{ remove(bookId); }})
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                                .build()
+                ).books().hallOfFame()
+        );
+    }
+
+    @Override
+    public HallOfFameODTO setQuoteOnHallOfFame(String userId, String quote) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
+
+        return mapper.toODTO(
+                metadataRepository.update(
+                        MetadataMO.builder()
+                                .userId(userId)
+                                .books(
+                                        BooksMetadataMO.builder()
+                                                .hallOfFame(
+                                                        HallOfFameMO.builder()
+                                                                .quote(quote)
                                                                 .build()
                                                 )
                                                 .build()

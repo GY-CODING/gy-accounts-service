@@ -104,12 +104,12 @@ public class BooksController {
         return ResponseEntity.ok(mapper.toRSDTO(service.getHallOfFame(UUID.fromString(profileId))));
     }
 
-    @PatchMapping("/halloffame")
-    public ResponseEntity<?> setHallOfFame(
+    @PatchMapping("/halloffame/book")
+    public ResponseEntity<?> addBookToHallOfFame(
             @Valid @RequestBody HallOfFameRQDTO hallOfFame,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        return ResponseEntity.ok(mapper.toRSDTO(service.setHallOfFame(userId, mapper.toIDTO(hallOfFame))));
+        return ResponseEntity.ok(mapper.toRSDTO(service.addBookToHallOfFame(userId, hallOfFame.bookId())));
     }
 
     @DeleteMapping("/halloffame/book/{bookId}")
@@ -118,6 +118,14 @@ public class BooksController {
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(mapper.toRSDTO(service.removeBookFromHallOfFame(userId, bookId)));
+    }
+
+    @PatchMapping("/halloffame/quote")
+    public ResponseEntity<?> setQuoteOnHallOfFame(
+            @Valid @RequestBody HallOfFameRQDTO hallOfFame,
+            @RequestHeader("x-user-id") String userId
+    ) throws APIException {
+        return ResponseEntity.ok(mapper.toRSDTO(service.setQuoteOnHallOfFame(userId, hallOfFame.quote())));
     }
 
     @GetMapping("/{profileId}/activity")

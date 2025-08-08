@@ -1,11 +1,9 @@
 package org.gycoding.accounts.application.service.products.books;
 
 import org.gycoding.accounts.application.dto.in.user.metadata.books.ActivityIDTO;
-import org.gycoding.accounts.application.dto.in.user.metadata.books.HallOfFameIDTO;
 import org.gycoding.accounts.application.dto.out.books.ActivityODTO;
 import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
 import org.gycoding.accounts.application.dto.out.books.HallOfFameODTO;
-import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.books.FriendRequestODTO;
 import org.gycoding.accounts.domain.model.user.metadata.books.FriendRequestCommand;
 import org.gycoding.exceptions.model.APIException;
@@ -26,8 +24,9 @@ public interface BooksService {
     String updateBiography(String userId, String biography) throws APIException;
 
     HallOfFameODTO getHallOfFame(UUID profileId) throws APIException;
-    HallOfFameODTO setHallOfFame(String userId, HallOfFameIDTO hallOfFame) throws APIException;
+    HallOfFameODTO addBookToHallOfFame(String userId, String bookId) throws APIException;
     HallOfFameODTO removeBookFromHallOfFame(String userId, String bookId) throws APIException;
+    HallOfFameODTO setQuoteOnHallOfFame(String userId, String quote) throws APIException;
 
     List<ActivityODTO> listActivities(UUID profileId) throws APIException;
     ActivityODTO setActivity(String userId, ActivityIDTO activity) throws APIException;

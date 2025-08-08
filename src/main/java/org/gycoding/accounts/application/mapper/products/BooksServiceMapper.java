@@ -2,7 +2,6 @@ package org.gycoding.accounts.application.mapper.products;
 
 import org.gycoding.accounts.application.dto.in.user.metadata.books.ActivityIDTO;
 import org.gycoding.accounts.application.dto.in.user.metadata.books.BooksMetadataIDTO;
-import org.gycoding.accounts.application.dto.in.user.metadata.books.HallOfFameIDTO;
 import org.gycoding.accounts.application.dto.out.books.ActivityODTO;
 import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
 import org.gycoding.accounts.application.dto.out.books.HallOfFameODTO;
@@ -20,8 +19,6 @@ import java.util.UUID;
 
 @Mapper(componentModel = "spring", imports = { UUID.class })
 public interface BooksServiceMapper {
-    BooksMetadataODTO toODTO(BooksMetadataMO booksMetadata);
-
     BooksMetadataMO toMO(BooksMetadataIDTO booksMetadata);
 
     @Mapping(target = "id", expression = "java(UUID.randomUUID())")
@@ -39,8 +36,6 @@ public interface BooksServiceMapper {
     BooksProfileODTO toODTO(ProfileMO profile, String biography, Boolean isFriend);
 
     HallOfFameODTO toODTO(HallOfFameMO hallOfFame);
-
-    HallOfFameMO toMO(HallOfFameIDTO hallOfFame);
 
     ActivityODTO toODTO(ActivityMO activity);
 
