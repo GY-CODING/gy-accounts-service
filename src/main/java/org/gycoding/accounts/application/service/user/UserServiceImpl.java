@@ -266,17 +266,28 @@ public class UserServiceImpl implements UserService {
         try {
             final var userMetadata = metadataRepository.get(userId);
             final var user = authFacade.getUser(userId);
-            final var defaultMetadata = mapper.toDefaultMO(
-                    userId,
-                    user,
-                    GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "")
-            );
 
             if(userMetadata.isPresent()) {
-                return mapper.toODTO(metadataRepository.refresh(defaultMetadata));
+                return mapper.toODTO(
+                        metadataRepository.refresh(
+                                mapper.toDefaultMO(
+                                        userId,
+                                        user,
+                                        userMetadata.get().profile().picture().isBlank() ? GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "") : userMetadata.get().profile().picture()
+                                )
+                        )
+                );
             }
 
-            return mapper.toODTO(metadataRepository.save(defaultMetadata));
+            return mapper.toODTO(
+                    metadataRepository.save(
+                            mapper.toDefaultMO(
+                                    userId,
+                                    user,
+                                    GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "")
+                            )
+                    )
+            );
         } catch(Exception e) {
             Logger.error("An error has occurred while setting user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
 
