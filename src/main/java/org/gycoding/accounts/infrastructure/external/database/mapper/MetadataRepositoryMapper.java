@@ -20,6 +20,10 @@ public interface MetadataRepositoryMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     MetadataEntity toUpdatedEntity(@MappingTarget MetadataEntity persistedMetadata, MetadataMO metadata);
 
+    @Mapping(target = "mongoId", source = "mongoId")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    MetadataEntity toRefreshedEntity(@MappingTarget MetadataEntity defaultMetadata, MetadataMO persistedMetadata, String mongoId);
+
     default UUID toUUID(String id) {
         return id == null ? null : UUID.fromString(id);
     }

@@ -30,8 +30,6 @@ import java.util.UUID;
 public class BooksServiceImpl implements BooksService {
     private final FriendRequestRepository friendRequestRepository;
 
-    private final NotificationsFacade notificationsFacade;
-
     private final MetadataRepository metadataRepository;
 
     private final BooksServiceMapper mapper;
@@ -151,11 +149,7 @@ public class BooksServiceImpl implements BooksService {
         }
 
         try {
-            final var friendRequest = mapper.toODTO(friendRequestRepository.save(mapper.toMO(userMetadata.profile().id(), to)));
-
-            notificationsFacade.notify(friendRequest.toString());
-
-            return friendRequest;
+            return mapper.toODTO(friendRequestRepository.save(mapper.toMO(userMetadata.profile().id(), to)));
         } catch (Exception e) {
             throw new APIException(
                 AccountsAPIError.CONFLICT.getCode(),

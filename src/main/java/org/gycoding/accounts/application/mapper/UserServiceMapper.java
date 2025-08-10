@@ -11,6 +11,7 @@ import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
+import org.gycoding.accounts.domain.model.user.metadata.books.HallOfFameMO;
 import org.gycoding.accounts.domain.model.user.metadata.messages.MessagesMetadataMO;
 import org.gycoding.accounts.shared.AccountRoles;
 import org.gycoding.accounts.shared.utils.Base64Utils;
@@ -58,6 +59,13 @@ public interface UserServiceMapper {
                         BooksMetadataMO.builder()
                                 .friends(List.of())
                                 .biography(String.format("Hi, I'm %s. Nice to meet you!", user.getName()))
+                                .hallOfFame(
+                                        HallOfFameMO.builder()
+                                                .books(List.of())
+                                                .quote("")
+                                                .build()
+                                )
+                                .activity(List.of())
                                 .build()
                 )
                 .messages(

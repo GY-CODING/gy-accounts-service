@@ -43,6 +43,18 @@ public class MetadataRepositoryImpl implements MetadataRepository {
     }
 
     @Override
+    public MetadataMO refresh(MetadataMO metadata) throws APIException {
+        final var persistedMetadata = repository.findByUserId(metadata.userId())
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.code,
+                        AccountsAPIError.RESOURCE_NOT_FOUND.message,
+                        AccountsAPIError.RESOURCE_NOT_FOUND.status
+                ));
+
+        return mapper.toMO(repository.save(mapper.toRefreshedEntity(mapper.toEntity(metadata), mapper.toMO(persistedMetadata), persistedMetadata.getMongoId())));
+    }
+
+    @Override
     public Optional<MetadataMO> get(String userId) {
         return repository.findByUserId(userId)
                 .map(mapper::toMO);

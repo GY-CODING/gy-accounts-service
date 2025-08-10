@@ -262,24 +262,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void syncMetadata(String userId) throws APIException {
+    public MetadataODTO syncMetadata(String userId) throws APIException {
         try {
             final var userMetadata = metadataRepository.get(userId);
+            final var user = authFacade.getUser(userId);
+            final var defaultMetadata = mapper.toDefaultMO(
+                    userId,
+                    user,
+                    GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "")
+            );
 
             if(userMetadata.isPresent()) {
-                // TODO. Add fields that didn't exist before on the user's metadata.
-                return;
+                return mapper.toODTO(metadataRepository.refresh(defaultMetadata));
             }
 
-            final var user = authFacade.getUser(userId);
-
-            metadataRepository.save(
-                    mapper.toDefaultMO(
-                        userId,
-                        user,
-                        GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "")
-                    )
-            );
+            return mapper.toODTO(metadataRepository.save(defaultMetadata));
         } catch(Exception e) {
             Logger.error("An error has occurred while setting user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
 

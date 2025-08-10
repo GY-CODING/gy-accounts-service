@@ -31,7 +31,7 @@ public interface UserService {
     void updatePassword(String userId, String password) throws APIException;
 
     MetadataODTO getMetadata(String userId) throws APIException;
-    void syncMetadata(String userId) throws APIException;
+    MetadataODTO syncMetadata(String userId) throws APIException;
 
     String refreshApiKey(String userId) throws APIException;
     String decodeApiKey(String apiKey) throws APIException;

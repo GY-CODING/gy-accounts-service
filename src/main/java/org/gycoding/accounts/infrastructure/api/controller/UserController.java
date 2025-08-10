@@ -140,9 +140,7 @@ public class UserController {
     public ResponseEntity<?> syncMetadata(
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        service.syncMetadata(userId);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(service.syncMetadata(userId));
     }
 
     @GetMapping("/metadata/apikey/decode")
