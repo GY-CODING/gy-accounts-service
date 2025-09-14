@@ -1,22 +1,21 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9.6-eclipse-temurin-17'
+            args '-v $HOME/.m2:/root/.m2' // Opcional: cache de dependencias
+        }
+    }
 
     environment {
         GITHUB_USER = credentials('GITHUB_USER')
         GITHUB_TOKEN = credentials('GITHUB_TOKEN')
     }
 
-    tools {
-        maven 'Maven 3.9.11'
-    }
-
     stages {
         stage('Unit Test') {
             steps {
                 sh 'mvn clean test --settings src/main/resources/settings.xml'
-                // Mostrar archivos generados para debug
                 sh 'ls -lR target/surefire-reports || true'
-                // Mostrar logs de pruebas para debug
                 sh 'cat target/surefire-reports/*.txt || true'
             }
         }
