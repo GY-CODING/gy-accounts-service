@@ -5,8 +5,10 @@ pipeline {
         stage('Unit Test') {
             steps {
                 sh 'mvn clean test --settings src/main/resources/settings.xml'
-                // Listar archivos generados para debug
+                // Mostrar archivos generados para debug
                 sh 'ls -lR target/surefire-reports || true'
+                // Mostrar logs de pruebas para debug
+                sh 'cat target/surefire-reports/*.txt || true'
             }
         }
     }
