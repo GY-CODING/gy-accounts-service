@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        GITHUB_USER = credentials('GITHUB_USER')
+        GITHUB_TOKEN = credentials('GITHUB_TOKEN')
+    }
+
     tools {
         maven 'Maven 3.9.11'
     }
