@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven 3.8.8' // Cambia este nombre si tu configuración de Jenkins usa otro
+    }
+
     stages {
         stage('Unit Test') {
             steps {
