@@ -2,9 +2,11 @@ pipeline {
     agent any
 
     stages {
-        stage('Unit Tests') {
+        stage('Unit Test') {
             steps {
                 sh 'mvn clean test --settings src/main/resources/settings.xml'
+                // Listar archivos generados para debug
+                sh 'ls -lR target/surefire-reports || true'
             }
         }
     }
