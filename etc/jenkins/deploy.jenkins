@@ -7,6 +7,24 @@ pipeline {
     }
 
     stages {
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    try {
+                            build job:
+                                'Back/Test/GY Accounts',
+                                wait: true,
+                                propagate: true
+                    } catch (Exception e) {
+                            echo "Error calling test job: ${e.getMessage()}"
+                            echo "Job path: Back/Test/GY Accounts"
+                            throw e
+                    }
+                }
+            }
+        }
+
         stage('Deploy to Dokploy') {
             steps {
                 withEnv([
