@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.6-eclipse-temurin-17'
-            args '-v $HOME/.m2:/root/.m2' // Opcional: cache de dependencias
-        }
-    }
+    agent any
 
     environment {
         GITHUB_USER = credentials('GITHUB_USER')
@@ -12,11 +7,47 @@ pipeline {
     }
 
     stages {
+        stage('Install JDK 17') {
+            steps {
+                sh '''
+                    echo ">>> Downloading JDK 17..."
+                    curl -L -o jdk17.tar.gz https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.13%2B11/OpenJDK17U-jdk_x64_linux_hotspot_17.0.13_11.tar.gz
+                    mkdir -p .jdk
+                    tar -xzf jdk17.tar.gz -C .jdk --strip-components=1
+                    rm jdk17.tar.gz
+                    export JAVA_HOME=$PWD/.jdk
+                    export PATH=$JAVA_HOME/bin:$PATH
+                    java -version
+                '''
+            }
+        }
+
+        stage('Install Maven') {
+            steps {
+                sh '''
+                    echo ">>> Downloading Maven..."
+                    curl -L -o maven.tar.gz https://archive.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+                    mkdir -p .maven
+                    tar -xzf maven.tar.gz -C .maven --strip-components=1
+                    rm maven.tar.gz
+                    export JAVA_HOME=$PWD/.jdk
+                    export PATH=$JAVA_HOME/bin:$PWD/.maven/bin:$PATH
+                    mvn -v
+                '''
+            }
+        }
+
         stage('Unit Test') {
             steps {
-                sh 'mvn clean test --settings src/main/resources/settings.xml'
-                sh 'ls -lR target/surefire-reports || true'
-                sh 'cat target/surefire-reports/*.txt || true'
+                sh '''
+                    export JAVA_HOME=$PWD/.jdk
+                    export PATH=$JAVA_HOME/bin:$PWD/.maven/bin:$PATH
+                    java -version
+                    mvn -v
+                    mvn clean test --settings src/main/resources/settings.xml
+                    ls -lR target/surefire-reports || true
+                    cat target/surefire-reports/*.txt || true
+                '''
             }
         }
     }
