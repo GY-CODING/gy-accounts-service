@@ -39,7 +39,7 @@ pipeline {
                                 curl -s --location --request POST "https://dokploy.gycoding.com/api/application.deploy" \
                                 --header "x-api-key: $DOKPLOY_API_KEY" \
                                 --header "Content-Type: application/json" \
-                                --data-raw "{ \"applicationId\": \"$ACCOUNTS_DOKPLOY_APP_ID\" }"
+                                --data-raw '{"applicationId": "'$ACCOUNTS_DOKPLOY_APP_ID'"}'
                             ''' ,
                             returnStdout: true
                         ).trim()
