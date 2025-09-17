@@ -32,19 +32,19 @@ pipeline {
                     string(credentialsId: 'ACCOUNTS_DOKPLOY_APP_ID', variable: 'APP_ID')
                 ]) {
                     sh '''
-        echo "Iniciando despliegue en Dokploy..."
+                        echo "Iniciando despliegue en Dokploy..."
 
-        DEPLOY_PAYLOAD=$(cat <<EOF
-        {
-          "applicationId": "$APP_ID"
-        }
-        EOF
-        )
+                        DEPLOY_PAYLOAD=$(cat <<EOF
+{
+"applicationId": "$APP_ID"
+}
+EOF
+                        )
 
-        curl -s --location --request POST "https://dokploy.gycoding.com/api/application.deploy" \
-          --header "x-api-key: $API_KEY" \
-          --header "Content-Type: application/json" \
-          --data-raw "$DEPLOY_PAYLOAD"
+                        curl -s -X POST "https://dokploy.gycoding.com/api/application.deploy" \
+                          -H "x-api-key: $API_KEY" \
+                          -H "Content-Type: application/json" \
+                          -d "$DEPLOY_PAYLOAD"
                     '''
                 }
             }
