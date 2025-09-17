@@ -27,28 +27,25 @@ pipeline {
 
         stage('Deploy to Dokploy') {
             steps {
-                withEnv([
-                    "DOKPLOY_API_KEY=${env.DOKPLOY_API_KEY}",
-                    "ACCOUNTS_DOKPLOY_APP_ID=${env.ACCOUNTS_DOKPLOY_APP_ID}"
+                withCredentials([
+                    string(credentialsId: 'DOKPLOY_API_KEY', variable: 'API_KEY'),
+                    string(credentialsId: 'ACCOUNTS_DOKPLOY_APP_ID', variable: 'APP_ID')
                 ]) {
-                    script {
-                        echo "DOKPLOY_API_KEY: ${env.DOKPLOY_API_KEY}"
-                        echo "ACCOUNTS_DOKPLOY_APP_ID: ${env.ACCOUNTS_DOKPLOY_APP_ID}"
-                        def response = sh(
-                            script: '''
-                                curl -s --location --request POST "https://dokploy.gycoding.com/api/application.deploy" \
-                                --header "x-api-key: $DOKPLOY_API_KEY" \
-                                --header "Content-Type: application/json" \
-                                --data-raw '{"applicationId": "'$ACCOUNTS_DOKPLOY_APP_ID'"}'
-                            ''' ,
-                            returnStdout: true
-                        ).trim()
-                        if (!response) {
-                            error("🚨 ERROR: Dokploy deployment could not be started.")
-                        }
+                    sh '''
+                      echo "Iniciando despliegue en Dokploy..."
 
-                        echo "🚀 Dokploy deployment response: ${response}"
-                    }
+                      DEPLOY_PAYLOAD=$(cat <<EOF
+                        {
+                          "applicationId": "$APP_ID"
+                        }
+                        EOF
+                      )
+
+                      curl -s --location --request POST "https://dokploy.gycoding.com/api/application.deploy" \
+                        --header "x-api-key: $API_KEY" \
+                        --header "Content-Type: application/json" \
+                        --data-raw "$DEPLOY_PAYLOAD"
+                    '''
                 }
             }
         }
