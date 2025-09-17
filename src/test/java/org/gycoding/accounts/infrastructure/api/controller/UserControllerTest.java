@@ -2,10 +2,13 @@ package org.gycoding.accounts.infrastructure.api.controller;
 
 import org.gycoding.accounts.application.dto.in.user.metadata.ProfileIDTO;
 import org.gycoding.accounts.application.dto.out.user.PictureODTO;
+import org.gycoding.accounts.application.dto.out.user.metadata.MetadataODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.service.user.UserService;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
+import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.ProfileRQDTO;
+import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.TransformIDRQDTO;
 import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.ProfileRSDTO;
 import org.gycoding.accounts.infrastructure.api.mapper.UserControllerMapper;
 import org.gycoding.accounts.stub.UserStubs;
@@ -17,6 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -187,13 +192,11 @@ public class UserControllerTest {
         when(service.updatePicture(eq(UserStubs.AUTH0_USER_ID), any(MockMultipartFile.class))).thenReturn(pictureODTO);
 
         // Then
-        final var result = controller.updatePicture(updatedPictureURL, UserStubs.AUTH0_USER_ID);
+        controller.updatePicture(updatedPictureURL, UserStubs.AUTH0_USER_ID);
 
         // Verify
         verify(service).updatePicture(eq(UserStubs.AUTH0_USER_ID), any(MockMultipartFile.class));
         verifyNoMoreInteractions(service);
-
-        assertEquals(pictureODTO.toString(), result.getBody());
     }
 
     @Test
@@ -261,6 +264,270 @@ public class UserControllerTest {
 
         // Verify
         verify(service).updatePhoneNumber(UserStubs.AUTH0_USER_ID, updatedPhoneNumber);
+        verifyNoMoreInteractions(service);
+
+        assertEquals(expectedException, result);
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test successful retrieve of user's metadata case.")
+    void testGetMetadata() throws APIException {
+        // When
+        final var metadata = mock(MetadataODTO.class);
+
+        when(service.getMetadata(UserStubs.AUTH0_USER_ID)).thenReturn(metadata);
+
+        // Then
+        final var result = controller.getMetadata(UserStubs.AUTH0_USER_ID);
+
+        // Verify
+        verify(service).getMetadata(UserStubs.AUTH0_USER_ID);
+        verifyNoMoreInteractions(service);
+
+        assertEquals(metadata, result.getBody());
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test unsuccessful retrieve of user's metadata case.")
+    void testWrongGetMetadata() throws APIException {
+        // When
+        final var expectedException = new APIException(
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
+        );
+
+        when(service.getMetadata(UserStubs.AUTH0_USER_ID)).thenThrow(expectedException);
+
+        // Then
+        final var result = assertThrows(
+                APIException.class,
+                () -> controller.getMetadata(UserStubs.AUTH0_USER_ID)
+        );
+
+        // Verify
+        verify(service).getMetadata(UserStubs.AUTH0_USER_ID);
+        verifyNoMoreInteractions(service);
+
+        assertEquals(expectedException, result);
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test successful sync of user's metadata case.")
+    void testSyncMetadata() throws APIException {
+        // When
+        final var metadata = mock(MetadataODTO.class);
+
+        when(service.syncMetadata(UserStubs.AUTH0_USER_ID)).thenReturn(metadata);
+
+        // Then
+        final var result = controller.syncMetadata(UserStubs.AUTH0_USER_ID);
+
+        // Verify
+        verify(service).syncMetadata(UserStubs.AUTH0_USER_ID);
+        verifyNoMoreInteractions(service);
+
+        assertEquals(metadata, result.getBody());
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test unsuccessful sync of user's metadata case.")
+    void testWrongSyncMetadata() throws APIException {
+        // When
+        final var expectedException = new APIException(
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
+        );
+
+        when(service.syncMetadata(UserStubs.AUTH0_USER_ID)).thenThrow(expectedException);
+
+        // Then
+        final var result = assertThrows(
+                APIException.class,
+                () -> controller.syncMetadata(UserStubs.AUTH0_USER_ID)
+        );
+
+        // Verify
+        verify(service).syncMetadata(UserStubs.AUTH0_USER_ID);
+        verifyNoMoreInteractions(service);
+
+        assertEquals(expectedException, result);
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test successful decode of an API Key case.")
+    void testDecodeApiKey() throws APIException {
+        // When
+        when(service.decodeApiKey(UserStubs.API_KEY.toString())).thenReturn(UserStubs.AUTH0_USER_ID);
+
+        // Then
+        final var result = controller.decodeApiKey(UserStubs.API_KEY.toString());
+
+        // Verify
+        verify(service).decodeApiKey(UserStubs.API_KEY.toString());
+        verifyNoMoreInteractions(service);
+
+        assertEquals(UserStubs.AUTH0_USER_ID, result.getBody());
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test unsuccessful decode of API Key case.")
+    void testWrongDecodeApiKey() throws APIException {
+        // When
+        final var expectedException = new APIException(
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
+        );
+
+        when(service.decodeApiKey(UserStubs.API_KEY.toString())).thenThrow(expectedException);
+
+        // Then
+        final var result = assertThrows(
+                APIException.class,
+                () -> controller.decodeApiKey(UserStubs.API_KEY.toString())
+        );
+
+        // Verify
+        verify(service).decodeApiKey(UserStubs.API_KEY.toString());
+        verifyNoMoreInteractions(service);
+
+        assertEquals(expectedException, result);
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test successful refresh of an API Key case.")
+    void testRefreshAPIKey() throws APIException {
+        // When
+        when(service.refreshApiKey(UserStubs.AUTH0_USER_ID)).thenReturn(UserStubs.API_KEY.toString());
+
+        // Then
+        final var result = controller.refreshApiKey(UserStubs.AUTH0_USER_ID);
+
+        // Verify
+        verify(service).refreshApiKey(UserStubs.AUTH0_USER_ID);
+        verifyNoMoreInteractions(service);
+
+        assertEquals(UserStubs.API_KEY.toString(), result.getBody());
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test unsuccessful refresh of API Key case.")
+    void testWrongRefreshAPIKey() throws APIException {
+        // When
+        final var expectedException = new APIException(
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
+        );
+
+        when(service.refreshApiKey(UserStubs.AUTH0_USER_ID)).thenThrow(expectedException);
+
+        // Then
+        final var result = assertThrows(
+                APIException.class,
+                () -> controller.refreshApiKey(UserStubs.AUTH0_USER_ID)
+        );
+
+        // Verify
+        verify(service).refreshApiKey(UserStubs.AUTH0_USER_ID);
+        verifyNoMoreInteractions(service);
+
+        assertEquals(expectedException, result);
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test successful retrieve of User ID given a Profile ID case.")
+    void testGetUserID() throws APIException {
+        // When
+        final var transformID = TransformIDRQDTO.builder()
+                .profileId(UserStubs.PROFILE_ID.toString())
+                .build();
+
+        when(service.transform(UserStubs.PROFILE_ID)).thenReturn(UserStubs.AUTH0_USER_ID);
+
+        // Then
+        final var result = controller.getUserId(transformID);
+
+        // Verify
+        verify(service).transform(UserStubs.PROFILE_ID);
+        verifyNoMoreInteractions(service);
+
+        assertEquals(UserStubs.AUTH0_USER_ID, result.getBody());
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test unsuccessful retrieve of User ID given a Profile ID case.")
+    void testWrongGetUserID() throws APIException {
+        // When
+        final var transformID = TransformIDRQDTO.builder()
+                .profileId(UserStubs.PROFILE_ID.toString())
+                .build();
+        final var expectedException = new APIException(
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
+        );
+
+        when(service.transform(UserStubs.PROFILE_ID)).thenThrow(expectedException);
+
+        // Then
+        final var result = assertThrows(
+                APIException.class,
+                () -> controller.getUserId(transformID)
+        );
+
+        // Verify
+        verify(service).transform(UserStubs.PROFILE_ID);
+        verifyNoMoreInteractions(service);
+
+        assertEquals(expectedException, result);
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test successful retrieve of Profile ID given a User ID case.")
+    void testGetProfileID() throws APIException {
+        // When
+        final var transformID = TransformIDRQDTO.builder()
+                .userId(UserStubs.AUTH0_USER_ID)
+                .build();
+
+        when(service.transform(UserStubs.AUTH0_USER_ID)).thenReturn(UserStubs.PROFILE_ID);
+
+        // Then
+        final var result = controller.getProfileId(transformID);
+
+        // Verify
+        verify(service).transform(UserStubs.AUTH0_USER_ID);
+        verifyNoMoreInteractions(service);
+
+        assertEquals(UserStubs.PROFILE_ID, result.getBody());
+    }
+
+    @Test
+    @DisplayName("[USER_CONTROLLER] - Test unsuccessful retrieve of Profile ID given a User ID case.")
+    void testWrongGetProfileID() throws APIException {
+        // When
+        final var transformID = TransformIDRQDTO.builder()
+                .userId(UserStubs.AUTH0_USER_ID)
+                .build();
+        final var expectedException = new APIException(
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
+                AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
+        );
+
+        when(service.transform(UserStubs.AUTH0_USER_ID)).thenThrow(expectedException);
+
+        // Then
+        final var result = assertThrows(
+                APIException.class,
+                () -> controller.getProfileId(transformID)
+        );
+
+        // Verify
+        verify(service).transform(UserStubs.AUTH0_USER_ID);
         verifyNoMoreInteractions(service);
 
         assertEquals(expectedException, result);

@@ -101,7 +101,9 @@ public class UserController {
             @RequestBody String picture,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.updatePicture(userId, FileUtils.read(picture)).toString());
+        service.updatePicture(userId, FileUtils.read(picture));
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/phonenumber")
