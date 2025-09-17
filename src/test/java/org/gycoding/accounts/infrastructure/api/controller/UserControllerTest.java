@@ -409,7 +409,7 @@ public class UserControllerTest {
         verify(service).refreshApiKey(UserStubs.AUTH0_USER_ID);
         verifyNoMoreInteractions(service);
 
-        assertEquals(UserStubs.API_KEY, result.getBody());
+        assertEquals(UserStubs.API_KEY.toString(), result.getBody());
     }
 
     @Test
