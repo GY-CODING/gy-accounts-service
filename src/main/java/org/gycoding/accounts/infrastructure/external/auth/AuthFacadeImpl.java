@@ -8,6 +8,7 @@ import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import com.auth0.json.mgmt.users.User;
 import kong.unirest.json.JSONObject;
+import lombok.AllArgsConstructor;
 import org.gycoding.accounts.domain.model.auth.UserMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.infrastructure.external.unirest.UnirestFacade;

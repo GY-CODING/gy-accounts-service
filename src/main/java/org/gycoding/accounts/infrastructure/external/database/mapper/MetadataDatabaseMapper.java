@@ -1,16 +1,13 @@
 package org.gycoding.accounts.infrastructure.external.database.mapper;
 
-import kotlin.Metadata;
-import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
-import org.gycoding.accounts.infrastructure.external.database.model.PictureEntity;
 import org.gycoding.accounts.infrastructure.external.database.model.metadata.MetadataEntity;
 import org.mapstruct.*;
 
 import java.util.UUID;
 
 @Mapper(componentModel = "spring", imports = { UUID.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface MetadataRepositoryMapper {
+public interface MetadataDatabaseMapper {
     @Mapping(target = "profile.id", expression = "java(toUUID(profileEntity.getId()))")
     MetadataMO toMO(MetadataEntity metadata);
 

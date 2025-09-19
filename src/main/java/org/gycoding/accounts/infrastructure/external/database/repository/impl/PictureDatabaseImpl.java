@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class PictureRepositoryImpl implements PictureRepository {
+public class PictureDatabaseImpl implements PictureRepository {
     private final PictureMongoRepository repository;
 
     private final UserDatabaseMapper mapper;
