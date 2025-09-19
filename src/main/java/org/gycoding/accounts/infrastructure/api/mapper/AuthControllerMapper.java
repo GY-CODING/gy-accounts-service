@@ -6,5 +6,5 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface AuthControllerMapper {
-    UserIDTO toIDTO(UserRQDTO profile);
+    UserIDTO toIDTO(UserRQDTO user);
 }

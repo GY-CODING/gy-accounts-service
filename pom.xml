@@ -13,10 +13,12 @@
 	<version>3.2.1</version>
 	<name>gy-accounts-service</name>
 	<description>GY Accounts is a service used by GYCODING for the management of user accounts for their products.</description>
+
 	<properties>
 		<java.version>17</java.version>
 		<docker.image.prefix>gycoding</docker.image.prefix>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -114,7 +116,7 @@
 			<artifactId>spring-logs</artifactId>
 			<version>1.0.1</version>
 		</dependency>
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<plugins>
@@ -122,7 +124,23 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-			<plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <useModulePath>false</useModulePath>
+                    <properties>
+                        <property>
+                            <name>junit.jupiter.extensions.autodetection.enabled</name>
+                            <value>true</value>
+                        </property>
+                    </properties>
+                </configuration>
+            </plugin>
+
+            <plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>dockerfile-maven-plugin</artifactId>
 				<version>1.4.13</version>
