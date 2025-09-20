@@ -37,7 +37,7 @@ pipeline {
             }
         }
 
-        stage('Unit Tests') {
+        stage('Tests') {
             steps {
                 sh '''
                     export JAVA_HOME=$PWD/.jdk
@@ -45,28 +45,19 @@ pipeline {
                     java -version
                     mvn -v
                     mvn clean test --settings src/main/resources/settings.xml
-                    ls -lR target/surefire-reports || true
-                    cat target/surefire-reports/*.txt || true
-                '''
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                sh '''
-                mvn clean verify sonar:sonar \
-                  -Dsonar.projectKey=GY-Accounts \
-                  -Dsonar.host.url=https://sonar.gycoding.com \
-                  -Dsonar.login=sqp_e15c3039759830502652fe564b3cd935ff3d1cf1
+                    mvn verify --settings src/main/resources/settings.xml
+                    ls -lR target/coverage-reports || true
+                    mvn sonar:sonar --settings src/main/resources/settings.xml \
+                      -Dsonar.projectKey=GY-Accounts \
+                      -Dsonar.host.url=https://sonar.gycoding.com \
+                      -Dsonar.login=sqp_e15c3039759830502652fe564b3cd935ff3d1cf1 \
+                      -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                 '''
             }
         }
     }
 
     post {
-        always {
-            junit '**/target/surefire-reports/*.xml'
-        }
         success {
             echo 'Tests passed!'
         }
