@@ -7,7 +7,7 @@ pipeline {
     }
 
     stages {
-        stage('Install JDK 17') {
+        stage('Install JDK') {
             steps {
                 sh '''
                     echo ">>> Downloading JDK 17..."
@@ -37,7 +37,7 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
+        stage('Unit Tests') {
             steps {
                 sh '''
                     export JAVA_HOME=$PWD/.jdk
@@ -48,6 +48,17 @@ pipeline {
                     ls -lR target/surefire-reports || true
                     cat target/surefire-reports/*.txt || true
                 '''
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def mvnHome = tool 'GY-Maven'
+                    withSonarQubeEnv('SonarQubeServer') {
+                        sh "${mvnHome}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=GY-Accounts"
+                    }
+                }
             }
         }
     }
