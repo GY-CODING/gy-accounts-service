@@ -46,7 +46,6 @@ pipeline {
                     mvn -v
                     mvn clean test --settings src/main/resources/settings.xml
                     mvn verify --settings src/main/resources/settings.xml
-                    ls -lR target/coverage-reports || true
                     mvn sonar:sonar --settings src/main/resources/settings.xml \
                       -Dsonar.projectKey=GY-Accounts \
                       -Dsonar.host.url=https://sonar.gycoding.com \
