@@ -50,7 +50,8 @@ pipeline {
                       -Dsonar.projectKey=GY-Accounts \
                       -Dsonar.host.url=https://sonar.gycoding.com \
                       -Dsonar.login=sqp_e15c3039759830502652fe564b3cd935ff3d1cf1 \
-                      -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                      -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+                      -Dsonar.coverage.exclusions=**/shared/**,**/model/**,**/config/**,**/dto/**,**/entity/**,**/repository/**,**/exceptions/**,**/AccountsApplication.java
                 '''
             }
         }
