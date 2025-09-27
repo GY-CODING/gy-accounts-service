@@ -190,6 +190,19 @@ public class UserServiceImpl implements UserService {
 
             Logger.info("User profile picture has been successfully saved to the database.", new JSONObject().put("userId", userId));
 
+            final var updatedMetadata = metadataRepository.update(
+                    MetadataMO.builder()
+                            .userId(userId)
+                            .profile(
+                                    ProfileMO.builder()
+                                            .picture(GY_ACCOUNTS_PICTURE_URL + savedPicture.name().replace("-pfp", ""))
+                                            .build()
+                            )
+                            .build()
+            );
+
+            Logger.info("User profile picture has been successfully linked with the metadata.", new JSONObject().put("userId", userId));
+
             return mapper.toODTO(savedPicture);
         } catch(Exception e) {
             Logger.error("An error has occurred while updating user profile picture.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
