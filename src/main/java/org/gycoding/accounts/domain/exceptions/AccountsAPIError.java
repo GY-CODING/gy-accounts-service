@@ -12,7 +12,7 @@ public enum AccountsAPIError {
     RESOURCE_NOT_FOUND("This resource was not found.", HttpStatus.NOT_FOUND),
     BAD_REQUEST("Request is malformed.", HttpStatus.BAD_REQUEST),
     CONFLICT("An internal conflict between external data and the API has occured. Requested data may already exist.", HttpStatus.CONFLICT),
-    FORBIDDEN("The username has no permission to access this resource.", HttpStatus.FORBIDDEN),
+    FORBIDDEN("The user has no permission to access this resource.", HttpStatus.FORBIDDEN),
     AUTH_ERROR("An error with the authentication service has occurred, sorry for the inconvenience.", HttpStatus.INTERNAL_SERVER_ERROR),
     SERVER_ERROR("An internal server error has occurred, sorry for the inconvenience.", HttpStatus.INTERNAL_SERVER_ERROR);
 
