@@ -2,24 +2,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.4</version>
-		<relativePath/>
-	</parent>
+
 	<groupId>org.gycoding</groupId>
 	<artifactId>gy-accounts-service</artifactId>
 	<version>3.2.1</version>
-	<name>gy-accounts-service</name>
-	<description>GY Accounts is a service used by GYCODING for the management of user accounts for their products.</description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.4</version>
+        <relativePath/>
+    </parent>
 
 	<properties>
 		<java.version>23</java.version>
-		<docker.image.prefix>gycoding</docker.image.prefix>
+
+        <jacoco.version>0.8.13</jacoco.version>
+        <maven-surefire.version>3.5.4</maven-surefire.version>
+        <maven-compiler.version>3.14.0</maven-compiler.version>
+
+        <feign.version>4.3.0</feign.version>
+        <auth0.version>1.11.1</auth0.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <lombok.version>1.18.32</lombok.version>
+        <dotenv.version>5.2.2</dotenv.version>
+        <gy.exceptions.version>1.1.6</gy.exceptions.version>
+        <gy.logs.version>1.0.1</gy.logs.version>
 	</properties>
 
 	<dependencies>
+        <!-- Spring Boot Dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -70,51 +82,44 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>4.3.0</version>
+            <version>${feign.version}</version>
         </dependency>
 
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.32</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok-mapstruct-binding</artifactId>
-			<version>0.2.0</version>
-		</dependency>
+        <!-- Lombok Dependencies -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>mvc-auth-commons</artifactId>
-			<version>1.2.0</version>
+            <version>${auth0.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>java-dotenv</artifactId>
-			<version>5.2.2</version>
+			<version>${dotenv.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
-			<version>1.5.5.Final</version>
+			<version>${mapstruct.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.gycoding</groupId>
 			<artifactId>spring-exceptions</artifactId>
-			<version>1.1.6</version>
+			<version>${gy.exceptions.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.gycoding</groupId>
 			<artifactId>spring-logs</artifactId>
-			<version>1.0.1</version>
+			<version>${gy.logs.version}</version>
 		</dependency>
     </dependencies>
 
@@ -128,7 +133,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.13</version>
+                <version>${jacoco.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -148,7 +153,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>${maven-surefire.version}</version>
                 <configuration>
                     <useModulePath>false</useModulePath>
                     <properties>
@@ -160,36 +165,24 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>dockerfile-maven-plugin</artifactId>
-				<version>1.4.13</version>
-				<configuration>
-					<repository>${docker.image.prefix}/${project.artifactId}</repository>
-					<buildArgs>
-						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-					</buildArgs>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.14.0</version>
+				<version>${maven-compiler.version}</version>
 				<configuration>
-					<release>23</release>
-					<source>23</source>
-					<target>23</target>
+					<release>${java.version}</release>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.32</version>
+							<version>${lombok.version}</version>
 						</path>
 						<path>
 							<groupId>org.mapstruct</groupId>
 							<artifactId>mapstruct-processor</artifactId>
-							<version>1.5.5.Final</version>
+							<version>${mapstruct.version}</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>

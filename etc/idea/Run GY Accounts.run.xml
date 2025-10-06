@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="AccountsApplication" type="Application" factoryName="Application">
+  <configuration default="false" name="Run GY Accounts" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="org.gycoding.accounts.AccountsApplication" />
     <module name="gy-accounts-service" />
     <method v="2">
