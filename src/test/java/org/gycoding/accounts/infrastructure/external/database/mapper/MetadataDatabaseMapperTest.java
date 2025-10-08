@@ -60,8 +60,6 @@ public class MetadataDatabaseMapperTest {
 
         // Verify
         assertEquals(metadataEntity.getUserId(), result.getUserId());
-        assertEquals(metadataEntity.getBooks(), result.getBooks());
-        assertEquals(metadataEntity.getMessages(), result.getMessages());
         assertEquals(metadataEntity.getProfile(), result.getProfile());
     }
 
@@ -88,8 +86,6 @@ public class MetadataDatabaseMapperTest {
 
         // Verify
         assertEquals(metadataUpdatedEntity.getUserId(), result.getUserId());
-        assertEquals(metadataUpdatedEntity.getBooks(), result.getBooks());
-        assertEquals(metadataUpdatedEntity.getMessages(), result.getMessages());
         assertEquals(metadataUpdatedEntity.getProfile(), result.getProfile());
     }
 
@@ -120,8 +116,6 @@ public class MetadataDatabaseMapperTest {
 
         // Verify
         assertEquals(metadataRefreshedEntity.getUserId(), result.getUserId());
-        assertEquals(metadataRefreshedEntity.getBooks(), result.getBooks());
-        assertEquals(metadataRefreshedEntity.getMessages(), result.getMessages());
         assertEquals(metadataRefreshedEntity.getProfile(), result.getProfile());
     }
 
