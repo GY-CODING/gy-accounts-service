@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             return requestedProfiles.stream()
-                    .map(profile -> mapper.toODTO(profile, userMetadata.books().friends().contains(profile.id())))
+                    .map(profile -> mapper.toODTO(profile))
                     .toList();
         } catch(NullPointerException e) {
             return requestedProfiles.stream()

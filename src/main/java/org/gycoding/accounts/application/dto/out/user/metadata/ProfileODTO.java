@@ -14,6 +14,5 @@ public record ProfileODTO(
     String phoneNumber,
     List<AccountRoles> roles,
     String apiKey,
-    String picture,
-    Boolean isFriend
+    String picture
 ) { }

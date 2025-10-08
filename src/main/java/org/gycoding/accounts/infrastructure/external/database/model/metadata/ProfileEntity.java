@@ -21,5 +21,4 @@ public class ProfileEntity {
     private List<AccountRoles> roles;
     private String apiKey;
     private String picture;
-    private Boolean isFriend;
 }

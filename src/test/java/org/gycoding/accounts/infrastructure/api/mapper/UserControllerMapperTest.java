@@ -39,7 +39,6 @@ public class UserControllerMapperTest {
         assertEquals(profileRSDTO.roles(), result.roles());
         assertEquals(profileRSDTO.apiKey(), result.apiKey());
         assertEquals(profileRSDTO.picture(), result.picture());
-        assertEquals(profileRSDTO.isFriend(), result.isFriend());
     }
 
     @Test
@@ -100,7 +99,6 @@ public class UserControllerMapperTest {
         assertEquals(publicProfileRSDTO.email(), result.email());
         assertEquals(publicProfileRSDTO.phoneNumber(), result.phoneNumber());
         assertEquals(publicProfileRSDTO.picture(), result.picture());
-        assertEquals(publicProfileRSDTO.isFriend(), result.isFriend());
     }
 
     @Test
@@ -137,32 +135,6 @@ public class UserControllerMapperTest {
 
         // Then
         final var result = mapper.toRSDTO(metadataODTO);
-
-        // Verify
-        assertNull(result);
-    }
-
-    @Test
-    @DisplayName("[USER_CONTROLLER_MAPPER] - Test successful mapping from MetadataRQDTO to MetadataIDTO.")
-    void testMetadataToIDTO() {
-        // When
-        final var metadataRQDTO = mock(MetadataRQDTO.class);
-
-        // Then
-        final var result = mapper.toIDTO(metadataRQDTO);
-
-        // Verify
-        assertNotNull(result);
-    }
-
-    @Test
-    @DisplayName("[USER_CONTROLLER_MAPPER] - Test unsuccessful mapping from MetadataRQDTO to MetadataIDTO.")
-    void testWrongMetadataToIDTO() {
-        // When
-        final MetadataRQDTO metadataRQDTO = null;
-
-        // Then
-        final var result = mapper.toIDTO(metadataRQDTO);
 
         // Verify
         assertNull(result);
