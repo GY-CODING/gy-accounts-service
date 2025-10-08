@@ -8,5 +8,7 @@ import java.util.UUID;
 @Builder
 public record BooksMetadataMO(
         List<UUID> friends,
-        String biography
+        String biography,
+        HallOfFameMO hallOfFame,
+        List<ActivityMO> activity
 ) { }

@@ -11,6 +11,7 @@ import java.util.UUID;
 public record PublicProfileRSDTO(
     UUID id,
     String username,
+    String email,
     String phoneNumber,
     String picture,
     @JsonInclude(JsonInclude.Include.NON_NULL)

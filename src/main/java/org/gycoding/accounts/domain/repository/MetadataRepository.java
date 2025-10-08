@@ -13,6 +13,7 @@ import java.util.UUID;
 public interface MetadataRepository {
     MetadataMO save(MetadataMO metadata);
     MetadataMO update(MetadataMO metadata) throws APIException;
+    MetadataMO refresh(MetadataMO metadata) throws APIException;
 
     Optional<MetadataMO> get(String userId);
     Optional<MetadataMO> get(UUID profileId);

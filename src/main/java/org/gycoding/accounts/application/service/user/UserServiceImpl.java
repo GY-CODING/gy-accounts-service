@@ -2,7 +2,6 @@ package org.gycoding.accounts.application.service.user;
 
 import com.auth0.exception.Auth0Exception;
 import kong.unirest.json.JSONObject;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -15,7 +14,6 @@ import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
-import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.domain.repository.MetadataRepository;
 import org.gycoding.accounts.domain.repository.PictureRepository;
@@ -49,41 +47,6 @@ public class UserServiceImpl implements UserService {
 
     @Value("${gy.accounts.picture.url}")
     private String GY_ACCOUNTS_PICTURE_URL;
-
-    @Override
-    public ProfileODTO getUser(UUID profileId) throws APIException {
-        final var userMetadata = metadataRepository.get(profileId)
-                .orElseThrow(() -> new APIException(
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                ));
-
-        return mapper.toODTO(userMetadata.profile());
-    }
-
-    @Override
-    public ProfileODTO getUser(String userId, UUID profileId) throws APIException {
-        final var requestedUserMetadata = metadataRepository.get(profileId)
-                .orElseThrow(() -> new APIException(
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                ));
-
-        final var userMetadata = metadataRepository.get(userId)
-                .orElseThrow(() -> new APIException(
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                ));
-
-        try {
-            return mapper.toODTO(requestedUserMetadata.profile(), userMetadata.books().friends().contains(requestedUserMetadata.profile().id()));
-        } catch(NullPointerException e) {
-            return mapper.toODTO(requestedUserMetadata.profile());
-        }
-    }
 
     @Override
     public List<ProfileODTO> listUsers(String query) throws APIException {
@@ -147,7 +110,7 @@ public class UserServiceImpl implements UserService {
             updatedMetadata = metadataRepository.update(
                     MetadataMO.builder()
                             .userId(userId)
-                            .profile(mapper.toMO(profile, String.format("%s/%s", GY_ACCOUNTS_PICTURE_URL, picture.name())))
+                            .profile(mapper.toMO(profile, GY_ACCOUNTS_PICTURE_URL + picture.name().replace("-pfp", "")))
                             .build()
             );
         } else {
@@ -227,6 +190,19 @@ public class UserServiceImpl implements UserService {
 
             Logger.info("User profile picture has been successfully saved to the database.", new JSONObject().put("userId", userId));
 
+            final var updatedMetadata = metadataRepository.update(
+                    MetadataMO.builder()
+                            .userId(userId)
+                            .profile(
+                                    ProfileMO.builder()
+                                            .picture(GY_ACCOUNTS_PICTURE_URL + savedPicture.name().replace("-pfp", ""))
+                                            .build()
+                            )
+                            .build()
+            );
+
+            Logger.info("User profile picture has been successfully linked with the metadata.", new JSONObject().put("userId", userId));
+
             return mapper.toODTO(savedPicture);
         } catch(Exception e) {
             Logger.error("An error has occurred while updating user profile picture.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
@@ -295,28 +271,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void setMetadata(String userId) throws APIException {
+    public MetadataODTO syncMetadata(String userId) throws APIException {
         try {
-            final var defaultMetadata = MetadataMO.builder()
-                    .userId(userId)
-                    .books(
-                            BooksMetadataMO.builder()
-                                    .friends(List.of())
-                                    .build()
-                    )
-                    .profile(
-                            ProfileMO.builder()
-                                    .id(UUID.randomUUID())
-                                    .username("New User")
-                                    .apiKey(Base64Utils.generateApiKey())
-                                    .build()
-                    )
-                    .build();
+            final var userMetadata = metadataRepository.get(userId);
+            final var user = authFacade.getUser(userId);
 
-            metadataRepository.update(
-                    MetadataMO.builder()
-                            .profile(defaultMetadata.profile())
-                            .build()
+            if(userMetadata.isPresent()) {
+                return mapper.toODTO(
+                        metadataRepository.refresh(
+                                mapper.toDefaultMO(
+                                        userId,
+                                        user,
+                                        userMetadata.get().profile().picture().isBlank() ? GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "") : userMetadata.get().profile().picture()
+                                )
+                        )
+                );
+            }
+
+            return mapper.toODTO(
+                    metadataRepository.save(
+                            mapper.toDefaultMO(
+                                    userId,
+                                    user,
+                                    GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "")
+                            )
+                    )
             );
         } catch(Exception e) {
             Logger.error("An error has occurred while setting user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));

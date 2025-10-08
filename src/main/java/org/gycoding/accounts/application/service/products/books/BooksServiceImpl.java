@@ -1,19 +1,21 @@
 package org.gycoding.accounts.application.service.products.books;
 
-import com.auth0.exception.Auth0Exception;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
+import org.gycoding.accounts.application.dto.in.user.metadata.books.ActivityIDTO;
+import org.gycoding.accounts.application.dto.out.books.ActivityODTO;
+import org.gycoding.accounts.application.dto.out.books.BooksProfileODTO;
+import org.gycoding.accounts.application.dto.out.books.HallOfFameODTO;
 import org.gycoding.accounts.application.dto.out.user.metadata.books.FriendRequestODTO;
-import org.gycoding.accounts.application.mapper.UserServiceMapper;
 import org.gycoding.accounts.application.mapper.products.BooksServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.books.FriendRequestCommand;
-import org.gycoding.accounts.domain.repository.AuthFacade;
+import org.gycoding.accounts.domain.model.user.metadata.books.HallOfFameMO;
 import org.gycoding.accounts.domain.repository.FriendRequestRepository;
 import org.gycoding.accounts.domain.repository.MetadataRepository;
+import org.gycoding.accounts.domain.repository.NotificationsFacade;
 import org.gycoding.exceptions.model.APIException;
 import org.gycoding.logs.logger.Logger;
 import org.springframework.stereotype.Service;
@@ -26,36 +28,66 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class BooksServiceImpl implements BooksService {
-    private final AuthFacade authFacade;
-
     private final FriendRequestRepository friendRequestRepository;
 
-    private MetadataRepository metadataRepository;
+    private final MetadataRepository metadataRepository;
 
-    private final BooksServiceMapper booksMapper;
-
-    private final UserServiceMapper userMapper;
+    private final BooksServiceMapper mapper;
 
     @Override
-    public List<ProfileODTO> listFriends(String userId) throws APIException {
-            final var userMetadata = metadataRepository.get(userId)
-                    .orElseThrow(() -> new APIException(
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                            AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                    ));
+    public BooksProfileODTO getProfile(UUID profileId) throws APIException {
+        final var userMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
 
-            final var friends = userMetadata.books().friends();
+        return mapper.toODTO(userMetadata.profile(), userMetadata.books().biography());
+    }
 
-            if(friends.isEmpty()) {
-                return List.of();
-            }
+    @Override
+    public BooksProfileODTO getProfile(String userId, UUID profileId) throws APIException {
+        final var requestedUserMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        try {
+            return mapper.toODTO(requestedUserMetadata.profile(), requestedUserMetadata.books().biography(), userMetadata.books().friends().contains(requestedUserMetadata.profile().id()));
+        } catch(NullPointerException e) {
+            return mapper.toODTO(requestedUserMetadata.profile(), requestedUserMetadata.books().biography());
+        }
+    }
+
+    @Override
+    public List<BooksProfileODTO> listFriends(String userId) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        final var friends = userMetadata.books().friends();
+
+        if(friends.isEmpty()) {
+            return List.of();
+        }
 
         try {
             return friends.stream()
                     .map(friend -> metadataRepository.get(friend).orElseThrow(RuntimeException::new))
-                    .map(MetadataMO::profile)
-                    .map(userMapper::toODTO)
+                    .map(friendMetadata -> mapper.toODTO(friendMetadata.profile(), friendMetadata.books().biography()))
                     .toList();
         } catch (RuntimeException e) {
             throw new APIException(
@@ -76,7 +108,7 @@ public class BooksServiceImpl implements BooksService {
                 ));
 
         return friendRequestRepository.list(userMetadata.profile().id()).stream()
-                .map(booksMapper::toODTO)
+                .map(mapper::toODTO)
                 .toList();
     }
 
@@ -100,7 +132,24 @@ public class BooksServiceImpl implements BooksService {
         }
 
         try {
-            return booksMapper.toODTO(friendRequestRepository.save(booksMapper.toMO(userMetadata.profile().id(), to)));
+            friendRequestRepository.list(to).stream()
+                    .filter(request -> request.from().equals(userMetadata.profile().id()))
+                    .findFirst()
+                    .ifPresent(request -> {
+                        throw new RuntimeException();
+                    });
+        } catch (RuntimeException e) {
+            Logger.error("Friend request already exists.", to);
+
+            throw new APIException(
+                AccountsAPIError.CONFLICT.getCode(),
+                AccountsAPIError.CONFLICT.getMessage(),
+                AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
+
+        try {
+            return mapper.toODTO(friendRequestRepository.save(mapper.toMO(userMetadata.profile().id(), to)));
         } catch (Exception e) {
             throw new APIException(
                 AccountsAPIError.CONFLICT.getCode(),
@@ -167,6 +216,55 @@ public class BooksServiceImpl implements BooksService {
     }
 
     @Override
+    public void removeFriend(String userId, UUID friendProfileId) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        final var friendMetadata = metadataRepository.get(friendProfileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                ));
+
+        if(!userMetadata.books().friends().contains(friendProfileId)) {
+            Logger.error("User is not a friend.", friendProfileId);
+
+            throw new APIException(
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
+
+        metadataRepository.update(
+                MetadataMO.builder()
+                        .userId(userMetadata.userId())
+                        .books(
+                                BooksMetadataMO.builder()
+                                        .friends(new ArrayList<>(userMetadata.books().friends()) {{ remove(friendMetadata.profile().id()); }})
+                                        .build()
+                        )
+                        .build()
+        );
+
+        metadataRepository.update(
+                MetadataMO.builder()
+                        .userId(friendMetadata.userId())
+                        .books(
+                                BooksMetadataMO.builder()
+                                        .friends(new ArrayList<>(friendMetadata.books().friends()) {{ remove(userMetadata.profile().id()); }})
+                                        .build()
+                        )
+                        .build()
+        );
+    }
+
+    @Override
     public String updateBiography(String userId, String biography) throws APIException {
         return metadataRepository.update(
                 MetadataMO.builder()
@@ -178,5 +276,171 @@ public class BooksServiceImpl implements BooksService {
                         )
                         .build()
         ).books().biography();
+    }
+
+    @Override
+    public HallOfFameODTO getHallOfFame(UUID profileId) throws APIException {
+        final var userMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
+
+        return mapper.toODTO(userMetadata.books().hallOfFame());
+    }
+
+    @Override
+    public HallOfFameODTO addBookToHallOfFame(String userId, String bookId) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
+
+        if(userMetadata.books().hallOfFame().books().contains(bookId)) {
+            Logger.error("The book trying to be set on Hall of Fame is already there.", userId);
+
+            throw new APIException(
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
+
+        if(userMetadata.books().hallOfFame().books().size() >= 5) {
+            Logger.error("You cannot have more than 5 bookId on your Hall of Fame.", userId);
+
+            throw new APIException(
+                    AccountsAPIError.CONFLICT.getCode(),
+                    AccountsAPIError.CONFLICT.getMessage(),
+                    AccountsAPIError.CONFLICT.getStatus()
+            );
+        }
+
+        return mapper.toODTO(
+            metadataRepository.update(
+                    MetadataMO.builder()
+                            .userId(userId)
+                            .books(
+                                    BooksMetadataMO.builder()
+                                            .hallOfFame(
+                                                    HallOfFameMO.builder()
+                                                            .books(new ArrayList<>(userMetadata.books().hallOfFame().books()) {{ add(bookId); }})
+                                                            .build()
+                                            )
+                                            .build()
+                            )
+                            .build()
+            ).books().hallOfFame()
+        );
+    }
+
+    @Override
+    public HallOfFameODTO removeBookFromHallOfFame(String userId, String bookId) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
+
+        if(bookId == null || bookId.isBlank()) {
+            Logger.error("Book ID cannot be null or blank.", userId);
+
+            throw new APIException(
+                    AccountsAPIError.BAD_REQUEST.getCode(),
+                    AccountsAPIError.BAD_REQUEST.getMessage(),
+                    AccountsAPIError.BAD_REQUEST.getStatus()
+            );
+        }
+
+        return mapper.toODTO(
+                metadataRepository.update(
+                        MetadataMO.builder()
+                                .userId(userId)
+                                .books(
+                                        BooksMetadataMO.builder()
+                                                .hallOfFame(
+                                                        HallOfFameMO.builder()
+                                                                .books(new ArrayList<>(userMetadata.books().hallOfFame().books()) {{ remove(bookId); }})
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                                .build()
+                ).books().hallOfFame()
+        );
+    }
+
+    @Override
+    public HallOfFameODTO setQuoteOnHallOfFame(String userId, String quote) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
+
+        return mapper.toODTO(
+                metadataRepository.update(
+                        MetadataMO.builder()
+                                .userId(userId)
+                                .books(
+                                        BooksMetadataMO.builder()
+                                                .hallOfFame(
+                                                        HallOfFameMO.builder()
+                                                                .quote(quote != null ? quote : "")
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                                .build()
+                ).books().hallOfFame()
+        );
+    }
+
+    @Override
+    public List<ActivityODTO> listActivities(UUID profileId) throws APIException {
+        final var userMetadata = metadataRepository.get(profileId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
+
+        return userMetadata.books().activity().stream()
+                .map(mapper::toODTO)
+                .toList();
+    }
+
+    @Override
+    public ActivityODTO setActivity(String userId, ActivityIDTO activity) throws APIException {
+        final var userMetadata = metadataRepository.get(userId)
+                .orElseThrow(() -> new APIException(
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus())
+                );
+
+        final var mappedActivity = mapper.toMO(activity);
+
+        metadataRepository.update(
+                MetadataMO.builder()
+                        .userId(userId)
+                        .books(
+                                BooksMetadataMO.builder()
+                                        .activity(
+                                                userMetadata.books().activity() != null ?
+                                                new ArrayList<>(userMetadata.books().activity()) {{ add(mappedActivity); }} :
+                                                List.of(mappedActivity)
+                                        )
+                                        .build()
+                        )
+                        .build()
+        );
+
+        return mapper.toODTO(mappedActivity);
     }
 }

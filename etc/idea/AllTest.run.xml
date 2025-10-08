@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="AllTest" type="JUnit" factoryName="JUnit">
-    <module name="gy-accounts" />
+    <module name="gy-accounts-service" />
     <option name="PACKAGE_NAME" value="org.gycoding.accounts" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />

@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
-    ProfileODTO getUser(UUID profileId) throws APIException;
-    ProfileODTO getUser(String userId, UUID profileId) throws APIException;
-
     List<ProfileODTO> listUsers(String query) throws APIException;
     List<ProfileODTO> listUsers(String userId, String query) throws APIException;
 
@@ -34,7 +31,7 @@ public interface UserService {
     void updatePassword(String userId, String password) throws APIException;
 
     MetadataODTO getMetadata(String userId) throws APIException;
-    void setMetadata(String userId) throws APIException;
+    MetadataODTO syncMetadata(String userId) throws APIException;
 
     String refreshApiKey(String userId) throws APIException;
     String decodeApiKey(String apiKey) throws APIException;

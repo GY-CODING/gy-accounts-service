@@ -23,21 +23,6 @@ public class UserController {
 
     private final UserControllerMapper mapper;
 
-    @GetMapping("/{profileId}")
-    public ResponseEntity<?> getUser(
-            @RequestHeader("x-user-id") String userId,
-            @PathVariable String profileId
-    ) throws APIException {
-        return ResponseEntity.ok(mapper.toPublicRSDTO(service.getUser(userId, UUID.fromString(profileId))));
-    }
-
-    @GetMapping("/{profileId}/public")
-    public ResponseEntity<?> getUserPublic(
-            @PathVariable String profileId
-    ) throws APIException {
-        return ResponseEntity.ok(mapper.toPublicRSDTO(service.getUser(UUID.fromString(profileId))));
-    }
-
     @GetMapping("/list")
     public ResponseEntity<?> listUsers(
             @RequestHeader("x-user-id") String userId,
@@ -116,7 +101,9 @@ public class UserController {
             @RequestBody String picture,
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        return ResponseEntity.ok(service.updatePicture(userId, FileUtils.read(picture)).toString());
+        service.updatePicture(userId, FileUtils.read(picture));
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/phonenumber")
@@ -151,13 +138,11 @@ public class UserController {
         return ResponseEntity.ok(service.getMetadata(userId));
     }
 
-    @PatchMapping("/metadata")
-    public ResponseEntity<?> setMetadata(
+    @PostMapping("/metadata")
+    public ResponseEntity<?> syncMetadata(
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
-        service.setMetadata(userId);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(service.syncMetadata(userId));
     }
 
     @GetMapping("/metadata/apikey/decode")

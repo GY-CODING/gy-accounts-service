@@ -1,6 +1,5 @@
 package org.gycoding.accounts.application.service.products.messages;
 
-import com.auth0.exception.Auth0Exception;
 import kong.unirest.json.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +8,6 @@ import org.gycoding.accounts.application.dto.out.user.metadata.messages.ChatODTO
 import org.gycoding.accounts.application.mapper.products.MessagesServiceMapper;
 import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
-import org.gycoding.accounts.domain.model.user.metadata.books.BooksMetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.messages.ChatMO;
 import org.gycoding.accounts.domain.model.user.metadata.messages.MessagesMetadataMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
