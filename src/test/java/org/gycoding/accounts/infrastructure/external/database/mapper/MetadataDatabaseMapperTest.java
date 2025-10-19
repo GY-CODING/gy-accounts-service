@@ -33,8 +33,6 @@ public class MetadataDatabaseMapperTest {
 
         // Verify
         assertEquals(metadataMO.userId(), result.userId());
-        assertEquals(metadataMO.books(), result.books());
-        assertEquals(metadataMO.messages(), result.messages());
         assertEquals(metadataMO.profile(), result.profile());
     }
 

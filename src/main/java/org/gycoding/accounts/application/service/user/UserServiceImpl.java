@@ -325,18 +325,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String decodeApiKey(String apiKey) throws APIException {
-        final var userMetadata = metadataRepository.getByApiKey(apiKey)
-                .orElseThrow(() -> new APIException(
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                ));
-
-        return userMetadata.userId();
-    }
-
-    @Override
     public UUID transform(String userId) throws APIException {
         final var userMetadata = metadataRepository.get(userId)
                 .orElseThrow(() -> new APIException(
