@@ -15,6 +15,7 @@ import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
+import org.gycoding.accounts.domain.repository.BooksFeignFacade;
 import org.gycoding.accounts.domain.repository.MetadataRepository;
 import org.gycoding.accounts.domain.repository.PictureRepository;
 import org.gycoding.accounts.shared.utils.Base64Utils;
@@ -35,6 +36,9 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     @Autowired
     private AuthFacade authFacade;
+
+    @Autowired
+    private BooksFeignFacade booksFeignFacade;
 
     @Autowired
     private UserServiceMapper mapper;
@@ -287,6 +291,8 @@ public class UserServiceImpl implements UserService {
                         )
                 );
             }
+
+            booksFeignFacade.setMetadata(userId);
 
             return mapper.toODTO(
                     metadataRepository.save(
