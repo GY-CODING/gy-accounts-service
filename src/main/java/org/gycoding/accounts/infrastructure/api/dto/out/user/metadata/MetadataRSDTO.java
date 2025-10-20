@@ -1,7 +1,6 @@
 package org.gycoding.accounts.infrastructure.api.dto.out.user.metadata;
 
 import lombok.*;
-import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.messages.MessagesMetadataRSDTO;
 
 @Data
 @Builder
@@ -9,6 +8,5 @@ import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.messages.M
 @Setter
 @AllArgsConstructor
 public class MetadataRSDTO {
-    private MessagesMetadataRSDTO messages;
     private ProfileRSDTO profile;
 }

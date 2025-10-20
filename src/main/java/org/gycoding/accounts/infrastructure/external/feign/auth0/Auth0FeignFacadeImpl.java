@@ -1,4 +1,4 @@
-package org.gycoding.accounts.infrastructure.external.feign;
+package org.gycoding.accounts.infrastructure.external.feign.auth0;
 
 import feign.FeignException;
 import lombok.AllArgsConstructor;

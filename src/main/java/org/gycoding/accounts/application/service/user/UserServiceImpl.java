@@ -15,6 +15,7 @@ import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
 import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.domain.repository.AuthFacade;
+import org.gycoding.accounts.domain.repository.BooksFeignFacade;
 import org.gycoding.accounts.domain.repository.MetadataRepository;
 import org.gycoding.accounts.domain.repository.PictureRepository;
 import org.gycoding.accounts.shared.utils.Base64Utils;
@@ -35,6 +36,9 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     @Autowired
     private AuthFacade authFacade;
+
+    @Autowired
+    private BooksFeignFacade booksFeignFacade;
 
     @Autowired
     private UserServiceMapper mapper;
@@ -79,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             return requestedProfiles.stream()
-                    .map(profile -> mapper.toODTO(profile, userMetadata.books().friends().contains(profile.id())))
+                    .map(profile -> mapper.toODTO(profile))
                     .toList();
         } catch(NullPointerException e) {
             return requestedProfiles.stream()
@@ -190,7 +194,7 @@ public class UserServiceImpl implements UserService {
 
             Logger.info("User profile picture has been successfully saved to the database.", new JSONObject().put("userId", userId));
 
-            final var updatedMetadata = metadataRepository.update(
+            metadataRepository.update(
                     MetadataMO.builder()
                             .userId(userId)
                             .profile(
@@ -275,27 +279,33 @@ public class UserServiceImpl implements UserService {
         try {
             final var userMetadata = metadataRepository.get(userId);
             final var user = authFacade.getUser(userId);
+            final var defaultMetadata = mapper.toDefaultMO(userId, user);
+
+            MetadataMO savedMetadata;
 
             if(userMetadata.isPresent()) {
-                return mapper.toODTO(
-                        metadataRepository.refresh(
-                                mapper.toDefaultMO(
-                                        userId,
-                                        user,
-                                        userMetadata.get().profile().picture().isBlank() ? GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "") : userMetadata.get().profile().picture()
-                                )
-                        )
-                );
+                savedMetadata = metadataRepository.refresh(defaultMetadata);
+
+                Logger.info("User metadata has been refreshed.", userId);
+            } else {
+                savedMetadata = metadataRepository.save(defaultMetadata);
+
+                Logger.info("User metadata has been created.", userId);
             }
 
+            booksFeignFacade.setMetadata(savedMetadata.profile().id());
+
+            updatePicture(userId, FileUtils.read(user.getPicture()));
+
+            Logger.info("User picture has been set.", userId);
+
             return mapper.toODTO(
-                    metadataRepository.save(
-                            mapper.toDefaultMO(
-                                    userId,
-                                    user,
-                                    GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "")
-                            )
-                    )
+                    metadataRepository.get(userId)
+                            .orElseThrow(() -> new APIException(
+                                    AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                                    AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                                    AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                            ))
             );
         } catch(Exception e) {
             Logger.error("An error has occurred while setting user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
@@ -322,18 +332,6 @@ public class UserServiceImpl implements UserService {
         );
 
         return userMetadata.profile().apiKey();
-    }
-
-    @Override
-    public String decodeApiKey(String apiKey) throws APIException {
-        final var userMetadata = metadataRepository.getByApiKey(apiKey)
-                .orElseThrow(() -> new APIException(
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                        AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-                ));
-
-        return userMetadata.userId();
     }
 
     @Override

@@ -34,7 +34,6 @@ public interface UserService {
     MetadataODTO syncMetadata(String userId) throws APIException;
 
     String refreshApiKey(String userId) throws APIException;
-    String decodeApiKey(String apiKey) throws APIException;
 
     UUID transform(String userId) throws APIException;
     String transform(UUID profileId) throws APIException;

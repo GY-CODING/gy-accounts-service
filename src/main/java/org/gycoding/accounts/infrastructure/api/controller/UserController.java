@@ -20,7 +20,6 @@ import java.util.UUID;
 @RequestMapping("/user")
 public class UserController {
     private final UserService service;
-
     private final UserControllerMapper mapper;
 
     @GetMapping("/list")
@@ -143,13 +142,6 @@ public class UserController {
             @RequestHeader("x-user-id") String userId
     ) throws APIException {
         return ResponseEntity.ok(service.syncMetadata(userId));
-    }
-
-    @GetMapping("/metadata/apikey/decode")
-    public ResponseEntity<?> decodeApiKey(
-            @RequestParam String key
-    ) throws APIException {
-        return ResponseEntity.ok(service.decodeApiKey(key));
     }
 
     @PatchMapping("/metadata/apikey")

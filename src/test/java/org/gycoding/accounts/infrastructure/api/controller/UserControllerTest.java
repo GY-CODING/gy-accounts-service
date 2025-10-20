@@ -354,47 +354,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("[USER_CONTROLLER] - Test successful decode of an API Key case.")
-    void testDecodeApiKey() throws APIException {
-        // When
-        when(service.decodeApiKey(UserStubs.API_KEY.toString())).thenReturn(UserStubs.AUTH0_USER_ID);
-
-        // Then
-        final var result = controller.decodeApiKey(UserStubs.API_KEY.toString());
-
-        // Verify
-        verify(service).decodeApiKey(UserStubs.API_KEY.toString());
-        verifyNoMoreInteractions(service);
-
-        assertEquals(UserStubs.AUTH0_USER_ID, result.getBody());
-    }
-
-    @Test
-    @DisplayName("[USER_CONTROLLER] - Test unsuccessful decode of API Key case.")
-    void testWrongDecodeApiKey() throws APIException {
-        // When
-        final var expectedException = new APIException(
-                AccountsAPIError.RESOURCE_NOT_MODIFIED.getCode(),
-                AccountsAPIError.RESOURCE_NOT_MODIFIED.getMessage(),
-                AccountsAPIError.RESOURCE_NOT_MODIFIED.getStatus()
-        );
-
-        when(service.decodeApiKey(UserStubs.API_KEY.toString())).thenThrow(expectedException);
-
-        // Then
-        final var result = assertThrows(
-                APIException.class,
-                () -> controller.decodeApiKey(UserStubs.API_KEY.toString())
-        );
-
-        // Verify
-        verify(service).decodeApiKey(UserStubs.API_KEY.toString());
-        verifyNoMoreInteractions(service);
-
-        assertEquals(expectedException, result);
-    }
-
-    @Test
     @DisplayName("[USER_CONTROLLER] - Test successful refresh of an API Key case.")
     void testRefreshAPIKey() throws APIException {
         // When

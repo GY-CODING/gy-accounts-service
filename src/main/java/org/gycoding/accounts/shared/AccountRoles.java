@@ -11,7 +11,7 @@ public enum AccountRoles {
     public final String role;
 
     private AccountRoles(String role) {
-        this.role    = role;
+        this.role = role;
     }
 
     public static AccountRoles fromString(String roleString) {

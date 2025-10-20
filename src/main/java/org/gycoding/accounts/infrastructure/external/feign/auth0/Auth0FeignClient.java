@@ -1,4 +1,4 @@
-package org.gycoding.accounts.infrastructure.external.feign;
+package org.gycoding.accounts.infrastructure.external.feign.auth0;
 
 import org.gycoding.accounts.infrastructure.external.feign.dto.in.ManagementTokenFeignRQDTO;
 import org.gycoding.accounts.infrastructure.external.feign.dto.out.ManagementTokenFeignRSDTO;
