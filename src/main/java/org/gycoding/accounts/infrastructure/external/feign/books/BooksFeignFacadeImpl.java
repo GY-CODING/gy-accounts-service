@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.UUID;
+
 @Validated
 @Service
 public class BooksFeignFacadeImpl implements BooksFeignFacade {
@@ -22,9 +24,9 @@ public class BooksFeignFacadeImpl implements BooksFeignFacade {
     private BooksFeignClient feignClient;
 
     @Override
-    public void setMetadata(String userId) throws APIException {
+    public void setMetadata(UUID profileId) throws APIException {
         try {
-            feignClient.setMetadata(userId, apiKey);
+            feignClient.setMetadata(profileId.toString(), apiKey);
         } catch (FeignException.NotFound e) {
             throw new APIException(
                     AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),

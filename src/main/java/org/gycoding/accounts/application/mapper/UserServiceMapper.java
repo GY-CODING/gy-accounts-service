@@ -30,7 +30,7 @@ public interface UserServiceMapper {
 
     MetadataODTO toODTO(MetadataMO metadata);
 
-    default MetadataMO toDefaultMO(String userId, User user, String pictureURL) {
+    default MetadataMO toDefaultMO(String userId, User user) {
         return MetadataMO.builder()
                 .userId(userId)
                 .profile(
@@ -41,7 +41,6 @@ public interface UserServiceMapper {
                                 .username(user.getName())
                                 .phoneNumber(user.getPhoneNumber())
                                 .email(user.getEmail())
-                                .picture(pictureURL)
                                 .build()
                 )
                 .build();

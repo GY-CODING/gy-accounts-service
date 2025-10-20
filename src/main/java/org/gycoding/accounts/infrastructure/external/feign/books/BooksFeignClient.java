@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(name = "GYBooks", url = "${gy.books.url}")
 public interface BooksFeignClient {
-    @PostMapping("")
-    void setMetadata(@RequestHeader("x-user-id") String userId, @RequestHeader("x-api-key") String apiKey);
+    @PostMapping("/metadata")
+    void setMetadata(@RequestHeader("x-profile-id") String profileId, @RequestHeader("x-api-key") String apiKey);
 }

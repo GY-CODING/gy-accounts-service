@@ -194,7 +194,7 @@ public class UserServiceImpl implements UserService {
 
             Logger.info("User profile picture has been successfully saved to the database.", new JSONObject().put("userId", userId));
 
-            final var updatedMetadata = metadataRepository.update(
+            metadataRepository.update(
                     MetadataMO.builder()
                             .userId(userId)
                             .profile(
@@ -279,29 +279,33 @@ public class UserServiceImpl implements UserService {
         try {
             final var userMetadata = metadataRepository.get(userId);
             final var user = authFacade.getUser(userId);
+            final var defaultMetadata = mapper.toDefaultMO(userId, user);
+
+            MetadataMO savedMetadata;
 
             if(userMetadata.isPresent()) {
-                return mapper.toODTO(
-                        metadataRepository.refresh(
-                                mapper.toDefaultMO(
-                                        userId,
-                                        user,
-                                        userMetadata.get().profile().picture().isBlank() ? GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "") : userMetadata.get().profile().picture()
-                                )
-                        )
-                );
+                savedMetadata = metadataRepository.refresh(defaultMetadata);
+
+                Logger.info("User metadata has been refreshed.", userId);
+            } else {
+                savedMetadata = metadataRepository.save(defaultMetadata);
+
+                Logger.info("User metadata has been created.", userId);
             }
 
-            booksFeignFacade.setMetadata(userId);
+            booksFeignFacade.setMetadata(savedMetadata.profile().id());
+
+            updatePicture(userId, FileUtils.read(user.getPicture()));
+
+            Logger.info("User picture has been set.", userId);
 
             return mapper.toODTO(
-                    metadataRepository.save(
-                            mapper.toDefaultMO(
-                                    userId,
-                                    user,
-                                    GY_ACCOUNTS_PICTURE_URL + updatePicture(userId, FileUtils.read(user.getPicture())).name().replace("-pfp", "")
-                            )
-                    )
+                    metadataRepository.get(userId)
+                            .orElseThrow(() -> new APIException(
+                                    AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
+                                    AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
+                                    AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
+                            ))
             );
         } catch(Exception e) {
             Logger.error("An error has occurred while setting user metadata.", new JSONObject().put("error", e.getMessage()).put("userId", userId));
