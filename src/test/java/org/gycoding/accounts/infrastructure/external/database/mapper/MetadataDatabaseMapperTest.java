@@ -7,7 +7,7 @@ import org.gycoding.accounts.infrastructure.external.database.model.metadata.Met
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.mapstruct.factory.Mappers;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
@@ -18,8 +18,7 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class MetadataDatabaseMapperTest {
-    @InjectMocks
-    private MetadataDatabaseMapperImpl mapper;
+    private final MetadataDatabaseMapper mapper = Mappers.getMapper(MetadataDatabaseMapper.class);
 
     @Test
     @DisplayName("[METADATA_DATABASE_MAPPER] - Test successful mapping from MetadataEntity to MetadataMO.")
@@ -33,8 +32,6 @@ public class MetadataDatabaseMapperTest {
 
         // Verify
         assertEquals(metadataMO.userId(), result.userId());
-        assertEquals(metadataMO.books(), result.books());
-        assertEquals(metadataMO.messages(), result.messages());
         assertEquals(metadataMO.profile(), result.profile());
     }
 
@@ -60,8 +57,6 @@ public class MetadataDatabaseMapperTest {
 
         // Verify
         assertEquals(metadataEntity.getUserId(), result.getUserId());
-        assertEquals(metadataEntity.getBooks(), result.getBooks());
-        assertEquals(metadataEntity.getMessages(), result.getMessages());
         assertEquals(metadataEntity.getProfile(), result.getProfile());
     }
 
@@ -88,8 +83,6 @@ public class MetadataDatabaseMapperTest {
 
         // Verify
         assertEquals(metadataUpdatedEntity.getUserId(), result.getUserId());
-        assertEquals(metadataUpdatedEntity.getBooks(), result.getBooks());
-        assertEquals(metadataUpdatedEntity.getMessages(), result.getMessages());
         assertEquals(metadataUpdatedEntity.getProfile(), result.getProfile());
     }
 
@@ -120,8 +113,6 @@ public class MetadataDatabaseMapperTest {
 
         // Verify
         assertEquals(metadataRefreshedEntity.getUserId(), result.getUserId());
-        assertEquals(metadataRefreshedEntity.getBooks(), result.getBooks());
-        assertEquals(metadataRefreshedEntity.getMessages(), result.getMessages());
         assertEquals(metadataRefreshedEntity.getProfile(), result.getProfile());
     }
 

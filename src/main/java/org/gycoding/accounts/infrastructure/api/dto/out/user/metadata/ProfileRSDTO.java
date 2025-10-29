@@ -15,7 +15,5 @@ public record ProfileRSDTO(
     String phoneNumber,
     List<AccountRoles> roles,
     String apiKey,
-    String picture,
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    Boolean isFriend
+    String picture
 ) { }

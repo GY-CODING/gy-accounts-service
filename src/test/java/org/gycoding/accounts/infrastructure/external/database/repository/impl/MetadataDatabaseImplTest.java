@@ -1,14 +1,11 @@
 package org.gycoding.accounts.infrastructure.external.database.repository.impl;
 
-import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
-import org.gycoding.accounts.domain.model.user.PictureMO;
+import org.gycoding.accounts.domain.exceptions.AccountsError;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
-import org.gycoding.accounts.domain.model.user.metadata.ProfileMO;
 import org.gycoding.accounts.infrastructure.external.database.mapper.MetadataDatabaseMapper;
-import org.gycoding.accounts.infrastructure.external.database.model.PictureEntity;
 import org.gycoding.accounts.infrastructure.external.database.model.metadata.MetadataEntity;
 import org.gycoding.accounts.infrastructure.external.database.repository.MetadataMongoRepository;
-import org.gycoding.exceptions.model.APIException;
+import org.gycoding.quasar.exceptions.model.DatabaseException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,7 +59,7 @@ public class MetadataDatabaseImplTest {
 
     @Test
     @DisplayName("[METADATA_DATABASE] - Test successful update of Metadata.")
-    void testUpdateMetadata() throws APIException {
+    void testUpdateMetadata() throws DatabaseException {
         // When
         final var metadataMO = mock(MetadataMO.class);
         final var metadataEntity = mock(MetadataEntity.class);
@@ -91,17 +88,13 @@ public class MetadataDatabaseImplTest {
     void testWrongUpdateMetadata() {
         // When
         final var metadataMO = mock(MetadataMO.class);
-        final var expectedException = new APIException(
-                AccountsAPIError.RESOURCE_NOT_FOUND.code,
-                AccountsAPIError.RESOURCE_NOT_FOUND.message,
-                AccountsAPIError.RESOURCE_NOT_FOUND.status
-        );
+        final var expectedException = new DatabaseException(AccountsError.RESOURCE_NOT_FOUND);
 
         when(repository.findByUserId(metadataMO.userId())).thenReturn(Optional.empty());
 
         // Then
         final var error = assertThrows(
-                APIException.class,
+                DatabaseException.class,
                 () -> database.update(metadataMO)
         );
 
@@ -115,7 +108,7 @@ public class MetadataDatabaseImplTest {
 
     @Test
     @DisplayName("[METADATA_DATABASE] - Test successful refresh of Metadata.")
-    void testRefreshMetadata() throws APIException {
+    void testRefreshMetadata() throws DatabaseException {
         // When
         final var metadataMO = mock(MetadataMO.class);
         final var metadataEntity = mock(MetadataEntity.class);
@@ -148,17 +141,13 @@ public class MetadataDatabaseImplTest {
     void testWrongRefreshMetadata() {
         // When
         final var metadataMO = mock(MetadataMO.class);
-        final var expectedException = new APIException(
-                AccountsAPIError.RESOURCE_NOT_FOUND.code,
-                AccountsAPIError.RESOURCE_NOT_FOUND.message,
-                AccountsAPIError.RESOURCE_NOT_FOUND.status
-        );
+        final var expectedException = new DatabaseException(AccountsError.RESOURCE_NOT_FOUND);
 
         when(repository.findByUserId(metadataMO.userId())).thenReturn(Optional.empty());
 
         // Then
         final var error = assertThrows(
-                APIException.class,
+                DatabaseException.class,
                 () -> database.refresh(metadataMO)
         );
 

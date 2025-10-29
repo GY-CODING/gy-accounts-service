@@ -12,6 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProfileEntity {
     @Field("id")
     private String id;
@@ -21,5 +22,4 @@ public class ProfileEntity {
     private List<AccountRoles> roles;
     private String apiKey;
     private String picture;
-    private Boolean isFriend;
 }
