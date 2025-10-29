@@ -6,14 +6,12 @@ import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.CreatedUser;
 import com.auth0.json.auth.TokenHolder;
 import com.auth0.json.mgmt.users.User;
-import kong.unirest.json.JSONObject;
-import org.apiguardian.api.API;
 import org.gycoding.accounts.domain.model.auth.UserMO;
 import org.gycoding.accounts.domain.repository.Auth0FeignFacade;
 import org.gycoding.accounts.domain.repository.AuthFacade;
 import org.gycoding.accounts.shared.AuthConnections;
-import org.gycoding.exceptions.model.APIException;
-import org.gycoding.logs.logger.Logger;
+import org.gycoding.quasar.exceptions.model.FacadeException;
+import org.gycoding.quasar.logs.service.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -61,7 +59,7 @@ public class AuthFacadeImpl implements AuthFacade {
         this.authAPI                = new AuthAPI(this.mainDomain, this.mainClientId, this.mainClientSecret);
     }
 
-    private String getManagementToken() throws APIException {
+    private String getManagementToken() throws FacadeException {
         final var accessToken = auth0FeignFacade.getManagementToken(
                 this.managementClientId,
                 this.managementClientSecret,
@@ -69,7 +67,7 @@ public class AuthFacadeImpl implements AuthFacade {
                 "client_credentials"
         );
 
-        Logger.info("Management access token generated.", new JSONObject().put("token", accessToken));
+        Logger.info("Management access token generated.");
 
         return accessToken;
     }
@@ -97,13 +95,13 @@ public class AuthFacadeImpl implements AuthFacade {
     }
 
     @Override
-    public User getUser(String userId) throws Auth0Exception, APIException {
+    public User getUser(String userId) throws Auth0Exception, FacadeException {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
         return managementAPI.users().get(userId, null).execute();
     }
 
     @Override
-    public void updatePassword(String userId, String newPassword) throws Auth0Exception, APIException {
+    public void updatePassword(String userId, String newPassword) throws Auth0Exception, FacadeException {
         final var managementAPI = new ManagementAPI(this.mainDomain, this.getManagementToken());
 
         User updateUser = new User();

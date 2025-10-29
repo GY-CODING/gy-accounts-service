@@ -2,17 +2,22 @@ package org.gycoding.accounts.infrastructure.api.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.gycoding.accounts.application.dto.out.user.metadata.ProfileODTO;
 import org.gycoding.accounts.application.service.user.UserService;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.ProfileRQDTO;
 import org.gycoding.accounts.infrastructure.api.dto.in.user.metadata.TransformIDRQDTO;
+import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.MetadataRSDTO;
+import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.ProfileRSDTO;
+import org.gycoding.accounts.infrastructure.api.dto.out.user.metadata.PublicProfileRSDTO;
 import org.gycoding.accounts.infrastructure.api.mapper.UserControllerMapper;
 import org.gycoding.accounts.shared.utils.FileUtils;
-import org.gycoding.exceptions.model.APIException;
+import org.gycoding.quasar.exceptions.model.QuasarException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,10 +28,10 @@ public class UserController {
     private final UserControllerMapper mapper;
 
     @GetMapping("/list")
-    public ResponseEntity<?> listUsers(
+    public ResponseEntity<List<PublicProfileRSDTO>> listUsers(
             @RequestHeader("x-user-id") String userId,
             @RequestParam String query
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(
                 service.listUsers(userId, query).stream()
                         .map(mapper::toPublicRSDTO)
@@ -35,9 +40,9 @@ public class UserController {
     }
 
     @GetMapping("/list/public")
-    public ResponseEntity<?> listUsersPublic(
+    public ResponseEntity<List<PublicProfileRSDTO>> listUsersPublic(
             @RequestParam String query
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(
                 service.listUsers(query).stream()
                         .map(mapper::toPublicRSDTO)
@@ -46,46 +51,46 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile(
+    public ResponseEntity<ProfileRSDTO> getProfile(
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(mapper.toRSDTO(service.getProfile(userId)));
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<?> updateProfile(
+    public ResponseEntity<ProfileRSDTO> updateProfile(
             @Valid @RequestBody ProfileRQDTO profile,
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(mapper.toRSDTO(service.updateProfile(userId, mapper.toIDTO(profile))));
     }
 
     @GetMapping("/username")
-    public ResponseEntity<?> getUsername(
+    public ResponseEntity<String> getUsername(
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(service.getUsername(userId));
     }
 
     @PatchMapping("/username")
-    public ResponseEntity<?> updateUsername(
+    public ResponseEntity<String> updateUsername(
             @RequestBody String username,
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(service.updateUsername(userId, username));
     }
 
     @GetMapping("/email")
-    public ResponseEntity<?> getEmail(
+    public ResponseEntity<String> getEmail(
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(service.getEmail(userId));
     }
 
     @GetMapping("/picture/{userId}")
     public ResponseEntity<?> getPicture(
             @PathVariable("userId") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         final var picture = service.getPicture(userId);
 
         return ResponseEntity.ok()
@@ -96,72 +101,72 @@ public class UserController {
     }
 
     @PatchMapping("/picture")
-    public ResponseEntity<?> updatePicture(
+    public ResponseEntity<Void> updatePicture(
             @RequestBody String picture,
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         service.updatePicture(userId, FileUtils.read(picture));
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/phonenumber")
-    public ResponseEntity<?> getPhoneNumber(
+    public ResponseEntity<String> getPhoneNumber(
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(service.getPhoneNumber(userId));
     }
 
     @PatchMapping("/phonenumber")
-    public ResponseEntity<?> updatePhoneNumber(
+    public ResponseEntity<String> updatePhoneNumber(
             @RequestBody String phoneNumber,
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(service.updatePhoneNumber(userId, phoneNumber));
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<?> updatePassword(
+    public ResponseEntity<Void> updatePassword(
             @Valid @RequestBody String newPassword,
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         service.updatePassword(userId, newPassword);
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/metadata")
-    public ResponseEntity<?> getMetadata(
+    public ResponseEntity<MetadataRSDTO> getMetadata(
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
-        return ResponseEntity.ok(service.getMetadata(userId));
+    ) throws QuasarException {
+        return ResponseEntity.ok(mapper.toRSDTO(service.getMetadata(userId)));
     }
 
     @PostMapping("/metadata")
-    public ResponseEntity<?> syncMetadata(
+    public ResponseEntity<MetadataRSDTO> syncMetadata(
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
-        return ResponseEntity.ok(service.syncMetadata(userId));
+    ) throws QuasarException {
+        return ResponseEntity.ok(mapper.toRSDTO(service.syncMetadata(userId)));
     }
 
     @PatchMapping("/metadata/apikey")
-    public ResponseEntity<?> refreshApiKey(
+    public ResponseEntity<String> refreshApiKey(
             @RequestHeader("x-user-id") String userId
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(service.refreshApiKey(userId));
     }
 
     @PostMapping("/transform/userId")
-    public ResponseEntity<?> getUserId(
+    public ResponseEntity<String> getUserId(
             @RequestBody TransformIDRQDTO transform
-    ) throws APIException {
+    ) throws QuasarException {
         return ResponseEntity.ok(service.transform(UUID.fromString(transform.profileId())));
     }
 
     @PostMapping("/transform/profileId")
-    public ResponseEntity<?> getProfileId(
+    public ResponseEntity<String> getProfileId(
             @Valid @RequestBody TransformIDRQDTO transform
-    ) throws APIException {
-        return ResponseEntity.ok(service.transform(transform.userId()));
+    ) throws QuasarException {
+        return ResponseEntity.ok(service.transform(transform.userId()).toString());
     }
 }

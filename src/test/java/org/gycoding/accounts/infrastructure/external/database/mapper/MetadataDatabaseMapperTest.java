@@ -7,7 +7,7 @@ import org.gycoding.accounts.infrastructure.external.database.model.metadata.Met
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.mapstruct.factory.Mappers;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
@@ -18,8 +18,7 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class MetadataDatabaseMapperTest {
-    @InjectMocks
-    private MetadataDatabaseMapperImpl mapper;
+    private final MetadataDatabaseMapper mapper = Mappers.getMapper(MetadataDatabaseMapper.class);
 
     @Test
     @DisplayName("[METADATA_DATABASE_MAPPER] - Test successful mapping from MetadataEntity to MetadataMO.")

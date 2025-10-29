@@ -4,11 +4,11 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Data
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "Metadata")
 public class MetadataEntity {
     @Id

@@ -12,6 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProfileEntity {
     @Field("id")
     private String id;

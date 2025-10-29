@@ -2,10 +2,10 @@ package org.gycoding.accounts.infrastructure.external.feign.auth0;
 
 import feign.FeignException;
 import lombok.AllArgsConstructor;
-import org.gycoding.accounts.domain.exceptions.AccountsAPIError;
+import org.gycoding.accounts.domain.exceptions.AccountsError;
 import org.gycoding.accounts.domain.repository.Auth0FeignFacade;
 import org.gycoding.accounts.infrastructure.external.feign.dto.in.ManagementTokenFeignRQDTO;
-import org.gycoding.exceptions.model.APIException;
+import org.gycoding.quasar.exceptions.model.FacadeException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -16,7 +16,7 @@ public class Auth0FeignFacadeImpl implements Auth0FeignFacade {
     private final Auth0FeignClient feignClient;
 
     @Override
-    public String getManagementToken(String managementClientId, String managementClientSecret, String managementAudience, String managementGrantType) throws APIException {
+    public String getManagementToken(String managementClientId, String managementClientSecret, String managementAudience, String managementGrantType) throws FacadeException {
         try {
             return feignClient.getManagementToken(
                     ManagementTokenFeignRQDTO.builder()
@@ -27,17 +27,9 @@ public class Auth0FeignFacadeImpl implements Auth0FeignFacade {
                             .build()
             ).accessToken();
         } catch (FeignException.NotFound e) {
-            throw new APIException(
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getCode(),
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getMessage(),
-                    AccountsAPIError.RESOURCE_NOT_FOUND.getStatus()
-            );
+            throw new FacadeException(AccountsError.RESOURCE_NOT_FOUND);
         } catch (FeignException e) {
-            throw new APIException(
-                    AccountsAPIError.SERVER_ERROR.getCode(),
-                    AccountsAPIError.SERVER_ERROR.getMessage(),
-                    AccountsAPIError.SERVER_ERROR.getStatus()
-            );
+            throw new FacadeException(AccountsError.SERVER_ERROR);
         }
     }
 }

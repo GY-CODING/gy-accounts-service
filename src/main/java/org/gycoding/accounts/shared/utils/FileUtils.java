@@ -1,7 +1,8 @@
 package org.gycoding.accounts.shared.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mock.web.MockMultipartFile;
+import org.gycoding.accounts.shared.MemoryMultipartFile;
+import org.gycoding.quasar.logs.service.Logger;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -31,12 +32,14 @@ public class FileUtils {
                 outputStream.write(buffer, 0, bytesRead);
             }
 
-            return new MockMultipartFile("file", "image.jpg", "image/jpeg", outputStream.toByteArray());
+            return new MemoryMultipartFile("file", "image.jpg", "image/jpeg", outputStream.toByteArray());
         } catch(IOException e) {
-            log.error("Error downloading image from URL: {}", imageUrl);
+            Logger.error(String.format("Error downloading image from URL: %s.", imageUrl), e);
+
             return null;
         } catch(Exception e) {
-            log.error(e.getMessage());
+            Logger.error(String.format("Unexpected error downloading image from URL: %s.", imageUrl), e);
+
             return null;
         } finally {
             assert connection != null;
@@ -56,9 +59,10 @@ public class FileUtils {
         byte[] decodedBytes = Base64Utils.decodeFromString(base64Data);
 
         try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(decodedBytes)) {
-            return new MockMultipartFile("file", "image.png", "image/png", byteArrayInputStream);
+            return new MemoryMultipartFile("file", "image.png", "image/png", byteArrayInputStream.readAllBytes());
         } catch (Exception e) {
-            log.error(e.getMessage());
+            Logger.error("Unexpected error downloading image.", e);
+
             return null;
         }
     }

@@ -1,8 +1,7 @@
 package org.gycoding.accounts.domain.repository;
 
-import org.gycoding.accounts.domain.model.user.PictureMO;
 import org.gycoding.accounts.domain.model.user.metadata.MetadataMO;
-import org.gycoding.exceptions.model.APIException;
+import org.gycoding.quasar.exceptions.model.DatabaseException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,8 +11,8 @@ import java.util.UUID;
 @Repository
 public interface MetadataRepository {
     MetadataMO save(MetadataMO metadata);
-    MetadataMO update(MetadataMO metadata) throws APIException;
-    MetadataMO refresh(MetadataMO metadata) throws APIException;
+    MetadataMO update(MetadataMO metadata) throws DatabaseException;
+    MetadataMO refresh(MetadataMO metadata) throws DatabaseException;
 
     Optional<MetadataMO> get(String userId);
     Optional<MetadataMO> get(UUID profileId);
