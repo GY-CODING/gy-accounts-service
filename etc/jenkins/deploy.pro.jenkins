@@ -12,12 +12,12 @@ pipeline {
                 script {
                     try {
                             build job:
-                                'Back/Test/GY Accounts',
+                                'Back/Test/Service/GY Accounts',
                                 wait: true,
                                 propagate: true
                     } catch (Exception e) {
                             echo "Error calling test job: ${e.getMessage()}"
-                            echo "Job path: Back/Test/GY Accounts"
+                            echo "Job path: Back/Test/Service/GY Accounts"
                             throw e
                     }
                 }
